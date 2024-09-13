@@ -54,11 +54,11 @@ public class IngredientsController {
             List<Ingredients> ingredients = ingredientsService.findAllIngredients();
             return ResponseEntity.ok(ingredients);
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredientes não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar os ingredientes.");
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar a requisição.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
         }
     }
 
@@ -75,16 +75,16 @@ public class IngredientsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar o ingrediente!")))
     })
-    public Object findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
+    public ResponseEntity<?> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
         try {
             Ingredients ingredient = ingredientsService.findIngredientsById(id);
-            return ingredient;
+            return ResponseEntity.ok(ingredient);
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingrediente não encontrado.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta.");
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o ingrediente.");
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar a requisição.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
         }
     }
 
@@ -106,11 +106,11 @@ public class IngredientsController {
             List<Ingredients> ingredients = ingredientsService.findIngredientsByName(name);
             return ResponseEntity.ok(ingredients);
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingrediente não encontrado.");
-        } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta.");
+        } catch (RuntimeException re) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar os ingredientes.");
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar a requisição.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
         }
     }
 }
