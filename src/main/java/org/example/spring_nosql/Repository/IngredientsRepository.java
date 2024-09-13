@@ -11,10 +11,8 @@ import java.util.List;
 public interface IngredientsRepository extends MongoRepository<Ingredients, String> {
 
     //Query para buscar ingredientes por ID
-    @Query(value = "{'id': ?0}", fields = "{'id': 1, 'name': 1, 'broken_restrictions': 1}")
     Ingredients findIngredientsById(ObjectId id);
 
     //Query para buscar ingredientes por nome
-    @Query(value = "{'name': ?0}", fields = "{'id': 1, 'name': 1, 'broken_restrictions': 1,}")
-    List<Object> findIngredientsByNameIgnoreCase(String name);
+    List<Ingredients> findIngredientsByNameIgnoreCase(String name);
 }

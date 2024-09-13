@@ -26,7 +26,7 @@ public class IngredientsService {
     }
 
     //Metodo para retornar um ingrediente com base no seu nome
-    public List<Object> findIngredientsByName(String name){
+    public List<Ingredients> findIngredientsByName(String name){
         return ingredientsRepository.findIngredientsByNameIgnoreCase(name);
     }
 }

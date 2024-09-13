@@ -24,7 +24,7 @@ import org.springframework.validation.Validator;
 import java.util.List;
 
 @RestController
-@RequestMapping("ingredients")
+@RequestMapping("/ingredients")
 public class IngredientsController {
 
     private final Validator validator;
@@ -42,21 +42,23 @@ public class IngredientsController {
             @ApiResponse(responseCode = "200", description = "Lista de ingredientes retornada com sucesso",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Ingredients.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor.",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "URL Incorreta!"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar os ingredientes!")))
     })
-    public ResponseEntity<List<Ingredients>> listAllIngredients() {
+    public ResponseEntity<?> listAllIngredients() {
         try {
             List<Ingredients> ingredients = ingredientsService.findAllIngredients();
             return ResponseEntity.ok(ingredients);
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredientes não encontrado.");
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar a requisição.");
         }
     }
 
@@ -73,14 +75,16 @@ public class IngredientsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar o ingrediente!")))
     })
-    public ResponseEntity<Ingredients> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
+    public Object findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
         try {
             Ingredients ingredient = ingredientsService.findIngredientsById(id);
-            return ResponseEntity.ok(ingredient);
+            return ingredient;
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingrediente não encontrado.");
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar a requisição.");
         }
     }
 
@@ -97,14 +101,16 @@ public class IngredientsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar os ingredientes!")))
     })
-    public ResponseEntity<List<Object>> findIngredientsByName(@Parameter(description = "Inserir o nome do ingrediente") @PathVariable String name) {
+    public ResponseEntity<?> findIngredientsByName(@Parameter(description = "Inserir o nome do ingrediente") @PathVariable String name) {
         try {
-            List<Object> ingredients = ingredientsService.findIngredientsByName(name);
+            List<Ingredients> ingredients = ingredientsService.findIngredientsByName(name);
             return ResponseEntity.ok(ingredients);
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingrediente não encontrado.");
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Erro ao processar a requisição.");
         }
     }
 }
