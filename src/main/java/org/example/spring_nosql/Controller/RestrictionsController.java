@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/restrictions")
 public class RestrictionsController {
@@ -39,13 +41,17 @@ public class RestrictionsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
     })
-    public Object listAllRestrictions() {
+    public ResponseEntity<?> listAllRestrictions() {
         try{
-            return restrictionsService.findAllRestrictions();
+            List<Restrictions> restrictions = restrictionsService.findAllRestrictions();
+            return ResponseEntity.ok(restrictions);
         }catch(HttpClientErrorException.NotFound ntf){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a restrição!");
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
         }
     }
 
@@ -62,13 +68,17 @@ public class RestrictionsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
     })
-    public Object listAllRestrictionsByName(@Valid @PathVariable String name){
+    public ResponseEntity<?> listAllRestrictionsByName(@Valid @PathVariable String name){
         try{
-            return restrictionsService.findRestrictionsByName(name);
+            List<Restrictions> restrictions = restrictionsService.findRestrictionsByName(name);
+            return ResponseEntity.ok(restrictions);
         }catch(HttpClientErrorException.NotFound ntf){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a restrição!");
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
         }
     }
 
@@ -85,13 +95,17 @@ public class RestrictionsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
     })
-    public Object listAllRestrictionsById(@Valid @PathVariable ObjectId id){
+    public ResponseEntity<?> listAllRestrictionsById(@Valid @PathVariable ObjectId id){
         try{
-            return restrictionsService.findRestrictionsById(id);
+            Restrictions restrictions = restrictionsService.findRestrictionsById(id);
+            return ResponseEntity.ok(restrictions);
         }catch(HttpClientErrorException.NotFound ntf){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a restrição!");
+        }
+        catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
         }
     }
 }
