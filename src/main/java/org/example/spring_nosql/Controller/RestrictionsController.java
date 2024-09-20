@@ -11,10 +11,7 @@ import org.example.spring_nosql.Model.Restrictions;
 import org.example.spring_nosql.Service.RestrictionsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
@@ -95,9 +92,10 @@ public class RestrictionsController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
     })
-    public ResponseEntity<?> listAllRestrictionsById(@Valid @PathVariable ObjectId id){
+    public ResponseEntity<?> listAllRestrictionsById(@Valid @PathVariable String id){
         try{
-            Restrictions restrictions = restrictionsService.findRestrictionsById(id);
+            ObjectId objectId = new ObjectId(id);
+            Restrictions restrictions = restrictionsService.findRestrictionsById(objectId);
             return ResponseEntity.ok(restrictions);
         }catch(HttpClientErrorException.NotFound ntf){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
