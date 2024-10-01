@@ -18,14 +18,10 @@ public class IngredientsShoppingList {
     @NotNull(message = "Ingrediente deve ser indicado como selecionado ou não!")
     private Boolean isChecked;
 
-    @Schema(name = "Id do ingrediente ", example = "1")
-    @Field(name = "_id")
-    @NotBlank(message = "ID do ingrediente não deve ser nula ou vazia")
-    private String id;
-
+    @Field(name = "ingredient_name")
     @NotBlank(message = "Nome da receita não deve ser nulo")
     @Schema(name = "Nome da receita", example = "Bobó de camarão")
-    private String name;
+    private String ingredientName;
 
     @NotNull(message = "O tipo de medida não deve ser nulo")
     @Schema(description = "Tipo de medida", example = "gr")
@@ -42,11 +38,11 @@ public class IngredientsShoppingList {
         this.ingredientId = ingredientId;
         this.isChecked = isChecked;
     }
-    public IngredientsShoppingList(String ingredientId, Boolean isChecked, String id, String name, String meditionType, Double quantity) {
+
+    public IngredientsShoppingList(String ingredientId, Boolean isChecked, String ingredientName, String meditionType, Double quantity) {
         this.ingredientId = ingredientId;
         this.isChecked = isChecked;
-        this.id = id;
-        this.name = name;
+        this.ingredientName = ingredientName;
         this.meditionType = meditionType;
         this.quantity = quantity;
     }
@@ -59,28 +55,20 @@ public class IngredientsShoppingList {
         this.ingredientId = ingredientId;
     }
 
-    public Boolean getIsChecked() {
+    public Boolean getChecked() {
         return isChecked;
     }
 
-    public void setIsChecked(Boolean checked) {
+    public void setChecked(Boolean checked) {
         isChecked = checked;
     }
 
-    public String getId() {
-        return id;
+    public String getIngredientName() {
+        return ingredientName;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public void setIngredientName(String ingredientName) {
+        this.ingredientName = ingredientName;
     }
 
     public String getMeditionType() {
@@ -102,10 +90,9 @@ public class IngredientsShoppingList {
     @Override
     public String toString() {
         return "IngredientsShoppingList{" +
-                "ingredientId=" + ingredientId +
+                "ingredientId='" + ingredientId + '\'' +
                 ", isChecked=" + isChecked +
-                ", id=" + id +
-                ", name='" + name + '\'' +
+                ", ingredientName='" + ingredientName + '\'' +
                 ", meditionType='" + meditionType + '\'' +
                 ", quantity=" + quantity +
                 '}';

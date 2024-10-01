@@ -3,6 +3,7 @@ package org.example.spring_nosql.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -13,31 +14,33 @@ import java.util.List;
 @Document(collection = "Persons")
 public class Ingredients {
     @Id
-    @Schema(name = "Id da receita ", example = "1")
+    @Schema(description = "Id da receita ", example = "") //adicionar exemplo
     @Field(name = "ingredient_id")
-    private int ingredientId;
+    @NotBlank(message = "ID do ingrediente não deve ser nulo")
+    private ObjectId ingredientId;
 
     @NotNull(message = "O tipo de medição não deve ser nulo")
-    @Schema(name = "Tipo de medição", example = "gr")
+    @Schema(description = "Tipo de medição", example = "gr")
+    @Field(name = "medition_type")
     private String meditionType;
 
-    @Schema(name = "Quantidade", example = "100")
+    @Schema(description = "Quantidade", example = "100")
     @NotNull(message = "A quantidade não deve ser nula")
     private Double quantity;
 
     public Ingredients() { }
 
-    public Ingredients(int ingredientId, String meditionType, Double quantity) {
+    public Ingredients(ObjectId ingredientId, String meditionType, Double quantity) {
         this.ingredientId = ingredientId;
         this.meditionType = meditionType;
         this.quantity = quantity;
     }
 
-    public int getIngredientId() {
-        return ingredientId;
+    public String getIngredientId() {
+        return ingredientId.toHexString();
     }
 
-    public void setIngredientId(int ingredientId) {
+    public void setIngredientId(ObjectId ingredientId) {
         this.ingredientId = ingredientId;
     }
 
@@ -60,7 +63,7 @@ public class Ingredients {
     @Override
     public String toString() {
         return "Ingredients{" +
-                "ingredientId=" + ingredientId +
+                "ingredientId=" + ingredientId.toHexString() +
                 ", meditionType='" + meditionType + '\'' +
                 ", quantity=" + quantity +
                 '}';

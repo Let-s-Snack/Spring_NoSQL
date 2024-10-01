@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
@@ -12,11 +13,11 @@ public class Coments {
     @Id
     @Schema(name = "Id do comentário ", example = "1")
     @Field(name = "coment_id")
-    private int comentId;
+    private ObjectId comentId;
 
     @Schema(name = "Id do dono do comentário ", example = "1")
     @Field(name = "person_id")
-    private int personId;
+    private ObjectId personId;
 
     @NotNull(message = "Avaliação da receita não deve ser nula")
     @Schema(name = "Avaliação", example = "4")
@@ -33,7 +34,7 @@ public class Coments {
 
     public Coments() { }
 
-    public Coments(int comentId, int personId, int rating, String message, Date creationDate) {
+    public Coments(ObjectId comentId, ObjectId personId, int rating, String message, Date creationDate) {
         this.comentId = comentId;
         this.personId = personId;
         this.rating = rating;
@@ -41,19 +42,19 @@ public class Coments {
         this.creationDate = creationDate;
     }
 
-    public int getComentId() {
-        return comentId;
+    public String getComentId() {
+        return comentId.toHexString();
     }
 
-    public void setComentId(int comentId) {
+    public void setComentId(ObjectId comentId) {
         this.comentId = comentId;
     }
 
-    public int getPersonId() {
-        return personId;
+    public String getPersonId() {
+        return personId.toHexString();
     }
 
-    public void setPersonId(int personId) {
+    public void setPersonId(ObjectId personId) {
         this.personId = personId;
     }
 

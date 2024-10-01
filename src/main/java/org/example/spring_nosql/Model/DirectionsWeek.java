@@ -1,34 +1,34 @@
 package org.example.spring_nosql.Model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 import java.util.Date;
 
 public class DirectionsWeek {
-    private int recipesId;
+    @Field(name = "recipes_id")
+    @Schema(description = "ID da receita da semana", example = "") // Adicionar exemplo
+    @NotBlank(message = "ID da receita da semana não deve ser nulo")
+    private String recipesId;
 
-    private Boolean isActive;
-
+    @Field(name = "creation_date")
+    @Schema(description = "Data de criação do usuário", example = "2024/08/27")
     private Date creationDate;
 
-    public DirectionsWeek(int recipesId, Boolean isActive, Date creationDate) {
+    public DirectionsWeek() {this.creationDate = new Date();}
+    public DirectionsWeek(String recipesId) {
         this.recipesId = recipesId;
-        this.isActive = isActive;
-        this.creationDate = creationDate;
+        this.creationDate = new Date();
     }
 
-    public int getRecipesId() {
+    public String getRecipesId() {
         return this.recipesId;
     }
 
-    public void setRecipesId(int recipesId) {
+    public void setRecipesId(String recipesId) {
         this.recipesId = recipesId;
-    }
-
-    public Boolean getActive() {
-        return this.isActive;
-    }
-
-    public void setActive(Boolean active) {
-        isActive = active;
     }
 
     public Date getCreationDate() {
@@ -43,7 +43,6 @@ public class DirectionsWeek {
     public String toString() {
         return "Wishlist{" +
                 "recipesId=" + recipesId +
-                ", isActive=" + isActive +
                 ", creationDate=" + creationDate +
                 '}';
     }

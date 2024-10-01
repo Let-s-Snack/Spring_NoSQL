@@ -11,10 +11,12 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
 import java.util.List;
 
-@Document(collection = "Persons")
+@Document(collection = "Recipes")
 public class Recipes {
     @Id
     @Schema(name = "Id da receita ", example = "1")
+    @Field(name = "_id")
+    @NotBlank(message = "ID da receita não deve ser nula ou vazia")
     private ObjectId id;
 
     @NotNull(message = "Nome da receita não deve ser nulo")
@@ -28,6 +30,11 @@ public class Recipes {
     @Schema(name = "URL da foto da receita", example = "https://i.pinimg.com/236x/c6/fa/68/c6fa68d10f6929de2b764484aa835310.jpg")
     @Field(name = "url_photo")
     private String urlPhoto;
+
+    @NotNull(message = "A data de criação da receita não deve ser nula")
+    @Schema(name = "Data de criação da receita", example = "10/08/2024")
+    @Field(name = "creation_date")
+    private Date creationDate;
 
     @NotNull(message = "A lista de ingredientes não deve ser nula")
     @Schema(name = "Lista de receitas favoritas", example = "Teste") //Adicionar um exemplo
@@ -46,15 +53,12 @@ public class Recipes {
     @Field(name = "broken_restrictions")
     private List<String> brokenRestrictions;
 
-    @NotNull(message = "A data de criação da receita não deve ser nula")
-    @Schema(name = "Data de criação da receita", example = "10/08/2024")
-    @Field(name = "creation_date")
-    private Date creationDate;
+
 
     public Recipes() { }
 
-    public Recipes(ObjectId id, String name, String description, String urlPhoto, List<Ingredients> ingredients, List<Coments> coments, List<String> preparationMethods, List<String> brokenRestrictions, Date creationDate) {
-        this.id = id;
+    public Recipes(String id, String name, String description, String urlPhoto, List<Ingredients> ingredients, List<Coments> coments, List<String> preparationMethods, List<String> brokenRestrictions, Date creationDate) {
+        this.id = new ObjectId(id);
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -65,12 +69,32 @@ public class Recipes {
         this.creationDate = creationDate;
     }
 
-    public ObjectId getId() {
-        return id;
+    public Recipes(String id, String name, String description, String urlPhoto, List<Ingredients> ingredients, List<String> preparationMethods, List<String> brokenRestrictions) {
+        this.id = new ObjectId(id);
+        this.name = name;
+        this.description = description;
+        this.urlPhoto = urlPhoto;
+        this.ingredients = ingredients;
+        this.preparationMethods = preparationMethods;
+        this.brokenRestrictions = brokenRestrictions;
     }
 
+    public Recipes(String id, String name, String description, String urlPhoto, Date creationDate){
+        this.id = new ObjectId(id);
+        this.name = name;
+        this.description = description;
+        this.urlPhoto = urlPhoto;
+        this.creationDate = creationDate;
+    }
+
+    public String getId() {
+        return id.toHexString();
+    }
     public void setId(ObjectId id) {
         this.id = id;
+    }
+    public void setId(String id) {
+        this.id = new ObjectId(id);
     }
 
     public @NotNull(message = "Nome da receita não deve ser nulo") String getName() {
