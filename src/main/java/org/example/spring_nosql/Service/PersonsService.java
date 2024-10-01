@@ -119,8 +119,7 @@ public class PersonsService{
         ), Persons.class, Recipes.class).getMappedResults();
     }
 
-    /*
-    //Fazendo um método para retornar uma lista das receitas e dos ingredientes do usuário
+    /*//Fazendo um método para retornar uma lista das receitas e dos ingredientes do usuário
     public List<Document> findShoppingListById(ObjectId id) {
         List<Document> results = mongoTemplate.aggregate(Aggregation.newAggregation(
                 match(Criteria.where("_id").is(id)),
