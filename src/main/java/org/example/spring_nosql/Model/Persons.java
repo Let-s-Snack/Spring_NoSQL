@@ -350,7 +350,6 @@ public class Persons {
         this.deactivationDate = deactivationDate;
     }
 
-    @Override
     public String toString() {
         return "Persons{" +
                 "id=" + id.toHexString() +

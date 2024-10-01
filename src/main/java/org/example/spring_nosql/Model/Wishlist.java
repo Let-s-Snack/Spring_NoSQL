@@ -15,12 +15,6 @@ public class Wishlist {
     @Schema(description = "ID da receita da wishlist", example = "") // Adicionar exemplo
     @NotBlank(message = "ID da receita da wishlist não deve ser nulo")
     private String recipesId;
-
-//    @Field(name = "recipes_id")
-//    @Schema(description = "ID da receita da wishlist", example = "") // Adicionar exemplo
-//    @NotBlank(message = "ID da receita da wishlist não deve ser nulo")
-//    private ObjectId recipesId;
-
     @Field(name = "creation_date")
     @Schema(description = "Data de criação da wishlist", example = "2024/08/27")
     private Date creationDate;
@@ -38,20 +32,6 @@ public class Wishlist {
     public void setRecipesId(String recipesId) {
         this.recipesId = recipesId;
     }
-
-//
-//    public Wishlist(ObjectId recipesId, Date creationDate) {
-//        this.recipesId = recipesId;
-//        this.creationDate = creationDate;
-//    }
-//
-//    public ObjectId getRecipesId() {
-//        return recipesId;
-//    }
-//
-//    public void setRecipesId(ObjectId recipesId) {
-//        this.recipesId = recipesId;
-//    }
 
     public Date getCreationDate() {
         return this.creationDate;
