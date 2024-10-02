@@ -73,12 +73,6 @@ public class Persons {
             "      }")
     private List<PersonsRestrictions> restrictions;
 
-    @Schema(description = "Lista de receitas favoritas", example = "{\n" +
-            "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
-            "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
-            "      }")
-    private List<Favorites> favorites;
-
     @Schema(description = "Lista de receitas salvas", example = "{{\n" +
             "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
             "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
@@ -117,7 +111,7 @@ public class Persons {
     public Persons(){
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, boolean registrationCompleted, List<PersonsRestrictions> restrictions, List<Favorites> favorites, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, boolean registrationCompleted, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -129,7 +123,6 @@ public class Persons {
         this.cellphone = cellphone;
         this.registrationCompleted = registrationCompleted;
         this.restrictions = restrictions;
-        this.favorites = favorites;
         this.wishlist = wishlist;
         this.directionsWeek = directionsWeek;
         this.shoppingList = shoppingList;
@@ -160,7 +153,7 @@ public class Persons {
         this.restrictions = restrictions;
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Favorites> favorites) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -171,25 +164,10 @@ public class Persons {
         this.birthDate = birthDate;
         this.cellphone = cellphone;
         this.restrictions = restrictions;
-        this.favorites = favorites;
-    }
-
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Favorites> favorites, List<Wishlist> wishlist) {
-        this.gender = gender;
-        this.name = name;
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-        this.isPro = isPro;
-        this.urlPhoto = urlPhoto;
-        this.birthDate = birthDate;
-        this.cellphone = cellphone;
-        this.restrictions = restrictions;
-        this.favorites = favorites;
         this.wishlist = wishlist;
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Favorites> favorites, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -200,12 +178,11 @@ public class Persons {
         this.birthDate = birthDate;
         this.cellphone = cellphone;
         this.restrictions = restrictions;
-        this.favorites = favorites;
         this.wishlist = wishlist;
         this.directionsWeek = directionsWeek;
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Favorites> favorites, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -216,7 +193,6 @@ public class Persons {
         this.birthDate = birthDate;
         this.cellphone = cellphone;
         this.restrictions = restrictions;
-        this.favorites = favorites;
         this.wishlist = wishlist;
         this.directionsWeek = directionsWeek;
         this.shoppingList = shoppingList;
@@ -329,14 +305,6 @@ public class Persons {
         this.restrictions = restrictions;
     }
 
-    public List<Favorites> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(List<Favorites> favorites) {
-        this.favorites = favorites;
-    }
-
     public List<Wishlist> getWishlist() {
         return wishlist;
     }
@@ -391,7 +359,6 @@ public class Persons {
                 ", cellphone='" + cellphone + '\'' +
                 ", registrationCompleted=" + registrationCompleted +
                 ", restrictions=" + restrictions +
-                ", favorites=" + favorites +
                 ", wishlist=" + wishlist +
                 ", directionsWeek=" + directionsWeek +
                 ", shoppingList=" + shoppingList +

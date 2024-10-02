@@ -35,7 +35,6 @@ public class PersonsController {
         this.personsService = personsService;
     }
 
-    //Funcionando
     @GetMapping("/listAll")
     @Operation(summary = "Buscar todos os usuários", description = "Faz a busca de todos os usuários cadastrados")
     @ApiResponses(value = {
@@ -51,7 +50,6 @@ public class PersonsController {
         return ResponseEntity.ok(personsService.findAllPersons());
     }
 
-    //Funcionando
     @GetMapping("/listPersonById/{id}")
     @Operation(summary = "Busca usuário pelo ID", description = "Faz a busca do usuário a partir do seu ID")
     @ApiResponses(value = {
@@ -76,7 +74,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @GetMapping("/personLogged")
     @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail e da senha")
     @ApiResponses(value = {
@@ -106,7 +103,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     //Buscando a restrição do usuário pelo seu id
     @GetMapping("/personRestriction/{id}")
     @Operation(summary = "Buscar restrição", description = "Faz a busca da restrição a partir do id do usuário")
@@ -136,34 +132,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
-    @GetMapping("/personFavorites/{id}")
-    @Operation(summary = "Buscar receitas favoritadas", description = "Faz a busca das receitas favoritadas pelo usuário a partir do seu id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200" , description = "As Receitas favoritas do usuário foi encontrada com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
-    public ResponseEntity<?> personFavoriteById(@Parameter(description = "Inserir ID do usuário para encontrar suas receitas da semana") @PathVariable String id){
-        try{
-            return ResponseEntity.ok(personsService.findPersonFavoritesById(new ObjectId(id)));
-        }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
-        }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
-        }
-    }
-
-    //Funcionando
     @GetMapping("/personWishlist/{id}")
     @Operation(summary = "Buscar wishlist", description = "Faz a busca da wishlist a partir do id do usuário")
     @ApiResponses(value = {
@@ -190,7 +158,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @GetMapping("/personDirectionWeek/{id}")
     @Operation(summary = "Buscar receita da semana", description = "Faz a busca da receita da semana a partir do id do usuário")
     @ApiResponses(value = {
@@ -216,7 +183,6 @@ public class PersonsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
         }
     }
-    //Funcionando
 
     /*@GetMapping("/personShoppingList/{id}")
     @Operation(summary = "Buscar ingredientes Salvos", description = "Faz a busca dos ingredientes que foram salvos")
@@ -244,7 +210,6 @@ public class PersonsController {
         }
     }*/
 
-    //Funcionando
     @PostMapping("/insertPerson")
     @Operation(summary = "Inserir Usuário", description = "Faz a inserção do gênero passado no body")
     @ApiResponses(value = {
@@ -281,7 +246,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @PutMapping("/updatePerson/{id}")
     @Operation(summary = "Excluindo o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
     @ApiResponses(value = {
@@ -364,12 +328,6 @@ public class PersonsController {
                     updatedPersons.setRestrictions(restrictions);
                 }
 
-                if (updatedValues.containsKey("favorites")) {
-                    System.out.println(updatedValues.get("favorites"));
-                    final List<Favorites> favorites = (List<Favorites>) updatedValues.get("favorites");
-                    updatedPersons.setFavorites(favorites);
-                }
-
                 if (updatedValues.containsKey("wishlist")) {
                     final List<Wishlist> wishlist = (List<Wishlist>) updatedValues.get("wishlist");
                     updatedPersons.setWishlist(wishlist);
@@ -418,7 +376,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @DeleteMapping("/deleteUser/{id}")
     @Transactional
     @ApiResponses(value = {
