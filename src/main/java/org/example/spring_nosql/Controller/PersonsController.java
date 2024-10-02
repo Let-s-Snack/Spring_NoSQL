@@ -77,7 +77,7 @@ public class PersonsController {
     }
 
     //Funcionando
-    @GetMapping("/personLogged")
+    @GetMapping("/personRegistered")
     @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail e da senha")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Informações de login estão corretas!",
@@ -91,12 +91,12 @@ public class PersonsController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> personLoggedByEmailAndPassword(@RequestBody Persons persons, BindingResult result){
+    public ResponseEntity<?> personRegisteredByEmailAndPassword(@RequestBody Persons persons, BindingResult result){
         try{
             if(result.hasErrors()){
                 return ResponseEntity.ok(errors(result));
             }else{
-                Persons person = personsService.findPersonLoggedByEmail(persons.getEmail(), persons.getPassword());
+                Persons person = personsService.findPersonRegisteredByEmail(persons.getEmail(), persons.getPassword());
                 return ResponseEntity.ok(Objects.requireNonNullElse(person, "Usuário ou senha incorreta"));
             }
         }catch (RuntimeException nnn){
@@ -283,7 +283,7 @@ public class PersonsController {
 
     //Funcionando
     @PutMapping("/updatePerson/{id}")
-    @Operation(summary = "Excluindo o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
+    @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Usuário foi atualizado com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -419,7 +419,7 @@ public class PersonsController {
     }
 
     //Funcionando
-    @DeleteMapping("/deleteUser/{id}")
+    @DeleteMapping("/deleteUserById/{id}")
     @Transactional
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Usuário foi excluido com sucesso!",

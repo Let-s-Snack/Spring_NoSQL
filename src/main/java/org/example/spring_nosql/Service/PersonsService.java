@@ -38,7 +38,7 @@ public class PersonsService{
     }
 
     //Fazendo um método para retornar o usuário caso ele esteja cadastrado ou não
-    public Persons findPersonLoggedByEmail(String email, String password) {
+    public Persons findPersonRegisteredByEmail(String email, String password) {
         Persons person = personRepository.findPersonByEmail(email);
 
         if (person != null && checkPassword(password, person.getPassword())) {

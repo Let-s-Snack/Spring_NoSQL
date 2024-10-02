@@ -38,7 +38,7 @@ public class Recipes {
     @Schema(name = "Lista de receitas favoritas", example = "Teste") //Adicionar um exemplo
     private List<Ingredients> ingredients;
 
-    @Schema(name = "Lista de cometários", example = "Teste") //Adicionar um exemplo
+    @Schema(name = "Lista de comentários", example = "Teste") //Adicionar um exemplo
     private List<Coments> coments;
 
     @NotNull(message = "A lista de passos não deve ser nula")
