@@ -49,13 +49,13 @@ public class Recipes {
     @NotNull(message = "A lista de restricoes não deve ser nula")
     @Schema(name = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
     @Field(name = "broken_restrictions")
-    private List<ObjectId> brokenRestrictions;
+    private List<Restrictions> brokenRestrictions;
 
 
 
     public Recipes() { }
 
-    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<ObjectId> brokenRestrictions, Date creationDate) {
+    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<Restrictions> brokenRestrictions, Date creationDate) {
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -66,7 +66,7 @@ public class Recipes {
         this.creationDate = creationDate;
     }
 
-    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<String> preparationMethods, List<ObjectId> brokenRestrictions) {
+    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<String> preparationMethods, List<Restrictions> brokenRestrictions) {
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -147,11 +147,11 @@ public class Recipes {
         this.preparationMethods = preparationMethods;
     }
 
-    public @NotNull(message = "A lista de restricoes não deve ser nula") List<ObjectId> getBrokenRestrictions() {
+    public @NotNull(message = "A lista de restricoes não deve ser nula") List<Restrictions> getBrokenRestrictions() {
         return brokenRestrictions;
     }
 
-    public void setBrokenRestrictions(@NotNull(message = "A lista de restricoes não deve ser nula") List<ObjectId> brokenRestrictions) {
+    public void setBrokenRestrictions(@NotNull(message = "A lista de restricoes não deve ser nula") List<Restrictions> brokenRestrictions) {
         this.brokenRestrictions = brokenRestrictions;
     }
 

@@ -6,9 +6,9 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 public class IngredientsRecipes {
-    @Schema(description = "Id do ingredient de recipes", example = "66f2dfdfb310eeeabd300dc3")
+    @Schema(description = "Id do ingrediente da receita", example = "66f2dfdfb310eeeabd300dc3")
     @Field(name = "ingredient_id")
-    private ObjectId ingredientId;
+    private String ingredientId;
 
     @NotNull(message = "O tipo de medição não deve ser nulo")
     @Schema(description = "Tipo de medição", example = "gr")
@@ -21,17 +21,17 @@ public class IngredientsRecipes {
 
     public IngredientsRecipes(){}
 
-    public IngredientsRecipes(ObjectId ingredientId, String meditionType, double quantity) {
+    public IngredientsRecipes(String ingredientId, String meditionType, double quantity) {
         this.ingredientId = ingredientId;
         this.meditionType = meditionType;
         this.quantity = quantity;
     }
 
     public String getIngredientId() {
-        return ingredientId.toHexString();
+        return ingredientId;
     }
 
-    public void setIngredientId(ObjectId ingredientId) {
+    public void setIngredientId(String ingredientId) {
         this.ingredientId = ingredientId;
     }
 
@@ -54,7 +54,7 @@ public class IngredientsRecipes {
     @Override
     public String toString() {
         return "IngredientsRecipes{" +
-                "ingredientId=" + ingredientId.toHexString() +
+                "ingredientId=" + ingredientId +
                 ", meditionType='" + meditionType + '\'' +
                 ", quantity=" + quantity +
                 '}';
