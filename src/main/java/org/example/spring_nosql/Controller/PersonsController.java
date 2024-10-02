@@ -77,7 +77,7 @@ public class PersonsController {
     }
 
     //Funcionando
-    @GetMapping("/personLogged")
+    @GetMapping("/personRegistered")
     @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail e da senha")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Informações de login estão corretas!",
@@ -91,12 +91,12 @@ public class PersonsController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> personLoggedByEmailAndPassword(@RequestBody Persons persons, BindingResult result){
+    public ResponseEntity<?> personRegisteredByEmailAndPassword(@RequestBody Persons persons, BindingResult result){
         try{
             if(result.hasErrors()){
                 return ResponseEntity.ok(errors(result));
             }else{
-                Persons person = personsService.findPersonLoggedByEmail(persons.getEmail(), persons.getPassword());
+                Persons person = personsService.findPersonRegisteredByEmail(persons.getEmail(), persons.getPassword());
                 return ResponseEntity.ok(Objects.requireNonNullElse(person, "Usuário ou senha incorreta"));
             }
         }catch (RuntimeException nnn){
@@ -127,33 +127,6 @@ public class PersonsController {
             Persons person = personsService.findPersonById(new ObjectId(id));
 
             return ResponseEntity.ok(person.getRestrictions());
-        }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
-        }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
-        }
-    }
-
-    //Funcionando
-    @GetMapping("/personFavorites/{id}")
-    @Operation(summary = "Buscar receitas favoritadas", description = "Faz a busca das receitas favoritadas pelo usuário a partir do seu id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200" , description = "As Receitas favoritas do usuário foi encontrada com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
-    public ResponseEntity<?> personFavoriteById(@Parameter(description = "Inserir ID do usuário para encontrar suas receitas da semana") @PathVariable String id){
-        try{
-            return ResponseEntity.ok(personsService.findPersonFavoritesById(new ObjectId(id)));
         }catch(HttpClientErrorException.NotFound ntf){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
         }catch (RuntimeException nnn){
@@ -283,7 +256,7 @@ public class PersonsController {
 
     //Funcionando
     @PutMapping("/updatePerson/{id}")
-    @Operation(summary = "Excluindo o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
+    @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Usuário foi atualizado com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -419,7 +392,7 @@ public class PersonsController {
     }
 
     //Funcionando
-    @DeleteMapping("/deleteUser/{id}")
+    @DeleteMapping("/deleteUserById/{id}")
     @Transactional
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Usuário foi excluido com sucesso!",

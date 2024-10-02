@@ -13,7 +13,7 @@ public class DirectionsWeek {
     private String recipesId;
 
     @Field(name = "creation_date")
-    @Schema(description = "Data de criação do usuário", example = "2024/08/27")
+    @Schema(description = "Data de criação da receita da semana do usuário", example = "2024/08/27")
     private Date creationDate;
 
     public DirectionsWeek() {this.creationDate = new Date();}

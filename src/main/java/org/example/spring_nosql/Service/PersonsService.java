@@ -38,7 +38,7 @@ public class PersonsService{
     }
 
     //Fazendo um método para retornar o usuário caso ele esteja cadastrado ou não
-    public Persons findPersonLoggedByEmail(String email, String password) {
+    public Persons findPersonRegisteredByEmail(String email, String password) {
         Persons person = personRepository.findPersonByEmail(email);
 
         if (person != null && checkPassword(password, person.getPassword())) {
@@ -48,34 +48,11 @@ public class PersonsService{
         }
     }
 
-    //Fazendo um método para retornar as receitas favoritas do usuário
-    public List<Recipes> findPersonFavoritesById(ObjectId id){
-        AggregationOperation addFieldsOperation = addFieldsOperation("favoritesObjectId", "$favorites.recipes_id");
-
-        return mongoTemplate.aggregate(newAggregation(
-                Aggregation.match(Criteria.where("_id").is(id)),
-                addFieldsOperation,
-                Aggregation.lookup("Recipes","favoritesObjectId","_id","recipes"),
-                unwind("recipes"),
-                Aggregation.project()
-                        .and("recipes._id").as("_id")
-                        .and("recipes.name").as("name")
-                        .and("recipes.description").as("description")
-                        .and("recipes.url_photo").as("url_photo")
-                        .and("recipes.creation_date").as("creation_date")
-                        .and("recipes.ingredients").as("ingredients")
-                        .and("recipes.preparation_methods").as("preparation_methods")
-                        .and("recipes.broken_restrictions").as("broken_restrictions")
-        ), Persons.class, Recipes.class).getMappedResults();
-    }
-
     //Fazendo um método para retornar a wishlist do usuário com base no seu id
     public List<Recipes> findWishlistPersonById(ObjectId id){
-        AggregationOperation addFieldsOperation = addFieldsOperation("wishlistObjectId", "$wishlist.recipes_id");
-
         return mongoTemplate.aggregate(newAggregation(
                 Aggregation.match(Criteria.where("_id").is(id)),
-                addFieldsOperation,
+                addFieldsOperation("wishlistObjectId", "$wishlist.recipes_id"),
                 Aggregation.lookup("Recipes","wishlistObjectId","_id","recipes"),
                 unwind("recipes"),
                 Aggregation.project()
@@ -92,11 +69,9 @@ public class PersonsService{
 
     //Fazendo um método para retornar uma lista das receita da semana do usuário
     public List<Recipes> findDirectionWeekById(ObjectId id){
-        AggregationOperation addFieldsOperation = addFieldsOperation("directionsWeekObjectId", "$directions_week.recipes_id");
-
         return mongoTemplate.aggregate(newAggregation(
                 Aggregation.match(Criteria.where("_id").is(id)),
-                addFieldsOperation,
+                addFieldsOperation("directionsWeekObjectId", "$directions_week.recipes_id"),
                 Aggregation.lookup("Recipes","directionsWeekObjectId","_id","recipes"),
                 unwind("recipes"),
                 Aggregation.project()

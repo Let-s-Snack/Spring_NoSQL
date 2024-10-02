@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.bson.types.ObjectId;
-import org.example.spring_nosql.Model.Gender;
 import org.example.spring_nosql.Model.Ingredients;
 import org.example.spring_nosql.Model.Restrictions;
 import org.example.spring_nosql.Service.IngredientsService;

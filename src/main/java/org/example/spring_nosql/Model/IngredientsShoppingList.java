@@ -17,8 +17,8 @@ public class IngredientsShoppingList {
     private Boolean isChecked;
 
     @Field(name = "ingredient_name")
-    @NotBlank(message = "Nome da receita não deve ser nulo")
-    @Schema(name = "Nome da receita", example = "Bobó de camarão")
+    @NotBlank(message = "Nome do ingrediente não deve ser nulo")
+    @Schema(name = "Nome do ingrediente", example = "Bobó de camarão")
     private String ingredientName;
 
     @NotNull(message = "O tipo de medida não deve ser nulo")
