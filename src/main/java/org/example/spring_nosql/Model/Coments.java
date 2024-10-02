@@ -17,7 +17,7 @@ public class Coments {
 
     @Schema(name = "Id do dono do comentário ", example = "1")
     @Field(name = "person_id")
-    private ObjectId personId;
+    private String personId;
 
     @NotNull(message = "Avaliação da receita não deve ser nula")
     @Schema(description = "Avaliação", example = "4")
@@ -35,7 +35,7 @@ public class Coments {
 
     public Coments() { }
 
-    public Coments(ObjectId comentId, ObjectId personId, int rating, String message, Date creationDate) {
+    public Coments(ObjectId comentId, String personId, int rating, String message, Date creationDate) {
         this.comentId = comentId;
         this.personId = personId;
         this.rating = rating;
@@ -52,10 +52,10 @@ public class Coments {
     }
 
     public String getPersonId() {
-        return personId.toHexString();
+        return personId;
     }
 
-    public void setPersonId(ObjectId personId) {
+    public void setPersonId(String personId) {
         this.personId = personId;
     }
 

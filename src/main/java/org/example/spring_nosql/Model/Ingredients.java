@@ -14,7 +14,7 @@ import java.util.List;
 @Document(collection = "Ingredients")
 public class Ingredients {
     @Id
-    @Schema(description = "Id da receita ", example = "") //adicionar exemplo
+    @Schema(description = "Id da receita ", example = "66f2dfdfb310eeeabd300dc3")
     @Field(name = "_id")
     private ObjectId id;
 
@@ -32,22 +32,12 @@ public class Ingredients {
     @Schema(name = "Data de criação do ingrediente", example = "2024/08/12")
     private Date creationDate;
 
-    @NotNull(message = "O tipo de medição não deve ser nulo")
-    @Schema(description = "Tipo de medição", example = "gr")
-    @Field(name = "medition_type")
-    private String meditionType;
 
-    @Schema(description = "Quantidade", example = "100")
-    @NotNull(message = "A quantidade não deve ser nula")
-    private Double quantity;
-
-    public Ingredients(ObjectId id, String name, List<Restrictions> brokenRestrictions, Date creationDate, String meditionType, Double quantity) {
+    public Ingredients(ObjectId id, String name, List<Restrictions> brokenRestrictions, Date creationDate) {
         this.id = id;
         this.name = name;
         this.brokenRestrictions = brokenRestrictions;
         this.creationDate = creationDate;
-        this.meditionType = meditionType;
-        this.quantity = quantity;
     }
 
     public Ingredients() {}
@@ -83,32 +73,13 @@ public class Ingredients {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-
-    public String getMeditionType() {
-        return meditionType;
-    }
-
-    public void setMeditionType(String meditionType) {
-        this.meditionType = meditionType;
-    }
-
-    public Double getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(Double quantity) {
-        this.quantity = quantity;
-    }
-
     @Override
     public String toString() {
         return "Ingredients{" +
-                "id=" + id.toHexString() +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", brokenRestrictions=" + brokenRestrictions +
                 ", creationDate=" + creationDate +
-                ", meditionType='" + meditionType + '\'' +
-                ", quantity=" + quantity +
                 '}';
     }
 }

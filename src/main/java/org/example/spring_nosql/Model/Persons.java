@@ -40,7 +40,7 @@ public class Persons {
     @NotBlank(message = "Senha não deve ser nula!")
     private String password;
 
-    @Schema(description = "Usuário é profissional", example = "true")
+    @Schema(description = "Usuário é premium", example = "true")
     @Field(name = "is_pro")
     @NotNull(message = "Registro deve ser indicado por true ou false!")
     private boolean isPro;
