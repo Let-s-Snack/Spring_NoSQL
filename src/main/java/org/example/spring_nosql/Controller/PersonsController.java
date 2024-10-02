@@ -137,33 +137,6 @@ public class PersonsController {
     }
 
     //Funcionando
-    @GetMapping("/personFavorites/{id}")
-    @Operation(summary = "Buscar receitas favoritadas", description = "Faz a busca das receitas favoritadas pelo usuário a partir do seu id")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200" , description = "As Receitas favoritas do usuário foi encontrada com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
-    public ResponseEntity<?> personFavoriteById(@Parameter(description = "Inserir ID do usuário para encontrar suas receitas da semana") @PathVariable String id){
-        try{
-            return ResponseEntity.ok(personsService.findPersonFavoritesById(new ObjectId(id)));
-        }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
-        }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
-        }
-    }
-
-    //Funcionando
     @GetMapping("/personWishlist/{id}")
     @Operation(summary = "Buscar wishlist", description = "Faz a busca da wishlist a partir do id do usuário")
     @ApiResponses(value = {

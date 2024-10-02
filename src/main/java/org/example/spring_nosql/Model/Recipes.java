@@ -36,7 +36,7 @@ public class Recipes {
 
     @NotNull(message = "A lista de ingredientes não deve ser nula")
     @Schema(name = "Lista de receitas favoritas", example = "Teste") //Adicionar um exemplo
-    private List<Ingredients> ingredients;
+    private List<IngredientsRecipes> ingredients;
 
     @Schema(name = "Lista de comentários", example = "Teste") //Adicionar um exemplo
     private List<Coments> coments;
@@ -49,14 +49,13 @@ public class Recipes {
     @NotNull(message = "A lista de restricoes não deve ser nula")
     @Schema(name = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
     @Field(name = "broken_restrictions")
-    private List<String> brokenRestrictions;
+    private List<ObjectId> brokenRestrictions;
 
 
 
     public Recipes() { }
 
-    public Recipes(String id, String name, String description, String urlPhoto, List<Ingredients> ingredients, List<Coments> coments, List<String> preparationMethods, List<String> brokenRestrictions, Date creationDate) {
-        this.id = new ObjectId(id);
+    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<ObjectId> brokenRestrictions, Date creationDate) {
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -67,8 +66,7 @@ public class Recipes {
         this.creationDate = creationDate;
     }
 
-    public Recipes(String id, String name, String description, String urlPhoto, List<Ingredients> ingredients, List<String> preparationMethods, List<String> brokenRestrictions) {
-        this.id = new ObjectId(id);
+    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<String> preparationMethods, List<ObjectId> brokenRestrictions) {
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -77,8 +75,14 @@ public class Recipes {
         this.brokenRestrictions = brokenRestrictions;
     }
 
-    public Recipes(String id, String name, String description, String urlPhoto, Date creationDate){
-        this.id = new ObjectId(id);
+    public Recipes(String name, String description, String urlPhoto, Date creationDate){
+        this.name = name;
+        this.description = description;
+        this.urlPhoto = urlPhoto;
+        this.creationDate = creationDate;
+    }
+
+    public Recipes(ObjectId id, String description, String urlPhoto, Date creationDate){
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -119,11 +123,11 @@ public class Recipes {
         this.urlPhoto = urlPhoto;
     }
 
-    public @NotNull(message = "A lista de ingredientes não deve ser nula") List<Ingredients> getIngredients() {
+    public @NotNull(message = "A lista de ingredientes não deve ser nula") List<IngredientsRecipes> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(@NotNull(message = "A lista de ingredientes não deve ser nula") List<Ingredients> ingredients) {
+    public void setIngredients(@NotNull(message = "A lista de ingredientes não deve ser nula") List<IngredientsRecipes> ingredients) {
         this.ingredients = ingredients;
     }
 
@@ -143,11 +147,11 @@ public class Recipes {
         this.preparationMethods = preparationMethods;
     }
 
-    public @NotNull(message = "A lista de restricoes não deve ser nula") List<String> getBrokenRestrictions() {
+    public @NotNull(message = "A lista de restricoes não deve ser nula") List<ObjectId> getBrokenRestrictions() {
         return brokenRestrictions;
     }
 
-    public void setBrokenRestrictions(@NotNull(message = "A lista de restricoes não deve ser nula") List<String> brokenRestrictions) {
+    public void setBrokenRestrictions(@NotNull(message = "A lista de restricoes não deve ser nula") List<ObjectId> brokenRestrictions) {
         this.brokenRestrictions = brokenRestrictions;
     }
 
