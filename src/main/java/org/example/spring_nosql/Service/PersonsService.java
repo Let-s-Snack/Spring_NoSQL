@@ -1,13 +1,9 @@
 package org.example.spring_nosql.Service;
 
-import com.mongodb.BasicDBObject;
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.types.ObjectId;
-import org.example.spring_nosql.Model.IngredientsShoppingList;
 import org.example.spring_nosql.Model.Persons;
 import org.example.spring_nosql.Model.Recipes;
-import org.example.spring_nosql.Model.ShoppingList;
 import org.example.spring_nosql.Repository.PersonRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -15,14 +11,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.query.Query.query;
-import static org.springframework.data.mongodb.core.query.Update.update;
 
 @Service
 public class PersonsService{
