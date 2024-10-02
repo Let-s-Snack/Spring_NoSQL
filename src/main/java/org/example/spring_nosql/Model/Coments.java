@@ -4,13 +4,14 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
 
 public class Coments {
     @Id
-    @Schema(name = "Id do comentário ", example = "1")
+    @Schema(description = "Id do comentário ", example = "1")
     @Field(name = "coment_id")
     private ObjectId comentId;
 
@@ -19,15 +20,16 @@ public class Coments {
     private ObjectId personId;
 
     @NotNull(message = "Avaliação da receita não deve ser nula")
-    @Schema(name = "Avaliação", example = "4")
+    @Schema(description = "Avaliação", example = "4")
     @Max(value = 5, message = "A avaliação deve ser entre 0 e 5")
     private int rating;
 
-    @Schema(name = "Comentário sobre a receita", example = "Receita muito boa!")
+    @Schema(description = "Comentário sobre a receita", example = "Receita muito boa!")
+    @Size(max = 200, message = "Mensagem não deve ter mais que 200 caracteres")
     private String message;
 
     @NotNull(message = "A data de criação do comentário não deve ser nula")
-    @Schema(name = "Data de criação do comentário", example = "10/08/2024")
+    @Schema(description = "Data de criação do comentário", example = "10/08/2024")
     @Field(name = "creation_date")
     private Date creationDate;
 

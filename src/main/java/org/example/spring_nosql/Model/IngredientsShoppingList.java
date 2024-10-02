@@ -7,14 +7,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 public class IngredientsShoppingList {
     @Field(name = "ingredient_id")
-    @Schema(description = "Id da receita ", example = "") //adicionar exemplo
+    @Schema(description = "Id da receita ", example = "60d5f4832f8fb814b56fa287")
     @NotBlank(message = "ID do ingrediente não deve ser nulo")
     private String ingredientId;
 
     @Field(name = "is_checked")
     @Schema(description = "Indica se o ingrediente foi selecionado ou não", example = "false")
     @NotNull(message = "Ingrediente deve ser indicado como selecionado ou não!")
-    private Boolean isChecked;
+    private boolean isChecked;
 
     @Field(name = "ingredient_name")
     @NotBlank(message = "Nome da receita não deve ser nulo")
@@ -53,12 +53,12 @@ public class IngredientsShoppingList {
         this.ingredientId = ingredientId;
     }
 
-    public Boolean getChecked() {
+    public Boolean getIsChecked() {
         return isChecked;
     }
 
-    public void setChecked(Boolean checked) {
-        isChecked = checked;
+    public void setIsChecked(Boolean isChecked) {
+        this.isChecked = isChecked;
     }
 
     public String getIngredientName() {

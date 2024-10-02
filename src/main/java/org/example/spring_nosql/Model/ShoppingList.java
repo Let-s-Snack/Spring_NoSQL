@@ -12,7 +12,7 @@ import java.util.List;
 @Document("shopping_list")
 public class ShoppingList {
     @Field(name = "recipes_id")
-    @Schema(description = "ID da receita da shopping list", example = "") // Adicionar exemplo
+    @Schema(description = "ID da receita da shopping list", example = "60d5f4832f8fb814b56fa2f5")
     @NotBlank(message = "ID da receita da shopping list não deve ser nulo")
     private String recipesId;
 
@@ -21,7 +21,23 @@ public class ShoppingList {
     @Schema(name = "Nome da receita", example = "Bobó de camarão")
     private String recipeName;
 
-    @Schema(description = "Id dos ingredientes salvos", example = "") // Adicionar exemplo
+    @Field(name = "ingredients")
+    @Schema(description = "Id dos ingredientes salvos", example = "[\n" +
+            "        {\n" +
+            "          \"ingredientId\": \"60d5f4832f8fb814b56fa229\",\n" +
+            "          \"isChecked\": false,\n" +
+            "          \"ingredientName\": null,\n" +
+            "          \"meditionType\": null,\n" +
+            "          \"quantity\": null\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"ingredientId\": \"60d5f4832f8fb814b56fa221\",\n" +
+            "          \"isChecked\": false,\n" +
+            "          \"ingredientName\": null,\n" +
+            "          \"meditionType\": null,\n" +
+            "          \"quantity\": null\n" +
+            "        }\n" +
+            "      ]")
     @NotBlank(message = "Shoppinglist deve ter ingredientes salvos")
     private List<IngredientsShoppingList> ingredients;
     @Schema(description = "Data de criação da shopping list", example = "2024/08/27")

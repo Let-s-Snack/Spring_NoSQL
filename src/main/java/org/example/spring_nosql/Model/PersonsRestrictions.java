@@ -9,7 +9,7 @@ import java.util.Date;
 
 public class PersonsRestrictions {
     @Field(name = "restrictions_id")
-    @Schema(description = "ID da restrição ", example = "") // Adicionar exemplo
+    @Schema(description = "ID da restrição ", example = "66f295e435644057236fec24")
     @NotBlank(message = "ID da restrição não deve ser nulo")
     private String restrictionId;
 
@@ -24,7 +24,7 @@ public class PersonsRestrictions {
     @Schema(name = "Descrição da restrição", example = "Pescetariano é um regime alimentar que inclui peixes e frutos do mar, mas exclui a carne de outros animais.")
     private String description;
     @Field(name = "url_photo")
-    @Schema(name = "URL da Photo", example = "") //Adicionar exemplo de URL de foto
+    @Schema(name = "URL da Photo", example = "https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg")
     private String urlPhoto;
     @Field(name = "creation_date")
     @Schema(name = "Data de criação da restrição", example = "2024/08/12")

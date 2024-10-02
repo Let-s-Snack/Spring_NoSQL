@@ -12,7 +12,7 @@ import java.util.List;
 @Document(collection = "Persons")
 public class Persons {
     @Id
-    @Schema(description = "Id do usuário", example = "10")
+    @Schema(description = "Id do usuário", example = "60d5f4832f8fb814b56fa2f5")
     @Field(name = "_id")
     private ObjectId id;
 
@@ -45,7 +45,7 @@ public class Persons {
     @NotNull(message = "Registro deve ser indicado por true ou false!")
     private boolean isPro;
 
-    @Schema(description = "URL da foto", example = "Teste") //Adicionar um exemplo da URL da photo
+    @Schema(description = "URL da foto", example = "https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg")
     @Field(name = "url_photo")
     private String urlPhoto;
 
@@ -64,19 +64,46 @@ public class Persons {
     @NotNull(message = "Registro deve ser indicado por true ou false")
     private boolean registrationCompleted;
 
-    @Schema(description = "Lista de Restrição", example = "") //Adicionar um exemplo
+    @Schema(description = "Lista de Restrição", example = "{\n" +
+            "        \"restrictionId\": \"60d5f4832f8fb814b56fa287\",\n" +
+            "        \"name\": \"alérgica a amendoim\",\n" +
+            "        \"description\": \"Não pode consumir amendoim\",\n" +
+            "        \"urlPhoto\": \"https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.143+00:00\"\n" +
+            "      }")
     private List<PersonsRestrictions> restrictions;
 
-    @Schema(description = "Lista de receitas favoritas", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Lista de receitas favoritas", example = "{\n" +
+            "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
+            "      }")
     private List<Favorites> favorites;
 
-    @Schema(description = "Lista de receitas salvas", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Lista de receitas salvas", example = "{{\n" +
+            "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
+            "      }")
     private List<Wishlist> wishlist;
 
-    @Schema(description = "Receita da semana", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Receita da semana", example = "{\n" +
+            "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
+            "      }")
     @Field(name = "directions_week")
     private List<DirectionsWeek> directionsWeek;
-    @Schema(description = "Ingredientes salvos do usuários", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Ingredientes salvos do usuários", example = "    {\n" +
+            "      \"recipesId\": \"60d5f4832f8fb814b56fa226\",\n" +
+            "      \"ingredients\": [\n" +
+            "        {\n" +
+            "          \"ingredientId\": \"60d5232f8fb814b56fa21356\",\n" +
+            "          \"isChecked\": true,\n" +
+            "          \"ingredientName\": null,\n" +
+            "          \"meditionType\": null,\n" +
+            "          \"quantity\": null\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"creationDate\": \"2024-09-24T10:35:16.848+00:00\"\n" +
+            "    }")
     @Field(name = "shopping_list")
     private List<ShoppingList> shoppingList;
 

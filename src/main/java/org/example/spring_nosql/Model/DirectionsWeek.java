@@ -8,12 +8,12 @@ import java.util.Date;
 
 public class DirectionsWeek {
     @Field(name = "recipes_id")
-    @Schema(description = "ID da receita da semana", example = "") // Adicionar exemplo
+    @Schema(description = "ID da receita da semana", example = "60d5f4832f8fb814b56fa287")
     @NotBlank(message = "ID da receita da semana não deve ser nulo")
     private String recipesId;
 
     @Field(name = "creation_date")
-    @Schema(description = "Data de criação do usuário", example = "2024/08/27")
+    @Schema(description = "Data de criação da receita da semana do usuário", example = "2024/08/27")
     private Date creationDate;
 
     public DirectionsWeek() {this.creationDate = new Date();}

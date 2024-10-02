@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class Wishlist {
     @Field(name = "recipes_id")
-    @Schema(description = "ID da receita da wishlist", example = "") // Adicionar exemplo
+    @Schema(description = "ID da receita da wishlist", example = "60d5f4832f8fb814b56fa2f5")
     @NotBlank(message = "ID da receita da wishlist não deve ser nulo")
     private String recipesId;
     @Field(name = "creation_date")

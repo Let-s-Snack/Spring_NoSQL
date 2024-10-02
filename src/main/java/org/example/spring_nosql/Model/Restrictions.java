@@ -30,7 +30,7 @@ public class Restrictions {
     @Schema(description = "Descrição da restrição", example = "Pescetariano é um regime alimentar que inclui peixes e frutos do mar, mas exclui a carne de outros animais.")
     private String description;
 
-    @Schema(description = "URL da Photo", example = "") //Adicionar exemplo de URL de foto
+    @Schema(description = "URL da Photo", example = "https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg")
     @Field(name = "url_photo")
     private String urlPhoto;
 
