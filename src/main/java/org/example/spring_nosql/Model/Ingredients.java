@@ -7,14 +7,30 @@ import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
+import java.util.List;
 
-@Document(collection = "Persons")
+
+@Document(collection = "Ingredients")
 public class Ingredients {
     @Id
     @Schema(description = "Id da receita ", example = "") //adicionar exemplo
-    @Field(name = "ingredient_id")
-    @NotBlank(message = "ID do ingrediente não deve ser nulo")
-    private ObjectId ingredientId;
+    @Field(name = "_id")
+    private ObjectId id;
+
+    @NotBlank(message = "Nome não deve ser nulo")
+    @Schema(name = "Nome do ingrediente", example = "Camarão")
+    @Min(value = 1, message = "Nome do ingrediente deve ter mais de 1 caracter")
+    @Max(value = 45, message = "Nome do ingrediente não deve ter mais de 45 caracteres")
+    private String name;
+
+    @Field(name = "broken_restrictions")
+    @Schema(name = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
+    private List<Restrictions> brokenRestrictions;
+
+    @Field(name = "creation_date")
+    @Schema(name = "Data de criação do ingrediente", example = "2024/08/12")
+    private Date creationDate;
 
     @NotNull(message = "O tipo de medição não deve ser nulo")
     @Schema(description = "Tipo de medição", example = "gr")
@@ -25,42 +41,72 @@ public class Ingredients {
     @NotNull(message = "A quantidade não deve ser nula")
     private Double quantity;
 
-    public Ingredients() { }
-
-    public Ingredients(ObjectId ingredientId, String meditionType, Double quantity) {
-        this.ingredientId = ingredientId;
+    public Ingredients(ObjectId id, String name, List<Restrictions> brokenRestrictions, Date creationDate, String meditionType, Double quantity) {
+        this.id = id;
+        this.name = name;
+        this.brokenRestrictions = brokenRestrictions;
+        this.creationDate = creationDate;
         this.meditionType = meditionType;
         this.quantity = quantity;
     }
 
-    public String getIngredientId() {
-        return ingredientId.toHexString();
+    public Ingredients() {}
+
+    public String getId() {
+        return id.toHexString();
     }
 
-    public void setIngredientId(ObjectId ingredientId) {
-        this.ingredientId = ingredientId;
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 
-    public @NotNull(message = "O tipo de medição não deve ser nulo") String getMeditionType() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Restrictions> getBrokenRestrictions() {
+        return brokenRestrictions;
+    }
+
+    public void setBrokenRestrictions(List<Restrictions> brokenRestrictions) {
+        this.brokenRestrictions = brokenRestrictions;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getMeditionType() {
         return meditionType;
     }
 
-    public void setMeditionType(@NotNull(message = "O tipo de medição não deve ser nulo") String meditionType) {
+    public void setMeditionType(String meditionType) {
         this.meditionType = meditionType;
     }
 
-    public @NotNull(message = "A quantidade não deve ser nula") Double getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(@NotNull(message = "A quantidade não deve ser nula") Double quantity) {
+    public void setQuantity(Double quantity) {
         this.quantity = quantity;
     }
 
     @Override
     public String toString() {
         return "Ingredients{" +
-                "ingredientId=" + ingredientId.toHexString() +
+                "id=" + id.toHexString() +
+                ", name='" + name + '\'' +
+                ", brokenRestrictions=" + brokenRestrictions +
+                ", creationDate=" + creationDate +
                 ", meditionType='" + meditionType + '\'' +
                 ", quantity=" + quantity +
                 '}';
