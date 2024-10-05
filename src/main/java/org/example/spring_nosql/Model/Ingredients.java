@@ -2,9 +2,7 @@ package org.example.spring_nosql.Model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -12,14 +10,15 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
 import java.util.List;
 
+
 @Document(collection = "Ingredients")
 public class Ingredients {
     @Id
-    @Schema(name = "ID do ingrediente", example = "1")
+    @Schema(description = "Id da receita ", example = "66f2dfdfb310eeeabd300dc3")
     @Field(name = "_id")
     private ObjectId id;
 
-    @NotNull
+    @NotBlank(message = "Nome não deve ser nulo")
     @Schema(name = "Nome do ingrediente", example = "Camarão")
     @Min(value = 1, message = "Nome do ingrediente deve ter mais de 1 caracter")
     @Max(value = 45, message = "Nome do ingrediente não deve ter mais de 45 caracteres")
@@ -29,12 +28,10 @@ public class Ingredients {
     @Schema(name = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
     private List<Restrictions> brokenRestrictions;
 
-
     @Field(name = "creation_date")
     @Schema(name = "Data de criação do ingrediente", example = "2024/08/12")
     private Date creationDate;
 
-    public Ingredients() {}
 
     public Ingredients(ObjectId id, String name, List<Restrictions> brokenRestrictions, Date creationDate) {
         this.id = id;
@@ -43,19 +40,21 @@ public class Ingredients {
         this.creationDate = creationDate;
     }
 
-    public ObjectId getId() {
-        return id;
+    public Ingredients() {}
+
+    public String getId() {
+        return id.toHexString();
     }
 
     public void setId(ObjectId id) {
         this.id = id;
     }
 
-    public @NotNull @Min(value = 1, message = "Nome do ingrediente deve ter mais de 1 caracter") @Max(value = 45, message = "Nome do ingrediente não deve ter mais de 45 caracteres") String getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(@NotNull @Min(value = 1, message = "Nome do ingrediente deve ter mais de 1 caracter") @Max(value = 45, message = "Nome do ingrediente não deve ter mais de 45 caracteres") String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -74,7 +73,6 @@ public class Ingredients {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-
     @Override
     public String toString() {
         return "Ingredients{" +

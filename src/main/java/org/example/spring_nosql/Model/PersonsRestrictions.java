@@ -1,64 +1,62 @@
 package org.example.spring_nosql.Model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
 import java.util.Date;
 
-@Document(collection = "Restrictions")
-public class Restrictions {
-    @Id
-    @Schema(description = "ID da restrição", example = "4")
-    @Field(name = "_id")
-    private ObjectId id;
+public class PersonsRestrictions {
+    @Field(name = "restrictions_id")
+    @Schema(description = "ID da restrição ", example = "66f295e435644057236fec24")
+    @NotBlank(message = "ID da restrição não deve ser nulo")
+    private String restrictionId;
 
-    @NotBlank(message = "Nome da restrição não deve ser nulo")
+    @Schema(name = "Nome da restrição", example = "Pescetariano")
+    @NotBlank(message = "Nome não deve ser nulo ou vazio")
     @Min(value = 3, message = "Nome da restrição deve ter mais de 3 caracteres")
     @Max(value = 45, message = "Nome da restrição não deve ter mais de 45 caracteres")
-    @Schema(description = "Nome da restrição", example = "Pescetariano")
     private String name;
-
-    @NotBlank(message = "Descrição da restrição não deve ser nulo")
+    @NotBlank(message = "Descrição não deve ser nula ou vazio")
     @Min(value = 3, message = "Descrição da restrição deve ter mais de 3 caracteres")
     @Max(value = 1000, message = "Descrição da restrição não deve ter mais de 1000 caracteres")
-    @Schema(description = "Descrição da restrição", example = "Pescetariano é um regime alimentar que inclui peixes e frutos do mar, mas exclui a carne de outros animais.")
+    @Schema(name = "Descrição da restrição", example = "Pescetariano é um regime alimentar que inclui peixes e frutos do mar, mas exclui a carne de outros animais.")
     private String description;
-
-    @Schema(description = "URL da Photo", example = "https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg")
     @Field(name = "url_photo")
+    @Schema(name = "URL da Photo", example = "https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg")
     private String urlPhoto;
-
     @Field(name = "creation_date")
-    @Schema(description= "Data de criação da restrição", example = "2024/08/12")
+    @Schema(name = "Data de criação da restrição", example = "2024/08/12")
     private Date creationDate;
 
-    public Restrictions(ObjectId id, String name, String description, String urlPhoto) {
-        this.id = id;
+    public PersonsRestrictions() {this.creationDate = new Date();}
+    public PersonsRestrictions(String restrictionId) {
+        this.restrictionId = restrictionId;
+        this.creationDate = new Date();
+    }
+
+    public PersonsRestrictions(String name, String description, String urlPhoto) {
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
+        this.creationDate = new Date();
     }
 
-    public Restrictions(String name, String description, String urlPhoto) {
+    public PersonsRestrictions(String restrictionId, String name, String description, String urlPhoto) {
+        this.restrictionId = restrictionId;
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
+        this.creationDate = new Date();
     }
 
-    public Restrictions(){}
-
-    public String getId() {
-        return id.toHexString();
+    public String getRestrictionId() {
+        return restrictionId;
     }
 
-    public void setId(ObjectId id) {
-        this.id = id;
+    public void setRestrictionId(String restrictionId) {
+        this.restrictionId = restrictionId;
     }
 
     public String getName() {
@@ -95,8 +93,8 @@ public class Restrictions {
 
     @Override
     public String toString() {
-        return "Restrictions{" +
-                "id=" + id.toHexString() +
+        return "PersonsRestrictions{" +
+                "restrictionId='" + restrictionId + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", urlPhoto='" + urlPhoto + '\'' +

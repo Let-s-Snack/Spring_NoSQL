@@ -3,112 +3,226 @@ package org.example.spring_nosql.Model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
 import java.util.Date;
 import java.util.List;
 
 @Document(collection = "Persons")
 public class Persons {
     @Id
-    @Schema(name = "Id do usuário", example = "10")
-    private int id;
+    @Schema(description = "Id do usuário", example = "60d5f4832f8fb814b56fa2f5")
+    @Field(name = "_id")
+    private ObjectId id;
 
-    @Schema(name = "Id do gênero do usuário", example = "2")
-    @Field(name = "genders_id")
-    @NotNull(message = "ID do gênero não deve ser nulo")
-    private int gendersId;
+    @Schema(description = "Gênero do usuário", example = "Feminino")
+    @NotBlank(message = "Gênero não deve ser nulo")
+    private String gender;
 
-    @Schema(name = "Nome do usuário", example = "Jose")
+    @Schema(description = "Nome do usuário", example = "Jose")
     @Size(max = 200, message = "Nome do usuário não deve ter mais de 200 caracteres")
-    @NotNull(message = "Nome do usuário não deve ser nulo")
+    @NotBlank(message = "Nome do usuário não deve ser nulo")
     private String name;
-    @Schema(name = "Apelido do usuário", example = "JosePeQuente")
+
+    @Schema(description = "Apelido do usuário", example = "JosePeQuente")
     @Size(max = 45, message = "Apelido do usuário não deve ter mais de 45 caracteres")
-    @NotNull(message = "Apelido do usuário não deve ser nulo")
+    @NotBlank(message = "Apelido do usuário não deve ser nulo")
     private String nickname;
 
-    @Email(message = "e-mail deve ser válido")
-    @NotNull(message = "E-mail não deve ser nulo")
-    @Schema(name = "E-mail do usuário", example = "jose@gmail.com")
+    @Schema(description = "E-mail do usuário", example = "jose@gmail.com")
+    @Email(message = "E-mail deve ser válido")
+    @NotBlank(message = "E-mail não deve ser nulo!")
     private String email;
-    @Schema(name = "Senha do usuário em HASH", example = "$2a$10$7EqJtq98hPqEX7fNZaFWoO7BiEXLYAK9Lk8rClTl6l5povF9QIJFu")
-    @Min(value = 8, message = "Senha deve ter 8 caracteres ou mais")
+
+    @Schema(description = "Senha do usuário em HASH", example = "$2a$10$7EqJtq98hPqEX7fNZaFWoO7BiEXLYAK9Lk8rClTl6l5povF9QIJFu")
+    @Size(min = 8, message = "Senha deve ter 8 caracteres ou mais")
+    @NotBlank(message = "Senha não deve ser nula!")
     private String password;
-    @Schema(name = "Usuário é Administrador", example = "false")
-    @Field(name = "id_adm")
-    @NotBlank(message = "Registro deve ser indicado por 1 ou 0")
-    private Boolean idAdm;
-    @Schema(name = "URL da foto", example = "Teste") //Adicionar um exemplo da URL da photo
+
+    @Schema(description = "Usuário é premium", example = "true")
+    @Field(name = "is_pro")
+    @NotNull(message = "Registro deve ser indicado por true ou false!")
+    private boolean isPro;
+
+    @Schema(description = "URL da foto", example = "https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg")
     @Field(name = "url_photo")
     private String urlPhoto;
-    @Schema(name = "Data de nascimento", example = "2007/09/25")
-    @Field(name = "birth_date")
-    @NotBlank(message = "Usuário deve conter data de nascimento")
-    private Date birthDate;
-    @Size(min = 11, message="O Número de telefone deve conter DDD: XXXXXXXXXXX")
-    @NotNull(message = "número de telefone não deve ser nulo!")
-    private String cellphone;
-    @Field(name = "registration_completed")
-    @Schema(name = "Cadastro foi completo", example = "true")
-    @NotNull(message = "Registro deve ser indicado por 1 ou 0")
-    private Boolean registrationCompleted;
-    @Schema(name = "Lista de Restrição", example = "Teste") //Adicionar um exemplo
-    private List<Restrictions> restrictions;
-    @Schema(name = "Lista de receitas favoritas", example = "Teste") //Adicionar um exemplo
-    private List<Favorites> favorites;
-    @Schema(name = "Lista de receitas salvas", example = "Teste") //Adicionar um exemplo
-    private List<Wishlist> wishlist;
-    @Schema(name = "Receita da semana", example = "Teste") //Adicionar um exemplo
-    private List<DirectionsWeek> directionsWeeks;
-    /*@Schema(name = "Lista de ingredientes que o ingrediente não gosta", example = "") //Testar
-    private List<>*/
-    @Field(name = "creation_date")
-    @Schema(name = "Data de criação do usuário", example = "2024/08/27")
-    private Date creationDate;
 
-    public Persons(){}
+    @Schema(description = "Data de nascimento", example = "2007/09/25")
+    @Field(name = "birth_date")
+    @NotNull(message = "Usuário deve conter data de nascimento")
+    private Date birthDate;
+
+    @Schema(description = "Número de telefone do usuário", example = "11999999999")
+    @Size(min = 11, message = "O Número de telefone deve conter DDD: XXXXXXXXXXX")
+    @NotBlank(message = "número de telefone não deve ser nulo!")
+    private String cellphone;
+
+    @Schema(description = "Cadastro foi completo", example = "true")
+    @Field(name = "registration_completed")
+    @NotNull(message = "Registro deve ser indicado por true ou false")
+    private boolean registrationCompleted;
+
+    @Schema(description = "Lista de Restrição", example = "{\n" +
+            "        \"restrictionId\": \"60d5f4832f8fb814b56fa287\",\n" +
+            "        \"name\": \"alérgica a amendoim\",\n" +
+            "        \"description\": \"Não pode consumir amendoim\",\n" +
+            "        \"urlPhoto\": \"https://i.pinimg.com/originals/5e/6f/7a/8b9d0a2b1c2.jpg\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.143+00:00\"\n" +
+            "      }")
+    private List<PersonsRestrictions> restrictions;
+
+    @Schema(description = "Lista de receitas salvas", example = "{{\n" +
+            "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
+            "      }")
+    private List<Wishlist> wishlist;
+
+    @Schema(description = "Receita da semana", example = "{\n" +
+            "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
+            "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
+            "      }")
+    @Field(name = "directions_week")
+    private List<DirectionsWeek> directionsWeek;
+    @Schema(description = "Ingredientes salvos do usuários", example = "    {\n" +
+            "      \"recipesId\": \"60d5f4832f8fb814b56fa226\",\n" +
+            "      \"ingredients\": [\n" +
+            "        {\n" +
+            "          \"ingredientId\": \"60d5232f8fb814b56fa21356\",\n" +
+            "          \"isChecked\": true,\n" +
+            "          \"ingredientName\": null,\n" +
+            "          \"meditionType\": null,\n" +
+            "          \"quantity\": null\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"creationDate\": \"2024-09-24T10:35:16.848+00:00\"\n" +
+            "    }")
+    @Field(name = "shopping_list")
+    private List<ShoppingList> shoppingList;
+
+    @Schema(description = "Data de criação do usuário", example = "2024/08/27")
+    @Field(name = "creation_date")
+    private Date creationDate;
+    @Schema(description = "Data de exclusão do usuário", example = "2024/08/27")
+    @Field(name = "deactivation_date")
+    private Date deactivationDate;
+
+    public Persons(){
+    }
+
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, boolean registrationCompleted, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
+        this.gender = gender;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.isPro = isPro;
+        this.urlPhoto = urlPhoto;
+        this.birthDate = birthDate;
+        this.cellphone = cellphone;
+        this.registrationCompleted = registrationCompleted;
+        this.restrictions = restrictions;
+        this.wishlist = wishlist;
+        this.directionsWeek = directionsWeek;
+        this.shoppingList = shoppingList;
+    }
+
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone) {
+        this.gender = gender;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.isPro = isPro;
+        this.urlPhoto = urlPhoto;
+        this.birthDate = birthDate;
+        this.cellphone = cellphone;
+    }
+
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions) {
+        this.gender = gender;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.isPro = isPro;
+        this.urlPhoto = urlPhoto;
+        this.birthDate = birthDate;
+        this.cellphone = cellphone;
+        this.restrictions = restrictions;
+    }
+
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist) {
+        this.gender = gender;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.isPro = isPro;
+        this.urlPhoto = urlPhoto;
+        this.birthDate = birthDate;
+        this.cellphone = cellphone;
+        this.restrictions = restrictions;
+        this.wishlist = wishlist;
+    }
+
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek) {
+        this.gender = gender;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.isPro = isPro;
+        this.urlPhoto = urlPhoto;
+        this.birthDate = birthDate;
+        this.cellphone = cellphone;
+        this.restrictions = restrictions;
+        this.wishlist = wishlist;
+        this.directionsWeek = directionsWeek;
+    }
+
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
+        this.gender = gender;
+        this.name = name;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+        this.isPro = isPro;
+        this.urlPhoto = urlPhoto;
+        this.birthDate = birthDate;
+        this.cellphone = cellphone;
+        this.restrictions = restrictions;
+        this.wishlist = wishlist;
+        this.directionsWeek = directionsWeek;
+        this.shoppingList = shoppingList;
+    }
+
+    public Persons(ObjectId id, String email, String password){
+        this.id = id;
+        this.email = email;
+        this.password = password;
+    }
 
     public Persons(String email, String password){
         this.email = email;
         this.password = password;
     }
 
-    public Persons(int id, int gendersId, String name, String nickname, String email, String password, Boolean idAdm, String urlPhoto, Date birthDate, String cellphone, Boolean registrationCompleted, List<Restrictions> restrictions, List<Favorites> favorites, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeeks, Date creationDate) {
-        this.id = id;
-        this.gendersId = gendersId;
-        this.name = name;
-        this.nickname = nickname;
-        this.email = email;
-        this.password = password;
-        this.idAdm = idAdm;
-        this.urlPhoto = urlPhoto;
-        this.birthDate = birthDate;
-        this.cellphone = cellphone;
-        this.registrationCompleted = registrationCompleted;
-        this.restrictions = restrictions;
-        this.favorites = favorites;
-        this.wishlist = wishlist;
-        this.directionsWeeks = directionsWeeks;
-        this.creationDate = creationDate;
+    public String getId() {
+        return id.toHexString();
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 
-    public int getGendersId() {
-        return gendersId;
+    public String getGender() {
+        return gender;
     }
 
-    public void setGendersId(int gendersId) {
-        this.gendersId = gendersId;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getName() {
@@ -143,12 +257,12 @@ public class Persons {
         this.password = password;
     }
 
-    public Boolean getIdAdm() {
-        return idAdm;
+    public Boolean getIsPro() {
+        return isPro;
     }
 
-    public void setIdAdm(Boolean idAdm) {
-        this.idAdm = idAdm;
+    public void setIsPro(Boolean isPro) {
+        this.isPro = isPro;
     }
 
     public String getUrlPhoto() {
@@ -183,20 +297,12 @@ public class Persons {
         this.registrationCompleted = registrationCompleted;
     }
 
-    public List<Restrictions> getRestrictions() {
+    public List<PersonsRestrictions> getRestrictions() {
         return restrictions;
     }
 
-    public void setRestrictions(List<Restrictions> restrictions) {
+    public void setRestrictions(List<PersonsRestrictions> restrictions) {
         this.restrictions = restrictions;
-    }
-
-    public List<Favorites> getFavorites() {
-        return favorites;
-    }
-
-    public void setFavorites(List<Favorites> favorites) {
-        this.favorites = favorites;
     }
 
     public List<Wishlist> getWishlist() {
@@ -207,12 +313,20 @@ public class Persons {
         this.wishlist = wishlist;
     }
 
-    public List<DirectionsWeek> getDirectionsWeeks() {
-        return directionsWeeks;
+    public List<DirectionsWeek> getDirectionsWeek() {
+        return directionsWeek;
     }
 
-    public void setDirectionsWeeks(List<DirectionsWeek> directionsWeeks) {
-        this.directionsWeeks = directionsWeeks;
+    public void setDirectionsWeek(List<DirectionsWeek> directionsWeek) {
+        this.directionsWeek = directionsWeek;
+    }
+
+    public List<ShoppingList> getShoppingList() {
+        return shoppingList;
+    }
+
+    public void setShoppingList(List<ShoppingList> shoppingList) {
+        this.shoppingList = shoppingList;
     }
 
     public Date getCreationDate() {
@@ -223,25 +337,33 @@ public class Persons {
         this.creationDate = creationDate;
     }
 
-    @Override
+    public Date getDeactivationDate() {
+        return deactivationDate;
+    }
+
+    public void setDeactivationDate(Date deactivationDate) {
+        this.deactivationDate = deactivationDate;
+    }
+
     public String toString() {
         return "Persons{" +
-                "id=" + id +
-                ", gendersId=" + gendersId +
+                "id=" + id.toHexString() +
+                ", gender='" + gender + '\'' +
                 ", name='" + name + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", idAdm=" + idAdm +
+                ", isPro=" + isPro +
                 ", urlPhoto='" + urlPhoto + '\'' +
                 ", birthDate=" + birthDate +
                 ", cellphone='" + cellphone + '\'' +
                 ", registrationCompleted=" + registrationCompleted +
                 ", restrictions=" + restrictions +
-                ", favorites=" + favorites +
                 ", wishlist=" + wishlist +
-                ", directionsWeeks=" + directionsWeeks +
+                ", directionsWeek=" + directionsWeek +
+                ", shoppingList=" + shoppingList +
                 ", creationDate=" + creationDate +
+                ", deactivationDate=" + deactivationDate +
                 '}';
     }
 }
