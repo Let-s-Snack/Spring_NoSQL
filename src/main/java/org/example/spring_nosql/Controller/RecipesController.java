@@ -42,7 +42,6 @@ public class RecipesController {
         this.recipesService = recipesService;
     }
 
-    //Funcionando
     @GetMapping("/listAll")
     @Operation(summary = "Buscar todas as receitas", description = "Faz a busca de todas as receitas cadastrados")
     @ApiResponses(value = {
@@ -58,7 +57,6 @@ public class RecipesController {
         return ResponseEntity.ok(recipesService.findAllRecipes());
     }
 
-    //Funcionando
     @GetMapping("/listRecipesById")
     @Operation(summary = "Busca receita pelo ID", description = "Faz a busca da receita a partir do seu ID")
     @ApiResponses(value = {
@@ -93,7 +91,7 @@ public class RecipesController {
     }
 
     @GetMapping("/listRecipesByName/{recipesName}")
-    @Operation(summary = "Busca receita pelo nome", description = "Faz a busca da receita a partir seu nome, ignorando maiúsculo/minúsculo")
+    @Operation(summary = "Busca receita pelo nome", description = "Faz a busca da receita a partir seu nome, ignorando se está em maiúsculo, minúsculo ou se possui acento")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -122,7 +120,6 @@ public class RecipesController {
         }
     }
 
-    //Funcionando
     @GetMapping("/listRecipesByRestrictions")
     @Operation(summary = "Busca receita pela restrição", description = "Faz a busca da receita a partir do id da restrição e o id do usuário")
     @ApiResponses(value = {
