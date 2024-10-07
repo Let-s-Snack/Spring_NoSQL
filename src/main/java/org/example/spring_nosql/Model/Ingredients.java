@@ -19,23 +19,30 @@ public class Ingredients {
     private ObjectId id;
 
     @NotBlank(message = "Nome não deve ser nulo")
-    @Schema(name = "Nome do ingrediente", example = "Camarão")
+    @Schema(description = "Nome do ingrediente", example = "Camarão")
     @Min(value = 1, message = "Nome do ingrediente deve ter mais de 1 caracter")
     @Max(value = 45, message = "Nome do ingrediente não deve ter mais de 45 caracteres")
     private String name;
 
+    @NotBlank(message = "Descrição não deve ser nula")
+    @Schema(description = "Descrição do ingrediente", example = "Camarão é um fruto do mar")
+    @Min(value = 1, message = "Descrição do ingrediente deve ter mais de 1 caracter")
+    @Max(value = 100, message = "Descrição do ingrediente não deve ter mais de 100 caracteres")
+    private String description;
+
     @Field(name = "broken_restrictions")
-    @Schema(name = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
+    @Schema(description = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
     private List<Restrictions> brokenRestrictions;
 
     @Field(name = "creation_date")
-    @Schema(name = "Data de criação do ingrediente", example = "2024/08/12")
+    @Schema(description = "Data de criação do ingrediente", example = "2024/08/12")
     private Date creationDate;
 
 
-    public Ingredients(ObjectId id, String name, List<Restrictions> brokenRestrictions, Date creationDate) {
+    public Ingredients(ObjectId id, String name, String description, List<Restrictions> brokenRestrictions, Date creationDate) {
         this.id = id;
         this.name = name;
+        this.description = description;
         this.brokenRestrictions = brokenRestrictions;
         this.creationDate = creationDate;
     }
@@ -58,6 +65,14 @@ public class Ingredients {
         this.name = name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<Restrictions> getBrokenRestrictions() {
         return brokenRestrictions;
     }
@@ -73,11 +88,13 @@ public class Ingredients {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
+
     @Override
     public String toString() {
         return "Ingredients{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", brokenRestrictions=" + brokenRestrictions +
                 ", creationDate=" + creationDate +
                 '}';

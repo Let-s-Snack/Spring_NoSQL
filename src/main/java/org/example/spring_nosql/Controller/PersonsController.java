@@ -377,7 +377,7 @@ public class PersonsController {
             }
 
         }catch(DataIntegrityViolationException ttt){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!" + ttt.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!");
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!" + nnn.getMessage());
         }catch (Exception npc){

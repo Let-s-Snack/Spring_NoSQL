@@ -38,11 +38,12 @@ public class Restrictions {
     @Schema(description= "Data de criação da restrição", example = "2024/08/12")
     private Date creationDate;
 
-    public Restrictions(ObjectId id, String name, String description, String urlPhoto) {
+    public Restrictions(ObjectId id, String name, String description, String urlPhoto, Date creationDate) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
+        this.creationDate = creationDate;
     }
 
     public Restrictions(String name, String description, String urlPhoto) {
