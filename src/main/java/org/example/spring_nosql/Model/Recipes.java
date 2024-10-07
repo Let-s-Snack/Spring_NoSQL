@@ -12,50 +12,67 @@ import java.util.List;
 @Document(collection = "Recipes")
 public class Recipes {
     @Id
-    @Schema(name = "Id da receita ", example = "1")
+    @Schema(name = "Id da receita ", example = "66f2dfdfb310eeeabd300dc5")
     @Field(name = "_id")
-    @NotBlank(message = "ID da receita não deve ser nula ou vazia")
     private ObjectId id;
 
-    @NotNull(message = "Nome da receita não deve ser nulo")
+    @NotBlank(message = "Nome da receita não deve ser nulo")
     @Schema(name = "Nome da receita", example = "Bobó de camarão")
     private String name;
 
     @Schema(name = "Descrição da receita", example = "Receita feita com temperos especiais e frutos do mar, trazendo uma harmonia ao paladar.")
-    @NotNull(message = "A descrição da receita não deve ser nula")
+    @NotBlank(message = "A descrição da receita não deve ser nula")
     private String description;
 
     @Schema(name = "URL da foto da receita", example = "https://i.pinimg.com/236x/c6/fa/68/c6fa68d10f6929de2b764484aa835310.jpg")
     @Field(name = "url_photo")
+    @NotBlank(message = "A foto da receita não deve ser nula")
     private String urlPhoto;
 
-    @NotNull(message = "A data de criação da receita não deve ser nula")
-    @Schema(name = "Data de criação da receita", example = "10/08/2024")
-    @Field(name = "creation_date")
-    private Date creationDate;
-
     @NotNull(message = "A lista de ingredientes não deve ser nula")
-    @Schema(name = "Lista de receitas favoritas", example = "Teste") //Adicionar um exemplo
+    @Schema(name = "Lista de receitas favoritas", example = "{\n" +
+            "        \"ingredientId\": \"66f2dfdfb310eeeabd300dc0\",\n" +
+            "        \"meditionType\": \"unidade\",\n" +
+            "        \"quantity\": 2\n" +
+            "      }")
     private List<IngredientsRecipes> ingredients;
 
     @Schema(name = "Lista de comentários", example = "Teste") //Adicionar um exemplo
     private List<Coments> coments;
 
     @NotNull(message = "A lista de passos não deve ser nula")
-    @Schema(name = "Passos de preparação", example = "Teste") //Adicionar um exemplo
+    @Schema(name = "Passos de preparação da receita", example = "[\n" +
+            "      \"1. Quebre os ovos;\",\n" +
+            "      \"2. Bata os ovos com sal;\",\n" +
+            "      \"3. Aqueça a frigideira;\",\n" +
+            "      \"4. Despeje os ovos e cozinhe até dourar\"\n" +
+            "    ]")
     @Field(name = "preparation_methods")
     private List<String> preparationMethods;
 
-    @NotNull(message = "A lista de restricoes não deve ser nula")
+    @NotNull(message = "A lista de restrições não deve ser nula")
     @Schema(name = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
     @Field(name = "broken_restrictions")
     private List<Restrictions> brokenRestrictions;
 
+    @NotNull(message = "A data de criação da receita não deve ser nula")
+    @Schema(name = "Data de criação da receita", example = "10/08/2024")
+    @Field(name = "creation_date")
+    private Date creationDate;
 
+    @Schema(description = "Média das avaliações", example = "4.5")
+    @Max(value = 5, message = "A avaliação deve ser entre 1 e 5")
+    @Min(value = 1, message = "A avaliação deve ser entre 1 e 5")
+    private Double rating;
+
+    @Schema(description = "Indica se a receita está favoritada pelo usuário ou não", example = "true")
+    @NotNull(message = "Receita deve ser favorita ou não")
+    private Boolean isFavorite;
 
     public Recipes() { }
 
-    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<Restrictions> brokenRestrictions, Date creationDate) {
+    public Recipes(ObjectId id, String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<Restrictions> brokenRestrictions, Date creationDate, Double rating, Boolean isFavorite) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
@@ -64,29 +81,8 @@ public class Recipes {
         this.preparationMethods = preparationMethods;
         this.brokenRestrictions = brokenRestrictions;
         this.creationDate = creationDate;
-    }
-
-    public Recipes(String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<String> preparationMethods, List<Restrictions> brokenRestrictions) {
-        this.name = name;
-        this.description = description;
-        this.urlPhoto = urlPhoto;
-        this.ingredients = ingredients;
-        this.preparationMethods = preparationMethods;
-        this.brokenRestrictions = brokenRestrictions;
-    }
-
-    public Recipes(String name, String description, String urlPhoto, Date creationDate){
-        this.name = name;
-        this.description = description;
-        this.urlPhoto = urlPhoto;
-        this.creationDate = creationDate;
-    }
-
-    public Recipes(ObjectId id, String description, String urlPhoto, Date creationDate){
-        this.name = name;
-        this.description = description;
-        this.urlPhoto = urlPhoto;
-        this.creationDate = creationDate;
+        this.rating = rating;
+        this.isFavorite = isFavorite;
     }
 
     public String getId() {
@@ -94,9 +90,6 @@ public class Recipes {
     }
     public void setId(ObjectId id) {
         this.id = id;
-    }
-    public void setId(String id) {
-        this.id = new ObjectId(id);
     }
 
     public @NotNull(message = "Nome da receita não deve ser nulo") String getName() {
@@ -163,10 +156,26 @@ public class Recipes {
         this.creationDate = creationDate;
     }
 
+    public Double getRating() {
+        return rating;
+    }
+
+    public void setRating(Double rating) {
+        this.rating = rating;
+    }
+
+    public Boolean getIsFavorite() {
+        return this.isFavorite;
+    }
+
+    public void setIsFavorite(Boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
     @Override
     public String toString() {
         return "Recipes{" +
-                "id=" + id +
+                "id=" + id.toHexString() +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", urlPhoto='" + urlPhoto + '\'' +
@@ -175,6 +184,8 @@ public class Recipes {
                 ", preparationMethods=" + preparationMethods +
                 ", brokenRestrictions=" + brokenRestrictions +
                 ", creationDate=" + creationDate +
+                ", rating=" + rating +
+                ", isFavorite=" + isFavorite +
                 '}';
     }
 }

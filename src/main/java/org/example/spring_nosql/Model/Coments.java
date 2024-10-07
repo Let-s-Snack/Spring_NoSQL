@@ -2,9 +2,7 @@ package org.example.spring_nosql.Model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.util.Date;
@@ -16,12 +14,13 @@ public class Coments {
     private ObjectId comentId;
 
     @Schema(name = "Id do dono do comentário ", example = "1")
-    @Field(name = "person_id")
-    private String personId;
+    @Field(name = "persons_id")
+    private String personsId;
 
     @NotNull(message = "Avaliação da receita não deve ser nula")
     @Schema(description = "Avaliação", example = "4")
-    @Max(value = 5, message = "A avaliação deve ser entre 0 e 5")
+    @Max(value = 5, message = "A avaliação deve ser entre 1 e 5")
+    @Min(value = 1, message = "A avaliação deve ser entre 1 e 5")
     private int rating;
 
     @Schema(description = "Comentário sobre a receita", example = "Receita muito boa!")
@@ -33,14 +32,25 @@ public class Coments {
     @Field(name = "creation_date")
     private Date creationDate;
 
+    @Field(name = "persons_name")
+    @NotBlank(message = "Nome do usuário que avaliou não deve ser nulo")
+    private String personsName;
+
     public Coments() { }
 
-    public Coments(ObjectId comentId, String personId, int rating, String message, Date creationDate) {
+    public Coments(ObjectId comentId, String personsId, int rating, String message, Date creationDate, String personsName) {
         this.comentId = comentId;
-        this.personId = personId;
+        this.personsId = personsId;
         this.rating = rating;
         this.message = message;
         this.creationDate = creationDate;
+        this.personsName = personsName;
+    }
+
+    public Coments(String personsId, int rating, String message) {
+        this.personsId = personsId;
+        this.rating = rating;
+        this.message = message;
     }
 
     public String getComentId() {
@@ -51,21 +61,19 @@ public class Coments {
         this.comentId = comentId;
     }
 
-    public String getPersonId() {
-        return personId;
+    public String getPersonsId() {
+        return personsId;
     }
 
-    public void setPersonId(String personId) {
-        this.personId = personId;
+    public void setPersonsId(String personsId) {
+        this.personsId = personsId;
     }
 
-    @NotNull(message = "Avaliação da receita não deve ser nula")
-    @Max(value = 5, message = "A avaliação deve ser entre 0 e 5")
     public int getRating() {
         return rating;
     }
 
-    public void setRating(@NotNull(message = "Avaliação da receita não deve ser nula") @Max(value = 5, message = "A avaliação deve ser entre 0 e 5") int rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
@@ -77,11 +85,31 @@ public class Coments {
         this.message = message;
     }
 
-    public @NotNull(message = "A data de criação do comentário não deve ser nula") Date getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(@NotNull(message = "A data de criação do comentário não deve ser nula") Date creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getPersonsName() {
+        return personsName;
+    }
+
+    public void setPersonsName(String personsName) {
+        this.personsName = personsName;
+    }
+
+    @Override
+    public String toString() {
+        return "Coments{" +
+                "comentId=" + comentId.toHexString() +
+                ", personsId='" + personsId + '\'' +
+                ", rating=" + rating +
+                ", message='" + message + '\'' +
+                ", creationDate=" + creationDate +
+                ", personsName='" + personsName + '\'' +
+                '}';
     }
 }
