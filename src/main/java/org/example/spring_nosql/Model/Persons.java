@@ -73,7 +73,7 @@ public class Persons {
             "      }")
     private List<PersonsRestrictions> restrictions;
 
-    @Schema(description = "Lista de receitas salvas", example = "{{\n" +
+    @Schema(description = "Lista de receitas salvas", example = "{\n" +
             "        \"recipesId\": \"66e454dfaa56ab29766e987f\",\n" +
             "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
             "      }")

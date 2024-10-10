@@ -12,36 +12,36 @@ import java.util.List;
 @Document(collection = "Recipes")
 public class Recipes {
     @Id
-    @Schema(name = "Id da receita ", example = "66f2dfdfb310eeeabd300dc5")
+    @Schema(description = "Id da receita ", example = "66f2dfdfb310eeeabd300dc5")
     @Field(name = "_id")
     private ObjectId id;
 
     @NotBlank(message = "Nome da receita não deve ser nulo")
-    @Schema(name = "Nome da receita", example = "Bobó de camarão")
+    @Schema(description = "Nome da receita", example = "Bobó de camarão")
     private String name;
 
-    @Schema(name = "Descrição da receita", example = "Receita feita com temperos especiais e frutos do mar, trazendo uma harmonia ao paladar.")
+    @Schema(description = "Descrição da receita", example = "Receita feita com temperos especiais e frutos do mar, trazendo uma harmonia ao paladar.")
     @NotBlank(message = "A descrição da receita não deve ser nula")
     private String description;
 
-    @Schema(name = "URL da foto da receita", example = "https://i.pinimg.com/236x/c6/fa/68/c6fa68d10f6929de2b764484aa835310.jpg")
+    @Schema(description = "URL da foto da receita", example = "https://i.pinimg.com/236x/c6/fa/68/c6fa68d10f6929de2b764484aa835310.jpg")
     @Field(name = "url_photo")
     @NotBlank(message = "A foto da receita não deve ser nula")
     private String urlPhoto;
 
     @NotNull(message = "A lista de ingredientes não deve ser nula")
-    @Schema(name = "Lista de receitas favoritas", example = "{\n" +
+    @Schema(description = "Lista de receitas favoritas", example = "{\n" +
             "        \"ingredientId\": \"66f2dfdfb310eeeabd300dc0\",\n" +
             "        \"meditionType\": \"unidade\",\n" +
             "        \"quantity\": 2\n" +
             "      }")
     private List<IngredientsRecipes> ingredients;
 
-    @Schema(name = "Lista de comentários", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Lista de comentários", example = "Teste") //Adicionar um exemplo
     private List<Coments> coments;
 
     @NotNull(message = "A lista de passos não deve ser nula")
-    @Schema(name = "Passos de preparação da receita", example = "[\n" +
+    @Schema(description = "Passos de preparação da receita", example = "[\n" +
             "      \"1. Quebre os ovos;\",\n" +
             "      \"2. Bata os ovos com sal;\",\n" +
             "      \"3. Aqueça a frigideira;\",\n" +
@@ -51,12 +51,12 @@ public class Recipes {
     private List<String> preparationMethods;
 
     @NotNull(message = "A lista de restrições não deve ser nula")
-    @Schema(name = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
     @Field(name = "broken_restrictions")
     private List<Restrictions> brokenRestrictions;
 
     @NotNull(message = "A data de criação da receita não deve ser nula")
-    @Schema(name = "Data de criação da receita", example = "10/08/2024")
+    @Schema(description = "Data de criação da receita", example = "10/08/2024")
     @Field(name = "creation_date")
     private Date creationDate;
 

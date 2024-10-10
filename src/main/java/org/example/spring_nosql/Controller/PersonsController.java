@@ -35,7 +35,6 @@ public class PersonsController {
         this.personsService = personsService;
     }
 
-    //Funcionando
     @GetMapping("/listAll")
     @Operation(summary = "Buscar todos os usuários", description = "Faz a busca de todos os usuários cadastrados")
     @ApiResponses(value = {
@@ -51,7 +50,6 @@ public class PersonsController {
         return ResponseEntity.ok(personsService.findAllPersons());
     }
 
-    //Funcionando
     @GetMapping("/listPersonById/{id}")
     @Operation(summary = "Busca usuário pelo ID", description = "Faz a busca do usuário a partir do seu ID")
     @ApiResponses(value = {
@@ -76,8 +74,7 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
-    @GetMapping("/personRegistered")
+    @GetMapping("/personRegistered/{email}")
     @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail e da senha")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Informações de login estão corretas!",
@@ -91,14 +88,9 @@ public class PersonsController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> personRegisteredByEmailAndPassword(@RequestBody Persons persons, BindingResult result){
+    public ResponseEntity<?> personRegisteredByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email){
         try{
-            if(result.hasErrors()){
-                return ResponseEntity.ok(errors(result));
-            }else{
-                Persons person = personsService.findPersonRegisteredByEmail(persons.getEmail(), persons.getPassword());
-                return ResponseEntity.ok(Objects.requireNonNullElse(person, "Usuário ou senha incorreta"));
-            }
+            return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonRegisteredByEmail(email), "Usuário ou senha incorreta"));
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
         }catch (Exception npc){
@@ -106,7 +98,34 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
+    @GetMapping("/listPersonByUsername/{username}")
+    @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do seu username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Username está correto!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Persons.class))),
+            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno com o servidor!")))
+
+    })
+    public ResponseEntity<?> listPersonByUsername(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String username){
+        try{
+            Persons persons = personsService.findPersonsByUsername(username);
+            System.out.println(persons);
+            return ResponseEntity.ok(Objects.requireNonNullElse(persons, "Apelido do usuário não existe"));
+        }catch (RuntimeException nnn){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+        }catch (Exception npc){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+        }
+    }
+
+
+
     //Buscando a restrição do usuário pelo seu id
     @GetMapping("/personRestriction/{id}")
     @Operation(summary = "Buscar restrição", description = "Faz a busca da restrição a partir do id do usuário")
@@ -136,7 +155,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @GetMapping("/personWishlist/{id}")
     @Operation(summary = "Buscar wishlist", description = "Faz a busca da wishlist a partir do id do usuário")
     @ApiResponses(value = {
@@ -163,7 +181,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @GetMapping("/personDirectionWeek/{id}")
     @Operation(summary = "Buscar receita da semana", description = "Faz a busca da receita da semana a partir do id do usuário")
     @ApiResponses(value = {
@@ -189,7 +206,6 @@ public class PersonsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
         }
     }
-    //Funcionando
 
     /*@GetMapping("/personShoppingList/{id}")
     @Operation(summary = "Buscar ingredientes Salvos", description = "Faz a busca dos ingredientes que foram salvos")
@@ -217,7 +233,6 @@ public class PersonsController {
         }
     }*/
 
-    //Funcionando
     @PostMapping("/insertPerson")
     @Operation(summary = "Inserir Usuário", description = "Faz a inserção do gênero passado no body")
     @ApiResponses(value = {
@@ -254,7 +269,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @PutMapping("/updatePerson/{id}")
     @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
     @ApiResponses(value = {
@@ -385,7 +399,6 @@ public class PersonsController {
         }
     }
 
-    //Funcionando
     @DeleteMapping("/deleteUserById/{id}")
     @Transactional
     @ApiResponses(value = {
