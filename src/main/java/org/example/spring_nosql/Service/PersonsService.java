@@ -38,14 +38,13 @@ public class PersonsService{
     }
 
     //Fazendo um método para retornar o usuário caso ele esteja cadastrado ou não
-    public Persons findPersonRegisteredByEmail(String email, String password) {
-        Persons person = personRepository.findPersonByEmail(email);
+    public Persons findPersonRegisteredByEmail(String email) {
+        return personRepository.findPersonByEmailIgnoreCase(email);
+    }
 
-        if (person != null && checkPassword(password, person.getPassword())) {
-            return person;
-        } else {
-            return null;
-        }
+    //Fazendo um método para retornar o usuário que contenha o username passado como parâmetro
+    public Persons findPersonsByUsername(String username){
+        return personRepository.findPersonsByNicknameIgnoreCase(username);
     }
 
     //Fazendo um método para retornar a wishlist do usuário com base no seu id

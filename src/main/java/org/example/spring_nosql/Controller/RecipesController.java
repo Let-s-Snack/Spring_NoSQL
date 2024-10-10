@@ -1,7 +1,6 @@
 package org.example.spring_nosql.Controller;
 
 import com.mongodb.client.result.UpdateResult;
-import org.example.spring_nosql.Model.Wishlist;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -25,9 +24,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 
@@ -58,7 +55,18 @@ public class RecipesController {
     }
 
     @GetMapping("/listRecipesById")
-    @Operation(summary = "Busca receita pelo ID", description = "Faz a busca da receita a partir do seu ID")
+    @Operation(summary = "Busca receita pelo ID", description = "Faz a busca da receita a partir do seu ID",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Informações das receitas pelo ID, sendo necessário o ID do usuário para verificar se a receita é favorita ou não",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(
+                                    type = "object",
+                                    example = "{\"recipesId\": \"66f2dfdfb310eeeabd300dc6\", \"personsId\": \"66f295e435644057236fec24\"}"
+                            )
+                    )
+            )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receita foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -90,8 +98,19 @@ public class RecipesController {
         }
     }
 
-    @GetMapping("/listRecipesByName/{recipesName}")
-    @Operation(summary = "Busca receita pelo nome", description = "Faz a busca da receita a partir seu nome, ignorando se está em maiúsculo, minúsculo ou se possui acento")
+    @GetMapping("/listRecipesByName")
+    @Operation(summary = "Busca receita pelo nome", description = "Faz a busca da receita a partir seu nome, ignorando se está em maiúsculo, minúsculo ou se possui acento",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Retorna as receitas pelo nome, sendo necessário o ID do usuário para verificar suas restrições",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(
+                                    type = "object",
+                                    example = "{\"recipesName\": \"pao\", \"personsId\": \"66f295e435644057236fec24\"}"
+                            )
+                    )
+            )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -104,24 +123,33 @@ public class RecipesController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> listRecipesByName(@Parameter(description = "Inserir nome da receita") @PathVariable String recipesName, @RequestBody Map<String, List<String>> listRestrictions){
-        try{
-            if(recipesName != null && listRestrictions.containsKey("restrictionsId")){
-                return ResponseEntity.ok(recipesService.findRecipesByName(recipesName, listRestrictions.get("restrictionsId")));
-            }else{
+    public ResponseEntity<?> listRecipesByName(@RequestBody Map<String, String> infos){
+        try {
+            if (infos.containsKey("recipesName") && infos.containsKey("personsId")) {
+                return ResponseEntity.ok(recipesService.findRecipesByName(infos.get("recipesName"), new ObjectId(infos.get("personsId"))));
+            } else {
                 return ResponseEntity.ok("Valores foram inseridos incorretamente!");
             }
-        }catch(DataIntegrityViolationException ttt){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!");
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuárioo!");
         }catch (Exception npc){
             return ResponseEntity.ok("Erro interno com o servidor");
         }
     }
 
-    @GetMapping("/listRecipesByRestrictions")
-    @Operation(summary = "Busca receita pela restrição", description = "Faz a busca da receita a partir do id da restrição e o id do usuário")
+    @GetMapping("/listRecipesByRestriction")
+    @Operation(summary = "Busca receita pela restrição", description = "Faz a busca da receita a partir do id da restrição e do id do usuário",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Retorna as receitas a partir da sua restrição, sendo necessário o ID do usuário para verificar se a receita é favorita ou não ",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(
+                                    type = "object",
+                                    example = "{\"restrictionsId\": \"670661af8cbdb8537c0229fb\", \"personsId\": \"66f295e435644057236fec24\"}"
+                            )
+                    )
+            )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -134,10 +162,10 @@ public class RecipesController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> listRecipesByRestriction(@RequestBody Map<String, String> infos){
+    public ResponseEntity<?> listRecipesByRestriction(@RequestBody Map<String, String> infos) {
         try{
-            if(infos.containsKey("personId") && infos.containsKey("restrictionId")){
-                return ResponseEntity.ok(recipesService.findRecipesByRestriction(new ObjectId(infos.get("personId")), new ObjectId(infos.get("restrictionId"))));
+            if(infos.containsKey("personsId") && infos.containsKey("restrictionsId")){
+                return ResponseEntity.ok(recipesService.findRecipesByRestriction(new ObjectId(infos.get("personsId")), new ObjectId(infos.get("restrictionsId"))));
             }else{
                 return ResponseEntity.ok("Valores inseridos incorretamente!");
             }
@@ -148,9 +176,18 @@ public class RecipesController {
         }
     }
 
-    //Funcionando
     @PutMapping("/insertComent/{recipesId}")
-    @Operation(summary = "Adicionar comentários", description = "Faz a inserção de um novo comentário a partir do id da receita")
+    @Operation(summary = "Adicionar comentários", description = "Faz a inserção de um novo comentário a partir do id da receita",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Retorna as receitas a partir da sua restrição, sendo necessário o ID do usuário para verificar se a receita é favorita ou não ",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(
+                                    //example = "{\"restrictionsId\": \"670661af8cbdb8537c0229fb\", \"personsId\": \"66f295e435644057236fec24\"}"
+                            )
+                    )
+            )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Comentário foi adicionado com sucesso!",
                     content = @Content(mediaType = "application/json",

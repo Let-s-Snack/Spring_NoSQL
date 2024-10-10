@@ -3,6 +3,8 @@ package org.example.spring_nosql.Service;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.example.spring_nosql.Model.Persons;
+import org.example.spring_nosql.Model.PersonsRestrictions;
 import org.example.spring_nosql.Model.Restrictions;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -22,11 +24,13 @@ import java.util.List;
 @Service
 public class RecipesService {
     private final RecipesRepository recipesRepository;
+    private PersonsService personsService;
     private final MongoTemplate mongoTemplate;
 
-    public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate){
+    public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate, PersonsService personsService){
         this.recipesRepository = recipesRepository;
         this.mongoTemplate = mongoTemplate;
+        this.personsService = personsService;
     }
 
     //Método para retornar todas as receitas
@@ -110,7 +114,14 @@ public class RecipesService {
     }
 
     //Método para retornar uma receita com base no seu nome
-    public List<Recipes> findRecipesByName(String recipeNameFilter, List<String> listObjectId){
+    public List<Recipes> findRecipesByName(String recipeNameFilter, ObjectId personsId){
+        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonById(personsId).getRestrictions();
+        List<String> listObjectId = new ArrayList<>();
+
+        for (PersonsRestrictions personsRestrictions : listPersonsRestrictions){
+            listObjectId.add(personsRestrictions.getRestrictionId());
+        }
+
         List<Recipes> recipes = findAllRecipes();
         List<Recipes> finalRecipesList = new ArrayList<>();
 
