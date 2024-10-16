@@ -261,7 +261,7 @@ public class PersonsController {
             }else{
                 person.setId(new ObjectId());
                 person.setPassword(hashPassword(person.getPassword()));
-                person.setCreationDate(new Date());
+                person.setCreationDate(new Date().toString());
                 Persons personInsert = personsService.insertPerson(person);
                 if(personInsert != null){
                     return ResponseEntity.status(HttpStatus.OK).body("Usuário foi inserido com sucesso");
