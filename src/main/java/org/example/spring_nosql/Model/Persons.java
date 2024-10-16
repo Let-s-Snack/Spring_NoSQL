@@ -105,6 +105,7 @@ public class Persons {
 
     @Schema(description = "Data de criação do usuário", example = "2024/08/27")
     @Field(name = "creation_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Date creationDate;
     @Schema(description = "Data de exclusão do usuário", example = "2024/08/27")
     @Field(name = "deactivation_date")
