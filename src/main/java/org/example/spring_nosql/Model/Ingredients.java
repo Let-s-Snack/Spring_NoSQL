@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Document(collection = "Ingredients")
@@ -30,21 +31,27 @@ public class Ingredients {
     @Max(value = 100, message = "Descrição do ingrediente não deve ter mais de 100 caracteres")
     private String description;
 
-    @Field(name = "broken_restrictions")
-    @Schema(description = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
-    private List<Restrictions> brokenRestrictions;
+    @Schema(description = "Indica se o usuário foi excluido ou não", example = "true")
+    @Field(name = "is_deleted")
+    @NotNull(message = "Informativo de deleção não pode ser nulo")
+    private boolean isDeleted;
 
     @Field(name = "creation_date")
     @Schema(description = "Data de criação do ingrediente", example = "2024/08/12")
     private Date creationDate;
 
 
-    public Ingredients(ObjectId id, String name, String description, List<Restrictions> brokenRestrictions, Date creationDate) {
+    @Field(name = "broken_restrictions")
+    @Schema(description = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
+    private List<ObjectId> brokenRestrictions;
+
+    public Ingredients(ObjectId id, String name, String description, boolean isDeleted, Date creationDate, List<ObjectId> brokenRestrictions) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.brokenRestrictions = brokenRestrictions;
         this.creationDate = creationDate;
+        this.isDeleted = isDeleted;
     }
 
     public Ingredients() {}
@@ -73,11 +80,15 @@ public class Ingredients {
         this.description = description;
     }
 
-    public List<Restrictions> getBrokenRestrictions() {
-        return brokenRestrictions;
+    public List<String> getBrokenRestrictions() {
+        return (brokenRestrictions == null)
+                ? List.of()
+                : brokenRestrictions.stream()
+                .map(ObjectId::toHexString)
+                .collect(Collectors.toList());
     }
 
-    public void setBrokenRestrictions(List<Restrictions> brokenRestrictions) {
+    public void setBrokenRestrictions(List<ObjectId> brokenRestrictions) {
         this.brokenRestrictions = brokenRestrictions;
     }
 
@@ -89,6 +100,14 @@ public class Ingredients {
         this.creationDate = creationDate;
     }
 
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     @Override
     public String toString() {
         return "Ingredients{" +
@@ -97,6 +116,7 @@ public class Ingredients {
                 ", description='" + description + '\'' +
                 ", brokenRestrictions=" + brokenRestrictions +
                 ", creationDate=" + creationDate +
+                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

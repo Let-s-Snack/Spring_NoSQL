@@ -6,8 +6,11 @@ import jakarta.validation.constraints.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Document(collection = "Recipes")
 public class Recipes {
@@ -53,7 +56,7 @@ public class Recipes {
     @NotNull(message = "A lista de restrições não deve ser nula")
     @Schema(description = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
     @Field(name = "broken_restrictions")
-    private List<Restrictions> brokenRestrictions;
+    private List<ObjectId> brokenRestrictions;
 
     @NotNull(message = "A data de criação da receita não deve ser nula")
     @Schema(description = "Data de criação da receita", example = "10/08/2024")
@@ -69,9 +72,14 @@ public class Recipes {
     @NotNull(message = "Receita deve ser favorita ou não")
     private Boolean isFavorite;
 
+    @Schema(description = "Indica se o usuário foi excluido ou não", example = "true")
+    @Field(name = "is_deleted")
+    @NotNull(message = "Informativo de deleção não pode ser nulo")
+    private boolean isDeleted;
+
     public Recipes() { }
 
-    public Recipes(ObjectId id, String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<Restrictions> brokenRestrictions, Date creationDate, Double rating, Boolean isFavorite) {
+    public Recipes(ObjectId id, String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<ObjectId> brokenRestrictions, Date creationDate, Double rating, Boolean isFavorite, boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -83,6 +91,7 @@ public class Recipes {
         this.creationDate = creationDate;
         this.rating = rating;
         this.isFavorite = isFavorite;
+        this.isDeleted = isDeleted;
     }
 
     public String getId() {
@@ -140,11 +149,15 @@ public class Recipes {
         this.preparationMethods = preparationMethods;
     }
 
-    public @NotNull(message = "A lista de restricoes não deve ser nula") List<Restrictions> getBrokenRestrictions() {
-        return brokenRestrictions;
+    public @NotNull(message = "A lista de restricoes não deve ser nula") List<String> getBrokenRestrictions() {
+        return (brokenRestrictions == null)
+                ? List.of()
+                : brokenRestrictions.stream()
+                .map(ObjectId::toHexString)
+                .collect(Collectors.toList());
     }
 
-    public void setBrokenRestrictions(@NotNull(message = "A lista de restricoes não deve ser nula") List<Restrictions> brokenRestrictions) {
+    public void setBrokenRestrictions(@NotNull(message = "A lista de restricoes não deve ser nula") List<ObjectId> brokenRestrictions) {
         this.brokenRestrictions = brokenRestrictions;
     }
 
@@ -154,6 +167,14 @@ public class Recipes {
 
     public void setCreationDate(@NotNull(message = "A data de criação da receita não deve ser nula") Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public boolean getIsDeleted() {
+        return this.isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public Double getRating() {
@@ -175,7 +196,7 @@ public class Recipes {
     @Override
     public String toString() {
         return "Recipes{" +
-                "id=" + id.toHexString() +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", urlPhoto='" + urlPhoto + '\'' +
@@ -186,6 +207,7 @@ public class Recipes {
                 ", creationDate=" + creationDate +
                 ", rating=" + rating +
                 ", isFavorite=" + isFavorite +
+                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

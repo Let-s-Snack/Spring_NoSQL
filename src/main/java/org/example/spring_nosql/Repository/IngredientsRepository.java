@@ -2,17 +2,19 @@ package org.example.spring_nosql.Repository;
 
 import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Ingredients;
-import org.example.spring_nosql.Model.Restrictions;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 
 import java.util.List;
 
-public interface IngredientsRepository extends MongoRepository<Ingredients, String> {
+public interface IngredientsRepository extends MongoRepository<Ingredients, ObjectId> {
 
     //Query para buscar ingredientes por ID
-    Ingredients findIngredientsById(ObjectId id);
+    Ingredients findIngredientsByIdAndIsDeletedIsFalse(ObjectId id);
 
     //Query para buscar ingredientes por nome
-    List<Ingredients> findIngredientsByNameIgnoreCase(String name);
+    //findIngredientsByNameIgnoreCaseAndIsDeletedIsFalse
+    List<Ingredients> findIngredientsByNameContainingIgnoreCaseAndIsDeletedIsFalse(String name);
+
+    //Query para buscar todos os ingredientes que não foram excluidos
+    List<Ingredients> findAllByIsDeletedIsFalse();
 }

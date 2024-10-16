@@ -9,5 +9,13 @@ import java.util.Date;
 import java.util.List;
 
 public interface RestrictionsRepository extends MongoRepository<Restrictions, ObjectId> {
-    List<Restrictions> findRestrictionsByNameIgnoreCase(String name);
+
+    //Método para buscar todas as restrições que não sofreram soft delete
+    List<Restrictions> findAllByIsDeletedIsFalse();
+
+    //Método para buscar a restrição a partir do ID e ele só ira retornar os registros que não sofreram soft delete
+    Restrictions findRestrictionsByIdAndIsDeletedIsFalse(ObjectId id);
+
+    //Método para buscar a restrição a partir do nome e ele só ira retornar os registros que não sofreram soft delete
+    Restrictions findRestrictionsByNameIgnoreCaseAndIsDeletedIsFalse(String name);
 }

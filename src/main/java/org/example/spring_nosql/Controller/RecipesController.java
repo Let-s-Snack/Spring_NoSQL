@@ -22,10 +22,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 
 @RestController
@@ -40,7 +43,7 @@ public class RecipesController {
     }
 
     @GetMapping("/listAll")
-    @Operation(summary = "Buscar todas as receitas", description = "Faz a busca de todas as receitas cadastrados")
+    @Operation(summary = "Buscar todas as receitas", description = "Faz a busca de todas as receitas cadastradas")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receitas foram retornados com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -55,18 +58,7 @@ public class RecipesController {
     }
 
     @GetMapping("/listRecipesById")
-    @Operation(summary = "Busca receita pelo ID", description = "Faz a busca da receita a partir do seu ID",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Informações das receitas pelo ID, sendo necessário o ID do usuário para verificar se a receita é favorita ou não",
-                    required = true,
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(
-                                    type = "object",
-                                    example = "{\"recipesId\": \"66f2dfdfb310eeeabd300dc6\", \"personsId\": \"66f295e435644057236fec24\"}"
-                            )
-                    )
-            )
-    )
+    @Operation(summary = "Busca receita pelo ID", description = "Faz a busca da receita a partir do seu ID, sendo necessário o e-mail do usuário para verificarmos se a receita é favorita")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receita foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -79,19 +71,12 @@ public class RecipesController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> listRecipesById(@RequestBody Map<String, String> infos){
+    public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try{
-            if(infos.containsKey("recipesId") && infos.containsKey("personsId")){
-                String recipesId = infos.get("recipesId");
-                String personsId = infos.get("personsId");
-
-                return ResponseEntity.ok(recipesService.findRecipesById(new ObjectId(recipesId), new ObjectId(personsId)));
-            }else{
-                return ResponseEntity.ok("Valores foram inseridos incorretamente!");
-            }
+            return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), "Não foi possível encontrar a receita!"));
         }catch(DataIntegrityViolationException ttt){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!");
-        }catch (RuntimeException nnn){
+        }catch (IndexOutOfBoundsException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
         }catch (Exception npc){
             return ResponseEntity.ok("Erro interno com o servidor");
@@ -99,18 +84,7 @@ public class RecipesController {
     }
 
     @GetMapping("/listRecipesByName")
-    @Operation(summary = "Busca receita pelo nome", description = "Faz a busca da receita a partir seu nome, ignorando se está em maiúsculo, minúsculo ou se possui acento",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Retorna as receitas pelo nome, sendo necessário o ID do usuário para verificar suas restrições",
-                    required = true,
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(
-                                    type = "object",
-                                    example = "{\"recipesName\": \"pao\", \"personsId\": \"66f295e435644057236fec24\"}"
-                            )
-                    )
-            )
-    )
+    @Operation(summary = "Busca receita pelo nome", description = "Faz a busca da receita a partir seu nome, ignorando se está em maiúsculo, minúsculo ou se possui acento")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -123,33 +97,23 @@ public class RecipesController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> listRecipesByName(@RequestBody Map<String, String> infos){
+    public ResponseEntity<?> listRecipesByName(@Parameter(description = "Adicionar o nome da receita") @RequestParam String recipesName, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try {
-            if (infos.containsKey("recipesName") && infos.containsKey("personsId")) {
-                return ResponseEntity.ok(recipesService.findRecipesByName(infos.get("recipesName"), new ObjectId(infos.get("personsId"))));
-            } else {
-                return ResponseEntity.ok("Valores foram inseridos incorretamente!");
-            }
-        }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuárioo!");
+            List<Recipes> recipes = recipesService.findRecipesByName(recipesName, personsEmail);
+
+            return (!recipes.isEmpty())
+                    ? ResponseEntity.ok(recipes)
+                    :ResponseEntity.ok("Não foi possível encontrar a receita!");
+
+        } catch (RuntimeException nnn){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
         }catch (Exception npc){
             return ResponseEntity.ok("Erro interno com o servidor");
         }
     }
 
     @GetMapping("/listRecipesByRestriction")
-    @Operation(summary = "Busca receita pela restrição", description = "Faz a busca da receita a partir do id da restrição e do id do usuário",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Retorna as receitas a partir da sua restrição, sendo necessário o ID do usuário para verificar se a receita é favorita ou não ",
-                    required = true,
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(
-                                    type = "object",
-                                    example = "{\"restrictionsId\": \"670661af8cbdb8537c0229fb\", \"personsId\": \"66f295e435644057236fec24\"}"
-                            )
-                    )
-            )
-    )
+    @Operation(summary = "Busca receita pela restrição", description = "Faz a busca da receita a partir do id da restrição e do e-mail do usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -162,15 +126,15 @@ public class RecipesController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> listRecipesByRestriction(@RequestBody Map<String, String> infos) {
+    public ResponseEntity<?> listRecipesByRestriction(@Parameter(description = "Adicionar o ID da restrição") @RequestParam String restrictionsId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail) {
         try{
-            if(infos.containsKey("personsId") && infos.containsKey("restrictionsId")){
-                return ResponseEntity.ok(recipesService.findRecipesByRestriction(new ObjectId(infos.get("personsId")), new ObjectId(infos.get("restrictionsId"))));
-            }else{
-                return ResponseEntity.ok("Valores inseridos incorretamente!");
-            }
+            List<Recipes> recipes = recipesService.findRecipesByRestriction(new ObjectId(restrictionsId), personsEmail);
+
+            return (!recipes.isEmpty())
+                    ? ResponseEntity.ok(recipes)
+                    :ResponseEntity.ok("Não foi possível encontrar as receitas!");
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar as receita!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar as receita ou o usuário!");
         }catch (Exception npc){
             return ResponseEntity.ok("Erro interno com o servidor");
         }

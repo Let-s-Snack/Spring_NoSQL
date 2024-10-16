@@ -5,6 +5,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -38,12 +39,18 @@ public class Restrictions {
     @Schema(description= "Data de criação da restrição", example = "2024/08/12")
     private Date creationDate;
 
-    public Restrictions(ObjectId id, String name, String description, String urlPhoto, Date creationDate) {
+    @Schema(description = "Indica se o usuário foi excluido ou não", example = "true")
+    @Field(name = "is_deleted")
+    @NotNull(message = "Informativo de deleção não pode ser nulo")
+    private boolean isDeleted;
+
+    public Restrictions(ObjectId id, String name, String description, String urlPhoto, Date creationDate, boolean isDeleted) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.urlPhoto = urlPhoto;
         this.creationDate = creationDate;
+        this.isDeleted = isDeleted;
     }
 
     public Restrictions(String name, String description, String urlPhoto) {
@@ -94,14 +101,23 @@ public class Restrictions {
         this.creationDate = creationDate;
     }
 
+    public boolean getIsDeleted() {
+        return this.isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     @Override
     public String toString() {
         return "Restrictions{" +
-                "id=" + id.toHexString() +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", urlPhoto='" + urlPhoto + '\'' +
                 ", creationDate=" + creationDate +
+                ", isDeleted=" + isDeleted +
                 '}';
     }
 }

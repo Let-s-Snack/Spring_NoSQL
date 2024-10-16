@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Ingredients;
-import org.example.spring_nosql.Model.Restrictions;
 import org.example.spring_nosql.Service.IngredientsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +20,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.validation.Validator;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/ingredients")
@@ -51,7 +51,10 @@ public class IngredientsController {
     public ResponseEntity<?> listAllIngredients() {
         try {
             List<Ingredients> ingredients = ingredientsService.findAllIngredients();
-            return ResponseEntity.ok(ingredients);
+
+            return (!ingredients.isEmpty())
+                    ? ResponseEntity.ok(ingredients)
+                    :ResponseEntity.ok("Ingredientes não foram encontrados!");
         } catch (HttpClientErrorException.NotFound ntf) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
         } catch (HttpServerErrorException.InternalServerError ise) {
@@ -76,8 +79,7 @@ public class IngredientsController {
     })
     public ResponseEntity<?> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
         try {
-            Ingredients ingredient = ingredientsService.findIngredientsById(id);
-            return ResponseEntity.ok(ingredient);
+            return ResponseEntity.ok(Objects.requireNonNullElse(ingredientsService.findIngredientsById(id), "Ingrediente não foi encontrado"));
         } catch (HttpClientErrorException.NotFound ntf) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta.");
         } catch (HttpServerErrorException.InternalServerError ise) {
@@ -103,7 +105,10 @@ public class IngredientsController {
     public ResponseEntity<?> findIngredientsByName(@Parameter(description = "Inserir o nome do ingrediente") @PathVariable String name) {
         try {
             List<Ingredients> ingredients = ingredientsService.findIngredientsByName(name);
-            return ResponseEntity.ok(ingredients);
+
+            return (!ingredients.isEmpty())
+                    ? ResponseEntity.ok(ingredients)
+                    :ResponseEntity.ok("Ingredientes não foram encontrados!");
         } catch (HttpClientErrorException.NotFound ntf) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta.");
         } catch (RuntimeException re) {

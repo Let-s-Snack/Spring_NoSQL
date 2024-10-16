@@ -24,27 +24,27 @@ import java.util.List;
 @Service
 public class RecipesService {
     private final RecipesRepository recipesRepository;
-    private PersonsService personsService;
+    private final PersonsService personsService;
+    private final RestrictionsService restrictionsService;
     private final MongoTemplate mongoTemplate;
 
-    public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate, PersonsService personsService){
+    public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate, PersonsService personsService, RestrictionsService restrictionsService){
         this.recipesRepository = recipesRepository;
         this.mongoTemplate = mongoTemplate;
         this.personsService = personsService;
+        this.restrictionsService = restrictionsService;
     }
 
     //Método para retornar todas as receitas
     public List<Recipes> findAllRecipes(){
         return mongoTemplate.aggregate(Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("is_deleted").is(false)),
                 addFieldsOperation("ingredientId", "$ingredients.ingredient_id"),
                 addFieldsOperation("personsId", "$coments.persons_id"),
-                addFieldsOperation("restrictionsId", "$broken_restrictions"),
 
                 Aggregation.lookup("Ingredients", "ingredientId", "_id", "ingredientsInfo"),
 
                 Aggregation.lookup("Persons", "personsId", "_id", "personsInfo"),
-
-                Aggregation.lookup("Restrictions", "restrictionsId", "_id", "restrictionsInfo"),
 
                 addAverageRatingOperation(), // Adicionando média do campo rating
 
@@ -64,29 +64,27 @@ public class RecipesService {
                         .and("rating").as("rating")
 
                         .and("preparation_methods").as("preparation_methods")
-                        .and("restrictionsInfo").as("broken_restrictions")
+                        .and("broken_restrictions").as("broken_restrictions")
         ), Recipes.class, Recipes.class).getMappedResults();
     }
 
     //Método para retornar uma receita com base no id
-    public Recipes findRecipesById(ObjectId id, ObjectId personsId){
-        AggregationOperation addFieldsPersonsIdFavorite = Aggregation.addFields().addField("personsIdFavorite").withValue(personsId).build();
+    public Recipes findRecipesById(ObjectId id, String personsEmail){
+        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields().addField("personsEmailFavorite").withValue(personsEmail).build();
 
-        List<Recipes> results =  mongoTemplate.aggregate(Aggregation.newAggregation(
+        return mongoTemplate.aggregate(Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("is_deleted").is(false)),
                 Aggregation.match(Criteria.where("_id").is(id)),
-                addFieldsPersonsIdFavorite,
+                addFieldsPersonsFavorite,
 
                 addFieldsOperation("ingredientId", "$ingredients.ingredient_id"),
                 addFieldsOperation("personsId", "$coments.persons_id"),
-                addFieldsOperation("restrictionsId", "$broken_restrictions"),
 
                 Aggregation.lookup("Ingredients", "ingredientId", "_id", "ingredientsInfo"),
 
                 Aggregation.lookup("Persons", "personsId", "_id", "personsInfo"),
 
-                Aggregation.lookup("Restrictions", "restrictionsId", "_id", "restrictionsInfo"),
-
-                Aggregation.lookup("Persons", "personsIdFavorite", "_id", "personsFavorite"),
+                Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
 
                 addAverageRatingOperation(), // Adicionando média do campo rating
 
@@ -108,14 +106,12 @@ public class RecipesService {
                         .and("isFavorite").as("isFavorite")
                         .and("preparation_methods").as("preparation_methods")
                         .and("restrictionsInfo").as("broken_restrictions")
-        ), Recipes.class, Recipes.class).getMappedResults();
-
-        return results.get(0);
+        ), Recipes.class, Recipes.class).getMappedResults().get(0);
     }
 
     //Método para retornar uma receita com base no seu nome
-    public List<Recipes> findRecipesByName(String recipeNameFilter, ObjectId personsId){
-        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonById(personsId).getRestrictions();
+    public List<Recipes> findRecipesByName(String recipeNameFilter, String personsEmail){
+        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(personsEmail).getRestrictions();
         List<String> listObjectId = new ArrayList<>();
 
         for (PersonsRestrictions personsRestrictions : listPersonsRestrictions){
@@ -133,7 +129,12 @@ public class RecipesService {
                     .replaceAll("[^\\p{ASCII}]", "").toLowerCase();
 
             if(recipeName.contains(recipeNameFilter)){
-                List<Restrictions> listRestrictions = recipe.getBrokenRestrictions();
+                List<String> listRestrictionsObjectId = recipe.getBrokenRestrictions();
+                List<Restrictions> listRestrictions = new ArrayList<>();
+
+                for (String restrictionsId : listRestrictionsObjectId){
+                    listRestrictions.add(restrictionsService.findRestrictionsById(new ObjectId(restrictionsId)));
+                }
 
                 if(!listRestrictions.isEmpty()){
                     for (Restrictions restrictions : listRestrictions) {
@@ -152,18 +153,19 @@ public class RecipesService {
     }
 
     //Método para encontrar as receitas que se encaixam na restrição passada como parâmetro
-    public List<Recipes> findRecipesByRestriction(ObjectId personsId, ObjectId restrictionId){
-        AggregationOperation addFieldsPersonsIdFavorite = Aggregation.addFields().addField("personsIdFavorite").withValue(personsId).build();
+    public List<Recipes> findRecipesByRestriction(ObjectId restrictionId, String personsEmail){
+        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields().addField("personsEmailFavorite").withValue(personsEmail).build();
         AggregationOperation addFieldsRestrictionId = Aggregation.addFields().addField("restrictionId").withValue(restrictionId).build();
 
         return mongoTemplate.aggregate(Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("is_deleted").is(false)),
                 addFieldsOperation("restrictionsId", "$broken_restrictions"),
                 addAverageRatingOperation(),
-                addFieldsPersonsIdFavorite,
+                addFieldsPersonsFavorite,
                 addFieldsRestrictionId,
                 createRestrictionMatchOperation(restrictionId),
 
-                Aggregation.lookup("Persons", "personsIdFavorite", "_id", "personsFavorite"),
+                Aggregation.lookup("Persons", "personsEmailFavorite", "_id", "personsFavorite"),
 
                 addIsFavoriteFieldOperation(),
 

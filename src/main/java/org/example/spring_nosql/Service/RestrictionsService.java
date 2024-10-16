@@ -16,17 +16,16 @@ public class RestrictionsService{
 
     //Método para retornar todos os registros de restrições
     public List<Restrictions> findAllRestrictions(){
-        return restrictionsRepository.findAll();
+        return restrictionsRepository.findAllByIsDeletedIsFalse();
     }
 
     //Método para retornar um registro de restrição pelo id
     public Restrictions findRestrictionsById(ObjectId id){
-        return restrictionsRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Restricão não encontrada"));
+        return restrictionsRepository.findRestrictionsByIdAndIsDeletedIsFalse(id);
     }
 
     //Método para retornar um registro de restrição pelo nome
-    public List<Restrictions> findRestrictionsByName(String name){
-        return restrictionsRepository.findRestrictionsByNameIgnoreCase(name);
+    public Restrictions findRestrictionsByName(String name){
+        return restrictionsRepository.findRestrictionsByNameIgnoreCaseAndIsDeletedIsFalse(name);
     }
 }
