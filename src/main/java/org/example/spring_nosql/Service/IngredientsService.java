@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Service;
 
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Ingredients;
 import org.example.spring_nosql.Repository.IngredientsRepository;
@@ -17,16 +18,16 @@ public class IngredientsService {
 
     //Metodo para retornar todos os ingredientes
     public List<Ingredients> findAllIngredients(){
-        return ingredientsRepository.findAll();
+        return ingredientsRepository.findAllByIsDeletedIsFalse();
     }
 
     //Metodo para retornar um ingrediente com base no seu id
     public Ingredients findIngredientsById(ObjectId id){
-        return ingredientsRepository.findIngredientsById(id);
+        return ingredientsRepository.findIngredientsByIdAndIsDeletedIsFalse(id);
     }
 
     //Metodo para retornar um ingrediente com base no seu nome
     public List<Ingredients> findIngredientsByName(String name){
-        return ingredientsRepository.findIngredientsByNameIgnoreCase(name);
+        return ingredientsRepository.findIngredientsByNameContainingIgnoreCaseAndIsDeletedIsFalse(name);
     }
 }

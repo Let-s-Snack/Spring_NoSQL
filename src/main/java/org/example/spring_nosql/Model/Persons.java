@@ -349,7 +349,7 @@ public class Persons {
 
     public String toString() {
         return "Persons{" +
-                "id=" + id.toHexString() +
+                "id=" + id +
                 ", gender='" + gender + '\'' +
                 ", name='" + name + '\'' +
                 ", nickname='" + nickname + '\'' +

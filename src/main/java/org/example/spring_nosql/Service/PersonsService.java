@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
-import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import java.util.Date;
 import java.util.List;
@@ -28,29 +27,29 @@ public class PersonsService{
 
     //Fazendo um método para retornar todos os usuários
     public List<Persons> findAllPersons(){
-        return personRepository.findAll();
+        return personRepository.findPersonsByDeactivationDateIsNull();
     }
 
     //Fazendo um método para retornar todos os usuários com base no id
     public Persons findPersonById(ObjectId id){
-        return personRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("Usuário não encontrado"));
+        return personRepository.findPersonsByIdAndDeactivationDateIsNull(id);
     }
 
     //Fazendo um método para retornar o usuário caso ele esteja cadastrado ou não
-    public Persons findPersonRegisteredByEmail(String email) {
-        return personRepository.findPersonByEmailIgnoreCase(email);
+    public Persons findPersonByEmail(String email) {
+        return personRepository.findPersonByEmailIgnoreCaseAndDeactivationDateIsNull(email);
     }
 
     //Fazendo um método para retornar o usuário que contenha o username passado como parâmetro
     public Persons findPersonsByUsername(String username){
-        return personRepository.findPersonsByNicknameIgnoreCase(username);
+        return personRepository.findPersonsByNicknameIgnoreCaseAndDeactivationDateIsNull(username);
     }
 
     //Fazendo um método para retornar a wishlist do usuário com base no seu id
-    public List<Recipes> findWishlistPersonById(ObjectId id){
+    public List<Recipes> findWishlistPersonById(String email){
         return mongoTemplate.aggregate(newAggregation(
-                Aggregation.match(Criteria.where("_id").is(id)),
+                Aggregation.match(Criteria.where("deactivation_date").is(null)),
+                Aggregation.match(Criteria.where("email").is(email)),
                 addFieldsOperation("wishlistObjectId", "$wishlist.recipes_id"),
                 Aggregation.lookup("Recipes","wishlistObjectId","_id","recipes"),
                 unwind("recipes"),
@@ -67,9 +66,10 @@ public class PersonsService{
     }
 
     //Fazendo um método para retornar uma lista das receita da semana do usuário
-    public List<Recipes> findDirectionWeekById(ObjectId id){
+    public List<Recipes> findDirectionWeekById(String email){
         return mongoTemplate.aggregate(newAggregation(
-                Aggregation.match(Criteria.where("_id").is(id)),
+                Aggregation.match(Criteria.where("deactivation_date").is(null)),
+                Aggregation.match(Criteria.where("email").is(email)),
                 addFieldsOperation("directionsWeekObjectId", "$directions_week.recipes_id"),
                 Aggregation.lookup("Recipes","directionsWeekObjectId","_id","recipes"),
                 unwind("recipes"),
@@ -162,11 +162,6 @@ public class PersonsService{
     public Persons deletePerson(Persons excludePerson){
         excludePerson.setDeactivationDate(new Date());
         return mongoTemplate.save(excludePerson);
-    }
-
-    // Verifica se a senha corresponde ao hash
-    public static boolean checkPassword(String password, String hashed) {
-        return BCrypt.checkpw(password, hashed);
     }
 
     public AggregationOperation addFieldsOperation(String nomeNovoCampo, String nomeColuna){
