@@ -161,7 +161,7 @@ public class PersonsService{
     //Fazendo um método para fazer a exclusão do usuário
 
     public Persons deletePerson(Persons excludePerson){
-        excludePerson.setDeactivationDate(new Date());
+        excludePerson.setDeactivationDate(new Date().toString());
         return mongoTemplate.save(excludePerson);
     }
 

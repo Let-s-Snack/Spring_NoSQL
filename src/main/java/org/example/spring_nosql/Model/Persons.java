@@ -106,10 +106,10 @@ public class Persons {
     @Schema(description = "Data de criação do usuário", example = "2024/08/27")
     @Field(name = "creation_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
-    private Date creationDate;
+    private String creationDate;
     @Schema(description = "Data de exclusão do usuário", example = "2024/08/27")
     @Field(name = "deactivation_date")
-    private Date deactivationDate;
+    private String deactivationDate;
 
     public Persons(){
     }
@@ -332,19 +332,19 @@ public class Persons {
         this.shoppingList = shoppingList;
     }
 
-    public Date getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    public Date getDeactivationDate() {
+    public String getDeactivationDate() {
         return deactivationDate;
     }
 
-    public void setDeactivationDate(Date deactivationDate) {
+    public void setDeactivationDate(String deactivationDate) {
         this.deactivationDate = deactivationDate;
     }
 
