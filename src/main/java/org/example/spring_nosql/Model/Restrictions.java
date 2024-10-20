@@ -44,6 +44,11 @@ public class Restrictions {
     @NotNull(message = "Informativo de deleção não pode ser nulo")
     private boolean isDeleted;
 
+    public Restrictions(ObjectId id) {
+        this.id = id;
+        this.creationDate = new Date();
+    }
+
     public Restrictions(ObjectId id, String name, String description, String urlPhoto, Date creationDate, boolean isDeleted) {
         this.id = id;
         this.name = name;
