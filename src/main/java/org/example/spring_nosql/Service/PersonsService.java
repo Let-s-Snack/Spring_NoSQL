@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Service;
 
+import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Persons;
@@ -8,6 +9,8 @@ import org.example.spring_nosql.Repository.PersonRepository;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import java.util.Date;
@@ -48,7 +51,6 @@ public class PersonsService{
     //Fazendo um método para retornar a wishlist do usuário com base no seu id
     public List<Recipes> findWishlistPersonById(String email){
         return mongoTemplate.aggregate(newAggregation(
-                Aggregation.match(Criteria.where("deactivation_date").is(null)),
                 Aggregation.match(Criteria.where("email").is(email)),
                 addFieldsOperation("wishlistObjectId", "$wishlist.recipes_id"),
                 Aggregation.lookup("Recipes","wishlistObjectId","_id","recipes"),
@@ -152,9 +154,14 @@ public class PersonsService{
         return personRepository.save(person);
     }*/
 
-    //Fazendo um método para fazer a atualização do usuário{
+    //Fazendo um método para fazer a atualização do usuário
     public Persons updatePerson(Persons person){
         return mongoTemplate.save(person);
+    }
+
+    //Fazendo um método para fazer atualizar listas de objetos dentro de persons
+    public UpdateResult updateObjects(Query query, Update update){
+        return mongoTemplate.updateFirst(query, update, Persons.class);
     }
 
     //Fazendo um método para fazer a exclusão do usuário

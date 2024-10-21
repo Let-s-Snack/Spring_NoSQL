@@ -1,6 +1,7 @@
 package org.example.spring_nosql.Controller;
 
 import com.mongodb.client.result.UpdateResult;
+import org.example.spring_nosql.Model.*;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -12,8 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.bson.types.ObjectId;
-import org.example.spring_nosql.Model.Coments;
-import org.example.spring_nosql.Model.Recipes;
 import org.example.spring_nosql.Service.PersonsService;
 import org.example.spring_nosql.Service.RecipesService;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -25,10 +24,7 @@ import org.springframework.validation.Validator;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 
 @RestController
@@ -143,11 +139,11 @@ public class RecipesController {
     @PutMapping("/insertComent/{recipesId}")
     @Operation(summary = "Adicionar comentários", description = "Faz a inserção de um novo comentário a partir do id da receita",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Retorna as receitas a partir da sua restrição, sendo necessário o ID do usuário para verificar se a receita é favorita ou não ",
+                    description = "Faz a inserção do comentário",
                     required = true,
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(
-                                    //example = "{\"restrictionsId\": \"670661af8cbdb8537c0229fb\", \"personsId\": \"66f295e435644057236fec24\"}"
+                                    example = "{\"personsId\": \"6707fb6b93239565894241be\", \"rating\": \"4\", \"message\": \"Receita maravilhosa!\",}"
                             )
                     )
             )
@@ -173,7 +169,6 @@ public class RecipesController {
                 coment.setCreationDate(new Date());
                 coment.setComentId(new ObjectId());
 
-                //System.out.println(updatedRecipes);
                 Query query = new Query(Criteria.where("_id").is(new ObjectId(recipesId)));
                 Update update = new Update().push("coments", coment);
 
