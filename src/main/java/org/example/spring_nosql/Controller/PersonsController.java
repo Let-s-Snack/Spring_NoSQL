@@ -42,94 +42,93 @@ public class PersonsController {
         this.recipesService = recipesService;
     }
 
-    @GetMapping("/listAll")
-    @Operation(summary = "Buscar todos os usuários", description = "Faz a busca de todos os usuários cadastrados")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuários foram retornados com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+        @GetMapping("/listAll")
+        @Operation(summary = "Buscar todos os usuários", description = "Faz a busca de todos os usuários cadastrados")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Usuários foram retornados com sucesso!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
 
-    })
-    public ResponseEntity<?> listAllPersons() {
-        return ResponseEntity.ok(personsService.findAllPersons());
-    }
-
-    @GetMapping("/listPersonById/{id}")
-    @Operation(summary = "Busca usuário pelo ID", description = "Faz a busca do usuário a partir do seu ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário foi encontrado com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
-    public ResponseEntity<?> listPersonById(@Parameter(description = "Inserir ID do usuário") @PathVariable String id) {
-        try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonById(new ObjectId(id)), "Usuário não encontrado"));
-        } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        } catch (Exception npc) {
-            return ResponseEntity.ok("Erro interno com o servidor");
+        })
+        public ResponseEntity<?> listAllPersons() {
+            return ResponseEntity.ok(personsService.findAllPersons());
         }
-    }
 
-    @GetMapping("/listPersonByEmail/{email}")
-    @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Informações de login estão corretas!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+        @GetMapping("/listPersonById/{id}")
+        @Operation(summary = "Busca usuário pelo ID", description = "Faz a busca do usuário a partir do seu ID")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Usuário foi encontrado com sucesso!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
 
-    })
-    public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email) {
-        try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonByEmail(email), "Usuário não encontrado!"));
-        } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+        })
+        public ResponseEntity<?> listPersonById(@Parameter(description = "Inserir ID do usuário") @PathVariable String id) {
+            try {
+                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonById(new ObjectId(id)), "Usuário não encontrado"));
+            } catch (RuntimeException nnn) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            } catch (Exception npc) {
+                return ResponseEntity.ok("Erro interno com o servidor");
+            }
         }
-    }
 
-    @GetMapping("/listPersonByUsername/{username}")
-    @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do usuário a partir do seu username")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Username está correto!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+        @GetMapping("/listPersonByEmail/{email}")
+        @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Informações de login estão corretas!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
 
-    })
-    public ResponseEntity<?> listPersonByUsername(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String username) {
-        try {
-            Persons persons = personsService.findPersonsByUsername(username);
-            System.out.println(persons);
-            return ResponseEntity.ok(Objects.requireNonNullElse(persons, "Apelido do usuário não existe"));
-        } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+        })
+        public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email) {
+            try {
+                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonByEmail(email), "Usuário não encontrado!"));
+            } catch (RuntimeException nnn) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            } catch (Exception npc) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            }
         }
-    }
+
+        @GetMapping("/listPersonByUsername/{username}")
+        @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do usuário a partir do seu username")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Username está correto!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
+
+        })
+        public ResponseEntity<?> listPersonByUsername(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String username) {
+            try {
+                Persons persons = personsService.findPersonsByUsername(username);
+                return ResponseEntity.ok(Objects.requireNonNullElse(persons, "Apelido do usuário não existe"));
+            } catch (RuntimeException nnn) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            } catch (Exception npc) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            }
+        }
 
     //Buscando a restrição do usuário pelo seu id
     @GetMapping("/personRestriction/{email}")
@@ -176,7 +175,6 @@ public class PersonsController {
     public ResponseEntity<?> personWishListById(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas salvas na wish list") @PathVariable String email) {
         try {
             List<Recipes> wishlist = personsService.findWishlistPersonById(email);
-            System.out.println(wishlist);
             if (wishlist.isEmpty()) {
                 return ResponseEntity.ok("Wishlist está vazia");
             } else {
@@ -270,7 +268,6 @@ public class PersonsController {
             else {
                 //Setando a data e definindo o fuso horário para UTC
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 
                 //Criando um objeto persons e setando seu ID e o creationDate
                 Persons person = new Persons(personsMobile.getGender(), personsMobile.getName(), personsMobile.getNickname(), personsMobile.getEmail(), hashPassword(personsMobile.getPassword()), personsMobile.getIsPro(), personsMobile.getUrlPhoto(), formatter.parse(personsMobile.getBirthDate()), personsMobile.getCellphone(), personsMobile.getRegistrationCompleted(), personsMobile.getRestrictions(), new ArrayList<Wishlist>(), new ArrayList<DirectionsWeek>(), new ArrayList<ShoppingList>());
