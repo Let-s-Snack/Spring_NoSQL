@@ -1,13 +1,8 @@
 package org.example.spring_nosql.Model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.*;
-import org.bson.types.ObjectId;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import java.util.Date;
 import java.util.List;
 
 public class PersonsMobile {
@@ -47,7 +42,6 @@ public class PersonsMobile {
     @Schema(description = "Data de nascimento", example = "2007/09/25")
     @Field(name = "birth_date")
     @NotNull(message = "Usuário deve conter data de nascimento")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private String birthDate;
 
     @Schema(description = "Número de telefone do usuário", example = "11999999999")
