@@ -86,7 +86,7 @@ public class Persons {
             "        \"creationDate\": \"2024-09-23T16:08:35.144+00:00\"\n" +
             "      }")
     @Field(name = "directions_week")
-    private List<DirectionsWeek> directionsWeek;
+    private DirectionsWeek directionsWeek;
     @Schema(description = "Ingredientes salvos do usuários", example = "    {\n" +
             "      \"recipesId\": \"60d5f4832f8fb814b56fa226\",\n" +
             "      \"ingredients\": [\n" +
@@ -105,7 +105,6 @@ public class Persons {
 
     @Schema(description = "Data de criação do usuário", example = "2024/08/27")
     @Field(name = "creation_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss", timezone = "UTC")
     private Date creationDate;
     @Schema(description = "Data de exclusão do usuário", example = "2024/08/27")
     @Field(name = "deactivation_date")
@@ -114,7 +113,7 @@ public class Persons {
     public Persons(){
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, boolean registrationCompleted, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, boolean registrationCompleted, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, DirectionsWeek directionsWeek, List<ShoppingList> shoppingList) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -170,7 +169,7 @@ public class Persons {
         this.wishlist = wishlist;
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, DirectionsWeek directionsWeek) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -185,7 +184,7 @@ public class Persons {
         this.directionsWeek = directionsWeek;
     }
 
-    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, List<DirectionsWeek> directionsWeek, List<ShoppingList> shoppingList) {
+    public Persons(String gender, String name, String nickname, String email, String password, boolean isPro, String urlPhoto, Date birthDate, String cellphone, List<PersonsRestrictions> restrictions, List<Wishlist> wishlist, DirectionsWeek directionsWeek, List<ShoppingList> shoppingList) {
         this.gender = gender;
         this.name = name;
         this.nickname = nickname;
@@ -316,11 +315,11 @@ public class Persons {
         this.wishlist = wishlist;
     }
 
-    public List<DirectionsWeek> getDirectionsWeek() {
+    public DirectionsWeek getDirectionsWeek() {
         return directionsWeek;
     }
 
-    public void setDirectionsWeek(List<DirectionsWeek> directionsWeek) {
+    public void setDirectionsWeek(DirectionsWeek directionsWeek) {
         this.directionsWeek = directionsWeek;
     }
 

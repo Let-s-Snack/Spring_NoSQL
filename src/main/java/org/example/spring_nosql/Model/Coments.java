@@ -13,9 +13,9 @@ public class Coments {
     @Field(name = "coment_id")
     private ObjectId comentId;
 
-    @Schema(name = "Id do dono do comentário ", example = "1")
-    @Field(name = "persons_id")
-    private String personsId;
+    @Schema(name = "E-mail do dono do comentário", example = "1")
+    @Field(name = "email")
+    private String email;
 
     @NotNull(message = "Avaliação da receita não deve ser nula")
     @Schema(description = "Avaliação", example = "4")
@@ -38,17 +38,17 @@ public class Coments {
 
     public Coments() { }
 
-    public Coments(ObjectId comentId, String personsId, int rating, String message, Date creationDate, String personsName) {
+    public Coments(ObjectId comentId, String email, int rating, String message, Date creationDate, String personsName) {
         this.comentId = comentId;
-        this.personsId = personsId;
+        this.email = email;
         this.rating = rating;
         this.message = message;
         this.creationDate = creationDate;
         this.personsName = personsName;
     }
 
-    public Coments(String personsId, int rating, String message) {
-        this.personsId = personsId;
+    public Coments(String email, int rating, String message) {
+        this.email = email;
         this.rating = rating;
         this.message = message;
     }
@@ -61,12 +61,12 @@ public class Coments {
         this.comentId = comentId;
     }
 
-    public String getPersonsId() {
-        return personsId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setPersonsId(String personsId) {
-        this.personsId = personsId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public int getRating() {
@@ -105,7 +105,7 @@ public class Coments {
     public String toString() {
         return "Coments{" +
                 "comentId=" + comentId.toHexString() +
-                ", personsId='" + personsId + '\'' +
+                ", email='" + email + '\'' +
                 ", rating=" + rating +
                 ", message='" + message + '\'' +
                 ", creationDate=" + creationDate +

@@ -14,13 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
 @RequestMapping("/restrictions")
 public class RestrictionsController {
     private final RestrictionsService restrictionsService;
+    private Map<String, String> mapResults = new HashMap<>();
 
     public RestrictionsController(RestrictionsService restrictionsService) {
         this.restrictionsService = restrictionsService;
@@ -43,11 +46,11 @@ public class RestrictionsController {
         try{
             return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findAllRestrictions(), "Restricões não foram encontradas"));
         }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a restrição!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a restrição!"));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -66,13 +69,13 @@ public class RestrictionsController {
     })
     public ResponseEntity<?> listAllRestrictionsByName(@Valid @PathVariable String name){
         try{
-            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsByName(name), "Restricão não encontrada"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsByName(name), mapResults.put("message", "Restricão não encontrada")));
         }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a restrição!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a restrição!"));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -91,13 +94,13 @@ public class RestrictionsController {
     })
     public ResponseEntity<?> listAllRestrictionsById(@Valid @PathVariable String id){
         try{
-            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsById(new ObjectId(id)), "Restricão não encontrada"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsById(new ObjectId(id)), mapResults.put("message", "Restricão não encontrada")));
         }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a restrição!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a restrição!"));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 }

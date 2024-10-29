@@ -87,8 +87,8 @@ public class PersonsRestrictions {
         return creationDate;
     }
 
-    public void setCreationDate(Date creationDate) {
-        this.creationDate = creationDate;
+    public void setCreationDate() {
+        this.creationDate = new Date();
     }
 
     @Override
