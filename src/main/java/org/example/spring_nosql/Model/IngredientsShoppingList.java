@@ -32,12 +32,12 @@ public class IngredientsShoppingList {
 
     public IngredientsShoppingList(){}
 
-    public IngredientsShoppingList(String ingredientId, Boolean isChecked) {
+    public IngredientsShoppingList(String ingredientId, boolean isChecked) {
         this.ingredientId = ingredientId;
         this.isChecked = isChecked;
     }
 
-    public IngredientsShoppingList(String ingredientId, Boolean isChecked, String ingredientName, String meditionType, Double quantity) {
+    public IngredientsShoppingList(String ingredientId, boolean isChecked, String ingredientName, String meditionType, Double quantity) {
         this.ingredientId = ingredientId;
         this.isChecked = isChecked;
         this.ingredientName = ingredientName;
@@ -53,11 +53,11 @@ public class IngredientsShoppingList {
         this.ingredientId = ingredientId;
     }
 
-    public Boolean getIsChecked() {
+    public boolean getIsChecked() {
         return isChecked;
     }
 
-    public void setIsChecked(Boolean isChecked) {
+    public void setIsChecked(boolean isChecked) {
         this.isChecked = isChecked;
     }
 

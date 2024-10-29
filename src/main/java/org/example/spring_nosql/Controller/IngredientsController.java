@@ -19,7 +19,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.validation.Validator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -28,6 +30,7 @@ public class IngredientsController {
 
     private final Validator validator;
     private final IngredientsService ingredientsService;
+    private Map<String, String> mapResults = new HashMap<>();
 
     public IngredientsController(Validator validator, IngredientsService ingredientsService) {
         this.validator = validator;
@@ -54,13 +57,13 @@ public class IngredientsController {
 
             return (!ingredients.isEmpty())
                     ? ResponseEntity.ok(ingredients)
-                    :ResponseEntity.ok("Ingredientes não foram encontrados!");
+                    :ResponseEntity.ok(mapResults.put("message", "Ingredientes não foram encontrados!"));
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar os ingredientes.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar os ingredientes."));
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro no servidor."));
         }
     }
 
@@ -79,13 +82,13 @@ public class IngredientsController {
     })
     public ResponseEntity<?> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
         try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(ingredientsService.findIngredientsById(id), "Ingrediente não foi encontrado"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(ingredientsService.findIngredientsById(id), mapResults.put("message", "Ingrediente não foi encontrado!")));
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta!"));
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o ingrediente.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o ingrediente!"));
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro no servidor!"));
         }
     }
 
@@ -108,13 +111,13 @@ public class IngredientsController {
 
             return (!ingredients.isEmpty())
                     ? ResponseEntity.ok(ingredients)
-                    :ResponseEntity.ok("Ingredientes não foram encontrados!");
+                    :ResponseEntity.ok(mapResults.put("message", "Ingredientes não foram encontrados!"));
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta!"));
         } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar os ingredientes.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar os ingredientes!"));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro no servidor.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno no servidor!"));
         }
     }
 }

@@ -37,11 +37,11 @@ public class RecipesService {
         return mongoTemplate.aggregate(Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("is_deleted").is(false)),
                 addFieldsOperation("ingredientId", "$ingredients.ingredient_id"),
-                addFieldsOperation("personsId", "$coments.persons_id"),
+                addFieldsOperation("personsEmail", "$coments.email"),
 
                 Aggregation.lookup("Ingredients", "ingredientId", "_id", "ingredientsInfo"),
 
-                Aggregation.lookup("Persons", "personsId", "_id", "personsInfo"),
+                Aggregation.lookup("Persons", "personsEmail", "email", "personsInfo"),
 
                 addAverageRatingOperation(), // Adicionando média do campo rating
 
@@ -68,6 +68,7 @@ public class RecipesService {
     //Método para retornar uma receita com base no id
     public Recipes findRecipesById(ObjectId id, String personsEmail){
         AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields().addField("personsEmailFavorite").withValue(personsEmail).build();
+        AggregationOperation addFieldsPersonsEmail = Aggregation.addFields().addField("personsEmail").withValue("$coments.email").build();
 
         return mongoTemplate.aggregate(Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("is_deleted").is(false)),
@@ -75,11 +76,11 @@ public class RecipesService {
                 addFieldsPersonsFavorite,
 
                 addFieldsOperation("ingredientId", "$ingredients.ingredient_id"),
-                addFieldsOperation("personsId", "$coments.persons_id"),
+                addFieldsPersonsEmail,
 
                 Aggregation.lookup("Ingredients", "ingredientId", "_id", "ingredientsInfo"),
 
-                Aggregation.lookup("Persons", "personsId", "_id", "personsInfo"),
+                Aggregation.lookup("Persons", "personsEmail", "email", "personsInfo"),
 
                 Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
 
@@ -291,7 +292,7 @@ public class RecipesService {
                                         .append("coment_id", "$$coment.coment_id")
                                         .append("creation_date", "$$coment.creation_date")
                                         .append("message", "$$coment.message")
-                                        .append("persons_id", "$$coment.persons_id")
+                                        .append("email", "$$coment.email")
                                         .append("rating", "$$coment.rating")
                                         .append("persons_name",
                                                 new Document("$arrayElemAt",
@@ -299,8 +300,8 @@ public class RecipesService {
                                                                 new Document("$map", new Document("input",
                                                                         new Document("$filter", new Document("input", "$personsInfo")
                                                                                 .append("as", "personInfo")
-                                                                                .append("cond", new Document("$eq", Arrays.asList("$$personInfo._id",
-                                                                                        new Document("$toObjectId", "$$coment.persons_id"))))
+                                                                                .append("cond", new Document("$eq", Arrays.asList("$$personInfo.email",
+                                                                                        "$$coment.email")))
                                                                         ))
                                                                         .append("as", "filteredPerson")
                                                                         .append("in", "$$filteredPerson.name")

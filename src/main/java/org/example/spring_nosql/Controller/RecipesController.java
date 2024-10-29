@@ -32,6 +32,7 @@ import java.util.*;
 public class RecipesController {
     private final Validator validator;
     private final RecipesService recipesService;
+    private Map<String, String> mapResults = new HashMap<>();
 
     public RecipesController(Validator validator, RecipesService recipesService, PersonsService personsService) {
         this.validator = validator;
@@ -69,13 +70,13 @@ public class RecipesController {
     })
     public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try{
-            return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), "Não foi possível encontrar a receita!"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), mapResults.put("message", "Não foi possível encontrar a receita!")));
         }catch(DataIntegrityViolationException ttt){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapResults.put("message", "Valores inseridos incorretamente!"));
         }catch (IndexOutOfBoundsException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
         }catch (Exception npc){
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor" + npc.getMessage()));
         }
     }
 
@@ -99,12 +100,12 @@ public class RecipesController {
 
             return (!recipes.isEmpty())
                     ? ResponseEntity.ok(recipes)
-                    :ResponseEntity.ok("Não foi possível encontrar a receita!");
+                    :ResponseEntity.ok(mapResults.put("message", "Não foi possível encontrar a receita!"));
 
         } catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
         }catch (Exception npc){
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -128,11 +129,11 @@ public class RecipesController {
 
             return (!recipes.isEmpty())
                     ? ResponseEntity.ok(recipes)
-                    :ResponseEntity.ok("Não foi possível encontrar as receitas!");
+                    :ResponseEntity.ok(mapResults.put("message", "Não foi possível encontrar as receitas!"));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar as receita ou o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar as receita ou o usuário!"));
         }catch (Exception npc){
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -175,15 +176,15 @@ public class RecipesController {
                 UpdateResult results = recipesService.insertComent(query, update);
 
                 if (results.getModifiedCount() >= 1) {
-                    return ResponseEntity.ok("Comentário foi inserido com sucesso");
+                    return ResponseEntity.ok(mapResults.put("message", "Comentário foi inserido com sucesso!"));
                 } else {
-                    return ResponseEntity.ok("Não foi possivel inserir o comentário");
+                    return ResponseEntity.ok(mapResults.put("message", "Não foi possível fazer a inserção do comentário!"));
                 }
             }
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
         }catch (Exception npc){
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 

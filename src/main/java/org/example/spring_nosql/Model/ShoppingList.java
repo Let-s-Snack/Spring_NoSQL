@@ -44,14 +44,14 @@ public class ShoppingList {
     @Field(name = "creation_date")
     private Date creationDate;
 
-    public ShoppingList() {this.creationDate = new Date();}
+    public ShoppingList() {}
 
     public ShoppingList(String recipesId, List<IngredientsShoppingList> ingredients) {
         this.recipesId = recipesId;
         this.ingredients = ingredients;
     }
 
-    public ShoppingList(String recipesId, String recipeName, List<IngredientsShoppingList> ingredients, Date creationDate) {
+    public ShoppingList(List<IngredientsShoppingList> ingredients, String recipesId, String recipeName, Date creationDate) {
         this.recipesId = recipesId;
         this.recipeName = recipeName;
         this.ingredients = ingredients;
@@ -80,6 +80,14 @@ public class ShoppingList {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
     }
 
     @Override

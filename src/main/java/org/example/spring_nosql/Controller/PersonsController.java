@@ -35,6 +35,7 @@ public class PersonsController {
     private final Validator validator;
     private final PersonsService personsService;
     private final RecipesService recipesService;
+    private Map<String, String> mapResults = new HashMap<>();
 
     public PersonsController(Validator validator, PersonsService personsService, RecipesService recipesService) {
         this.validator = validator;
@@ -42,68 +43,68 @@ public class PersonsController {
         this.recipesService = recipesService;
     }
 
-    @GetMapping("/listAll")
-    @Operation(summary = "Buscar todos os usuários", description = "Faz a busca de todos os usuários cadastrados")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuários foram retornados com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+        @GetMapping("/listAll")
+        @Operation(summary = "Buscar todos os usuários", description = "Faz a busca de todos os usuários cadastrados")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Usuários foram retornados com sucesso!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
 
-    })
-    public ResponseEntity<?> listAllPersons() {
-        return ResponseEntity.ok(personsService.findAllPersons());
-    }
-
-    @GetMapping("/listPersonById/{id}")
-    @Operation(summary = "Busca usuário pelo ID", description = "Faz a busca do usuário a partir do seu ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuário foi encontrado com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
-    public ResponseEntity<?> listPersonById(@Parameter(description = "Inserir ID do usuário") @PathVariable String id) {
-        try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonById(new ObjectId(id)), "Usuário não encontrado"));
-        } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        } catch (Exception npc) {
-            return ResponseEntity.ok("Erro interno com o servidor");
+        })
+        public ResponseEntity<?> listAllPersons() {
+            return ResponseEntity.ok(personsService.findAllPersons());
         }
-    }
 
-    @GetMapping("/listPersonByEmail/{email}")
-    @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Informações de login estão corretas!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+        @GetMapping("/listPersonById/{id}")
+        @Operation(summary = "Busca usuário pelo ID", description = "Faz a busca do usuário a partir do seu ID")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Usuário foi encontrado com sucesso!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
 
-    })
-    public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email) {
-        try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonByEmail(email), "Usuário não encontrado!"));
-        } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
-        } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+        })
+        public ResponseEntity<?> listPersonById(@Parameter(description = "Inserir ID do usuário") @PathVariable String id) {
+            try {
+                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonById(new ObjectId(id)), mapResults.put("message", "Usuário não encontrado")));
+            } catch (RuntimeException nnn) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            } catch (Exception npc) {
+                return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
+            }
         }
-    }
+
+        @GetMapping("/listPersonByEmail/{email}")
+        @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do cadastro do usuário a partir do e-mail")
+        @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Informações de login estão corretas!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(implementation = Persons.class))),
+                @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                        content = @Content(mediaType = "application/json",
+                                schema = @Schema(example = "Erro interno com o servidor!")))
+
+        })
+        public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email) {
+            try {
+                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonByEmail(email), mapResults.put("message", "Usuário não encontrado!")));
+            } catch (RuntimeException nnn) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            } catch (Exception npc) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            }
+        }
 
     @GetMapping("/listPersonByUsername/{username}")
     @Operation(summary = "Buscar usuário cadastrado", description = "Faz a busca do usuário a partir do seu username")
@@ -122,12 +123,11 @@ public class PersonsController {
     public ResponseEntity<?> listPersonByUsername(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String username) {
         try {
             Persons persons = personsService.findPersonsByUsername(username);
-            System.out.println(persons);
-            return ResponseEntity.ok(Objects.requireNonNullElse(persons, "Apelido do usuário não existe"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(persons, mapResults.put("message", "Apelido do usuário não existe")));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -151,11 +151,11 @@ public class PersonsController {
             Persons person = personsService.findPersonByEmail(email);
             return ResponseEntity.ok(person.getRestrictions());
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -173,21 +173,52 @@ public class PersonsController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> personWishListById(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas salvas na wish list") @PathVariable String email) {
+    public ResponseEntity<?> personWishListByEmail(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas salvas na wish list") @PathVariable String email) {
         try {
-            List<Recipes> wishlist = personsService.findWishlistPersonById(email);
-            System.out.println(wishlist);
+            List<Recipes> wishlist = personsService.findWishlistPersonByEmail(email);
             if (wishlist.isEmpty()) {
-                return ResponseEntity.ok("Wishlist está vazia");
+                return ResponseEntity.ok(mapResults.put("message", "Wishlist está vazia"));
             } else {
                 return ResponseEntity.ok(wishlist);
             }
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+        }
+    }
+
+    @GetMapping("/personsShoppingList/{email}")
+    @Operation(summary = "Buscar Shopping List", description = "Faz a busca do shopping list a partir do e-mail do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Wishlist do Usuário foi encontrada com sucesso!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Wishlist.class))),
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno com o servidor!")))
+
+    })
+    public ResponseEntity<?> personsShoppingList(@Parameter(description = "Inserir o e-mail do usuário para encontrar seu shopping list") @PathVariable String email) {
+        try {
+            List<ShoppingList> shoppinglist = personsService.findShoppingListByEmail(email);
+
+            if (shoppinglist.isEmpty()) {
+                return ResponseEntity.ok(mapResults.put("message", "Shoppinglist está vazia"));
+            } else {
+                return ResponseEntity.ok(shoppinglist);
+            }
+        } catch (HttpClientErrorException.NotFound ntf) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+        } catch (RuntimeException nnn) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!" + nnn.getMessage()));
+        } catch (Exception npc) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -205,48 +236,22 @@ public class PersonsController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> personDirectionWeekId(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas da semana") @PathVariable String email) {
+    public ResponseEntity<?> personDirectionWeekEmail(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas da semana") @PathVariable String email) {
         try {
-            List<Recipes> directionWeek = personsService.findDirectionWeekById(email);
+            List<Recipes> directionWeek = personsService.findDirectionWeekByEmail(email);
             if (directionWeek.isEmpty()) {
-                return ResponseEntity.ok("Semana da receita está vazia");
+                return ResponseEntity.ok(mapResults.put("message", "Semana da receita está vazia"));
             } else {
                 return ResponseEntity.ok(directionWeek);
             }
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
-
-    /*@GetMapping("/personShoppingList/{id}")
-    @Operation(summary = "Buscar ingredientes Salvos", description = "Faz a busca dos ingredientes que foram salvos")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200" , description = "Ingredientes foram encontrados com sucesso!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ShoppingList.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
-    public ResponseEntity<?> personShoppingList(@Parameter(description = "Inserir ID do usuário para encontrar os ingredientes que estão salvos") @PathVariable String id){
-        try{
-            return ResponseEntity.ok(personsService.findShoppingListById(new ObjectId(id)));
-        }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("URL incorreta");
-        }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!" + nnn.getMessage());
-        }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
-        }
-    }*/
 
     @PostMapping("/insertPerson")
     @Operation(summary = "Inserir Usuário", description = "Faz a inserção do gênero passado no body")
@@ -270,10 +275,9 @@ public class PersonsController {
             else {
                 //Setando a data e definindo o fuso horário para UTC
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
 
                 //Criando um objeto persons e setando seu ID e o creationDate
-                Persons person = new Persons(personsMobile.getGender(), personsMobile.getName(), personsMobile.getNickname(), personsMobile.getEmail(), hashPassword(personsMobile.getPassword()), personsMobile.getIsPro(), personsMobile.getUrlPhoto(), formatter.parse(personsMobile.getBirthDate()), personsMobile.getCellphone(), personsMobile.getRegistrationCompleted(), personsMobile.getRestrictions(), new ArrayList<Wishlist>(), new ArrayList<DirectionsWeek>(), new ArrayList<ShoppingList>());
+                Persons person = new Persons(personsMobile.getGender(), personsMobile.getName(), personsMobile.getNickname(), personsMobile.getEmail(), hashPassword(personsMobile.getPassword()), personsMobile.getIsPro(), personsMobile.getUrlPhoto(), formatter.parse(personsMobile.getBirthDate()), personsMobile.getCellphone(), personsMobile.getRegistrationCompleted(), personsMobile.getRestrictions(), new ArrayList<Wishlist>(), new DirectionsWeek(), new ArrayList<ShoppingList>());
                 person.setId(new ObjectId());
                 person.setCreationDate(new Date());
 
@@ -282,20 +286,20 @@ public class PersonsController {
 
                 //Verificando se caso o usuário tenha sido inserido ele retornara que o usuário foi inserido, caso não ele retorna falso
                 if (personInsert != null) {
-                    return ResponseEntity.status(HttpStatus.OK).body("Usuário foi inserido com sucesso");
+                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Usuário foi inserido com sucesso"));
                 } else {
-                    return ResponseEntity.status(HttpStatus.OK).body("Não foi possivel inserir o usuário");
+                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possivel inserir o usuário"));
                 }
             }
         } catch (DataIntegrityViolationException ttt) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapResults.put("message", "Valores inseridos incorretamente!"));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor!" + npc.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor!" + npc.getMessage()));
         }
     }
 
-    @PutMapping("/updatePerson/{id}")
-    @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do id passado como parâmetro")
+    @PutMapping("/updatePerson/{email}")
+    @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do email passado como parâmetro")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário foi atualizado com sucesso!",
                     content = @Content(mediaType = "application/json",
@@ -311,92 +315,110 @@ public class PersonsController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> updatePersonById(@Parameter(description = "Inserir o ID do usuário") @PathVariable String id, @RequestBody Map<String, Object> updatedValues) {
+    public ResponseEntity<?> updatePersonByEmail(@Parameter(description = "Inserir o e-mail do usuário") @PathVariable String email, @RequestBody Map<String, Object> updatedValues) {
         try {
-            Persons updatedPersons = personsService.findPersonById(new ObjectId(id));
+            Persons updatedPersons = personsService.findPersonByEmail(email);
 
             if (updatedPersons != null) {
+                Query query = new Query(Criteria.where("email").is(email));
+                Update update = new Update();
+
                 if (updatedValues.containsKey("_id")) {
-                    return ResponseEntity.ok("ID do usuário não pode ser atualizado");
+                    return ResponseEntity.ok(mapResults.put("message", "ID do usuário não pode ser atualizado"));
                 }
 
                 if (updatedValues.containsKey("gender")) {
                     final String gender = String.valueOf(updatedValues.get("gender"));
-                    updatedPersons.setGender(gender);
+                    update.set("gender", gender);
                 }
 
                 if (updatedValues.containsKey("name")) {
                     final String name = String.valueOf(updatedValues.get("name"));
-                    updatedPersons.setName(name);
+                    update.set("name", name);
                 }
 
                 if (updatedValues.containsKey("nickname")) {
                     final String nickname = String.valueOf(updatedValues.get("nickname"));
-                    updatedPersons.setNickname(nickname);
+                    update.set("nickname", nickname);
                 }
 
                 if (updatedValues.containsKey("email")) {
-                    final String email = String.valueOf(updatedValues.get("email"));
-                    updatedPersons.setEmail(email);
+                    final String newEmail = String.valueOf(updatedValues.get("email"));
+                    update.set("email", newEmail);
                 }
 
                 if (updatedValues.containsKey("password")) {
                     final String password = String.valueOf(updatedValues.get("password"));
-                    updatedPersons.setPassword(hashPassword(password));
+                    update.set("password", hashPassword(password));
                 }
 
                 if (updatedValues.containsKey("isPro")) {
                     final boolean isPro = Boolean.parseBoolean(String.valueOf(updatedValues.get("isPro")));
-                    updatedPersons.setIsPro(isPro);
+                    update.set("is_pro", isPro);
                 }
 
                 if (updatedValues.containsKey("urlPhoto")) {
                     final String urlPhoto = String.valueOf(updatedValues.get("urlPhoto"));
-                    updatedPersons.setUrlPhoto(urlPhoto);
+                    update.set("url_photo", urlPhoto);
                 }
 
                 if (updatedValues.containsKey("birthDate")) {
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                     final String dateString = String.valueOf(updatedValues.get("birthDate"));
-                    updatedPersons.setBirthDate(dateFormat.parse(dateString));
+
+                    update.set("birth_date", dateFormat.parse(dateString));
                 }
 
                 if (updatedValues.containsKey("cellphone")) {
                     final String cellphone = String.valueOf(updatedValues.get("cellphone"));
-                    updatedPersons.setCellphone(cellphone);
+                    update.set("cellphone", cellphone);
                 }
 
                 if (updatedValues.containsKey("registrationCompleted")) {
                     final boolean registrationCompleted = Boolean.parseBoolean(String.valueOf(updatedValues.get("registrationCompleted")));
-                    updatedPersons.setRegistrationCompleted(registrationCompleted);
+                    update.set("registration_completed", registrationCompleted);
                 }
 
                 if (updatedValues.containsKey("restrictions")) {
-                    final List<PersonsRestrictions> restrictions = (List<PersonsRestrictions>) updatedValues.get("restrictions");
-                    updatedPersons.setRestrictions(restrictions);
+                    // Primeiro, obtenha a lista como uma lista de LinkedHashMap
+                    List<LinkedHashMap<String, Object>> restrictionsData = (List<LinkedHashMap<String, Object>>) updatedValues.get("restrictions");
+
+                    // Agora converta para uma lista de PersonsRestrictions
+                    List<PersonsRestrictions> restrictions = new ArrayList<>();
+                    for (LinkedHashMap<String, Object> restrictionData : restrictionsData) {
+                        PersonsRestrictions restriction = new PersonsRestrictions();
+                        restriction.setRestrictionId((String) restrictionData.get("restrictionId"));
+                        // Preencha outros campos conforme necessário
+                        restrictions.add(restriction);
+                    }
+
+                    List<PersonsRestrictions> personsRestrictions = updatedPersons.getRestrictions();
+
+                    for (PersonsRestrictions objectRestrictions : restrictions) {
+                        for (PersonsRestrictions objectAddRestrictions : personsRestrictions) {
+                            if (objectRestrictions.getRestrictionId().equalsIgnoreCase(objectAddRestrictions.getRestrictionId())) {
+                                //Fazendo a query para remover a restrição
+                                update.pull("restrictions", objectRestrictions);
+                            }else{
+                                update.push("restrictions", objectRestrictions);
+                            }
+                        }
+                    }
                 }
 
-                if (updatedValues.containsKey("wishlist")) {
-                    final List<Wishlist> wishlist = (List<Wishlist>) updatedValues.get("wishlist");
-                    updatedPersons.setWishlist(wishlist);
-                }
+                if (updatedValues.containsKey("directionsWeek")) {
+                    LinkedHashMap<String, Object> directionData = (LinkedHashMap<String, Object>) updatedValues.get("directionsWeek");
+                    DirectionsWeek directionsWeek = new DirectionsWeek((String) directionData.get("recipesId"));
 
-                if (updatedValues.containsKey("directionsWeeks")) {
-                    final List<DirectionsWeek> directionsWeeks = (List<DirectionsWeek>) updatedValues.get("directionsWeeks");
-                    updatedPersons.setDirectionsWeek(directionsWeeks);
-                }
-
-                if (updatedValues.containsKey("shoppingList")) {
-                    final List<ShoppingList> shoppingList = (List<ShoppingList>) updatedValues.get("shoppingList");
-                    updatedPersons.setShoppingList(shoppingList);
+                    update.set("directions_week", directionsWeek);
                 }
 
                 if (updatedValues.containsKey("creationDate")) {
-                    return ResponseEntity.ok("Não é possivel atualizar a data de criação do usuário!");
+                    return ResponseEntity.ok(mapResults.put("message", "Não é possivel atualizar a data de criação do usuário!"));
                 }
 
                 if (updatedValues.containsKey("deactivationDate")) {
-                    return ResponseEntity.ok("Não é possivel atualizar a data de deleção do usuário, caso queira você deverá excluir o mesmo!");
+                    return ResponseEntity.ok(mapResults.put("message", "Não é possivel atualizar a data de deleção do usuário, caso queira você deverá excluir o mesmo!"));
                 }
 
                 //Validando os dados
@@ -408,19 +430,22 @@ public class PersonsController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors(result));
                 }
 
-                personsService.updatePerson(updatedPersons);
-                return ResponseEntity.status(HttpStatus.OK).body("Atualização feita com sucesso!");
+                UpdateResult updateResult = personsService.updatePerson(query, update);
 
+                if(updateResult.getModifiedCount() >= 1){
+                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização feita com sucesso!"));
+                }else{
+                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possivel fazer a atualização do usuário!"));
+                }
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body("Não foi possivel encontrar o usuário!");
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possivel encontrar o usuário!"));
             }
-
         } catch (DataIntegrityViolationException ttt) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Valores inseridos incorretamente!");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapResults.put("message", "Valores inseridos incorretamente!"));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!" + nnn.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!" + nnn.getMessage()));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor!" + npc.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor!" + npc.getMessage()));
         }
     }
 
@@ -450,7 +475,7 @@ public class PersonsController {
             //Criando um for na qual caso a receita já esteja dentro do ShoppingList ele não ira salvar
             for (ShoppingList objectShoppingList : persons.getShoppingList()) {
                 if (objectShoppingList.getRecipesId().equalsIgnoreCase(recipesId)) {
-                    return ResponseEntity.ok("Receita já está salva!");
+                    return ResponseEntity.ok(mapResults.put("message", "Receita já está salva!"));
                 }
             }
 
@@ -493,17 +518,90 @@ public class PersonsController {
             Update update = new Update().push("shopping_list", shoppingList);
 
             //Pegando os resultados do update
-            UpdateResult results = personsService.updateObjects(query, update);
+            UpdateResult results = personsService.updatePerson(query, update);
 
             if(results.getModifiedCount() >= 1 ){
-                return ResponseEntity.status(HttpStatus.OK).body("Atualização foi feita com sucesso!");
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização foi feita com sucesso!"));
             }else{
-                return ResponseEntity.status(HttpStatus.OK).body("Não foi possível fazer a atualização!");
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível fazer a atualização!"));
             }
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
         } catch (Exception npc) {
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
+        }
+    }
+
+    @PutMapping("/checkIngredients/{personsEmail}")
+    @Operation(summary = "Salvar ingredientes da shopping list", description = "Marca um check no shoppinglist do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comentários foram checkados com sucesso!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ShoppingList.class))),
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno com o servidor!")))
+
+    })
+    public ResponseEntity<?> checkIngredients(@Parameter(description = "Inserir e-mail do usuário") @PathVariable String personsEmail, @RequestBody ShoppingList listShoppingList) {
+        try {
+            //Criando um persons e pegando o seu shoppingList
+            Persons persons = personsService.findPersonByEmail(personsEmail);
+            List<ShoppingList> personsShoppingList = persons.getShoppingList();
+            int contIngredientsChecked = 0;
+
+            //Percorrendo o shoppingList do usuário e verificando se a receita existe
+            for(ShoppingList objectPersonsShoppingList : personsShoppingList){
+
+            //Verificando se o ingredient enviado é igual ao já existente
+                if(objectPersonsShoppingList.getRecipesId().equalsIgnoreCase(listShoppingList.getRecipesId())){
+                    //Guardando os ingredientes e percorrendo eles
+                    List<IngredientsShoppingList> personsIngredientsShoppingList = objectPersonsShoppingList.getIngredients();
+                    List<IngredientsShoppingList> ingredientsShoppingList = listShoppingList.getIngredients();
+
+                    for (IngredientsShoppingList personsIngredients : personsIngredientsShoppingList){
+                        for (IngredientsShoppingList ingredients : ingredientsShoppingList){
+
+                            //Verificando se o id existe, e caso exista eu dou um check nele
+                            if(personsIngredients.getIngredientId().equalsIgnoreCase(ingredients.getIngredientId())){
+                                personsIngredients.setIsChecked(ingredients.getIsChecked());
+                            }
+                        }
+                    }
+
+                    objectPersonsShoppingList.setIngredients(personsIngredientsShoppingList);
+                }
+
+                //Verificando se todos os ingredientes estão checkados
+                for(IngredientsShoppingList ingredients : objectPersonsShoppingList.getIngredients()){
+                    if(ingredients.getIsChecked()){
+                        contIngredientsChecked ++;
+                    }
+                }
+
+                //Caso esteja eu removo o personShoppingList
+                if(contIngredientsChecked == objectPersonsShoppingList.getIngredients().size()){
+                    personsShoppingList.remove(objectPersonsShoppingList);
+                }
+            }
+
+            Query query = new Query(Criteria.where("email").is(personsEmail));
+            Update update = new Update().set("shopping_list", personsShoppingList);
+
+            UpdateResult results = personsService.updatePerson(query, update);
+
+            if(results.getModifiedCount() >= 1 ){
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização foi feita com sucesso!"));
+            }else {
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível fazer a atualização!"));
+            }
+        } catch (RuntimeException nnn) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+        } catch (Exception npc) {
+            return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
@@ -537,12 +635,12 @@ public class PersonsController {
                     Update update = new Update().pull("wishlist", objectWishlist);
 
                     //Pegando os resultados do update
-                    UpdateResult results = personsService.updateObjects(query, update);
+                    UpdateResult results = personsService.updatePerson(query, update);
 
                     if(results.getModifiedCount() >= 1 ){
-                        return ResponseEntity.status(HttpStatus.OK).body("Receita foi descutida com sucesso!");
+                        return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Receita foi descutida com sucesso!"));
                     }else{
-                        return ResponseEntity.status(HttpStatus.OK).body("Não foi possível descurtir a receita!");
+                        return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível descurtir a receita!"));
                     }
                 }
             }
@@ -555,21 +653,21 @@ public class PersonsController {
             Update update = new Update().push("wishlist", wishlist);
 
             //Pegando os resultados do update
-            UpdateResult results = personsService.updateObjects(query, update);
+            UpdateResult results = personsService.updatePerson(query, update);
 
             if(results.getModifiedCount() >= 1 ){
-                return ResponseEntity.status(HttpStatus.OK).body("Atualização foi feita com sucesso!");
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização foi feita com sucesso!"));
             }else{
-                return ResponseEntity.status(HttpStatus.OK).body("Não foi possível fazer a atualização!");
+                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível fazer a atualização!"));
             }
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar a receita ou o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
         } catch (Exception npc) {
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
         }
     }
 
-    @DeleteMapping("/deleteUserById/{id}")
+    @DeleteMapping("/deleteUserById/{email}")
     @Transactional
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Usuário foi excluido com sucesso!",
@@ -587,9 +685,9 @@ public class PersonsController {
 
     })
     @Operation(summary = "Excluindo o usuário", description = "Excluindo o usuário encontrado a partir do id passado como parâmetro")
-    public ResponseEntity<?> deleteUserById(@Parameter(description = "Inserir o ID do usuário a ser excluido") @PathVariable String id){
+    public ResponseEntity<?> deleteUserByEmail(@Parameter(description = "Inserir o ID do usuário a ser excluido") @PathVariable String email){
         try{
-            Persons deletePerson = personsService.findPersonById(new ObjectId(id));
+            Persons deletePerson = personsService.findPersonByEmail(email);
 
             //Validando os dados
             DataBinder dataBinder = new DataBinder(deletePerson);
@@ -601,15 +699,15 @@ public class PersonsController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors(result));
             }else {
                 if(personsService.deletePerson(deletePerson) != null){
-                    return ResponseEntity.ok("Usuário foi excluido com sucesso!");
+                    return ResponseEntity.ok(mapResults.put("message", "Usuário foi excluido com sucesso!"));
                 }else{
-                    return ResponseEntity.ok("Não foi possivel excluir o usuário!");
+                    return ResponseEntity.ok(mapResults.put("message", "Não foi possivel excluir o usuário!"));
                 }
             }
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!" + nnn.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor!"));
         }
     }
 
