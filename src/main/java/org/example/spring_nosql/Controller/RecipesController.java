@@ -2,6 +2,7 @@ package org.example.spring_nosql.Controller;
 
 import com.google.gson.Gson;
 import com.mongodb.client.result.UpdateResult;
+import jakarta.validation.Valid;
 import org.example.spring_nosql.Model.*;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -160,7 +161,7 @@ public class RecipesController {
                             schema = @Schema(example = "Erro interno com o servidor!")))
 
     })
-    public ResponseEntity<?> insertComent(@Parameter(description = "Inserir ID da receita") @PathVariable String recipesId, @RequestBody Coments coment, BindingResult result){
+    public ResponseEntity<?> insertComent(@Parameter(description = "Inserir ID da receita") @PathVariable String recipesId, @Valid @RequestBody Coments coment, BindingResult result){
         try {
             if (result.hasErrors()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors(result));

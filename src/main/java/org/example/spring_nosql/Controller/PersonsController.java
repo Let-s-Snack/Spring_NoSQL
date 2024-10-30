@@ -56,6 +56,8 @@ public class PersonsController {
 
         })
         public ResponseEntity<?> listAllPersons() {
+        String hash = hashPassword("12345");
+            System.out.println(hash);
             return ResponseEntity.ok(personsService.findAllPersons());
         }
 
