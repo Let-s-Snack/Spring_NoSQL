@@ -36,10 +36,12 @@ public class RecipesService {
 
     //Método para retornar todas as receitas
     public List<Recipes> findAllRecipes(){
+        AggregationOperation addEmailField = Aggregation.addFields().addField("personsEmail").withValue("$coments.email").build();
+
         return mongoTemplate.aggregate(Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("is_deleted").is(false)),
                 addFieldsOperation("ingredientId", "$ingredients.ingredient_id"),
-                addFieldsOperation("personsEmail", "$coments.email"),
+                addEmailField,
 
                 Aggregation.lookup("Ingredients", "ingredientId", "_id", "ingredientsInfo"),
 
@@ -165,7 +167,7 @@ public class RecipesService {
                 addFieldsRestrictionId,
                 createRestrictionMatchOperation(restrictionId),
 
-                Aggregation.lookup("Persons", "personsEmailFavorite", "_id", "personsFavorite"),
+                Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
 
                 addIsFavoriteFieldOperation(),
 

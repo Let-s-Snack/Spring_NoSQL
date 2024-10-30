@@ -27,13 +27,11 @@ public class Coments {
     @Size(max = 200, message = "Mensagem não deve ter mais que 200 caracteres")
     private String message;
 
-    @NotNull(message = "A data de criação do comentário não deve ser nula")
     @Schema(description = "Data de criação do comentário", example = "10/08/2024")
     @Field(name = "creation_date")
     private Date creationDate;
 
     @Field(name = "persons_name")
-    @NotBlank(message = "Nome do usuário que avaliou não deve ser nulo")
     private String personsName;
 
     public Coments() { }
