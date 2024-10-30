@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Controller;
 
+import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Ingredients;
+import org.example.spring_nosql.Model.Message;
 import org.example.spring_nosql.Service.IngredientsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +32,7 @@ public class IngredientsController {
 
     private final Validator validator;
     private final IngredientsService ingredientsService;
-    private Map<String, String> mapResults = new HashMap<>();
+    private Gson gson = new Gson();
 
     public IngredientsController(Validator validator, IngredientsService ingredientsService) {
         this.validator = validator;
@@ -54,16 +56,15 @@ public class IngredientsController {
     public ResponseEntity<?> listAllIngredients() {
         try {
             List<Ingredients> ingredients = ingredientsService.findAllIngredients();
-
             return (!ingredients.isEmpty())
                     ? ResponseEntity.ok(ingredients)
-                    :ResponseEntity.ok(mapResults.put("message", "Ingredientes não foram encontrados!"));
+                    :ResponseEntity.ok(gson.toJson(new Message("Ingredientes não foram encontrados!")));
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar os ingredientes."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar os ingredientes!")));
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro no servidor."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno no servidor!")));
         }
     }
 
@@ -82,13 +83,13 @@ public class IngredientsController {
     })
     public ResponseEntity<?> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
         try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(ingredientsService.findIngredientsById(id), mapResults.put("message", "Ingrediente não foi encontrado!")));
+            return ResponseEntity.ok(Objects.requireNonNullElse(ingredientsService.findIngredientsById(id), gson.toJson(new Message("Ingrediente não foi encontrado!"))));
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta!")));
         } catch (HttpServerErrorException.InternalServerError ise) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o ingrediente!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o ingrediente!")));
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro no servidor!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno no servidor!")));
         }
     }
 
@@ -108,16 +109,15 @@ public class IngredientsController {
     public ResponseEntity<?> findIngredientsByName(@Parameter(description = "Inserir o nome do ingrediente") @PathVariable String name) {
         try {
             List<Ingredients> ingredients = ingredientsService.findIngredientsByName(name);
-
             return (!ingredients.isEmpty())
                     ? ResponseEntity.ok(ingredients)
-                    :ResponseEntity.ok(mapResults.put("message", "Ingredientes não foram encontrados!"));
+                    :ResponseEntity.ok(gson.toJson(new Message("Ingredientes não foram encontrados!")));
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta!"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta!")));
         } catch (RuntimeException re) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar os ingredientes!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar os ingredientes!")));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno no servidor!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno no servidor!")));
         }
     }
 }
