@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Controller;
 
+import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -7,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.bson.types.ObjectId;
+import org.example.spring_nosql.Model.Message;
 import org.example.spring_nosql.Model.Restrictions;
 import org.example.spring_nosql.Service.RestrictionsService;
 import org.springframework.http.HttpStatus;
@@ -23,7 +25,7 @@ import java.util.Objects;
 @RequestMapping("/restrictions")
 public class RestrictionsController {
     private final RestrictionsService restrictionsService;
-    private Map<String, String> mapResults = new HashMap<>();
+    private Gson gson = new Gson();
 
     public RestrictionsController(RestrictionsService restrictionsService) {
         this.restrictionsService = restrictionsService;
@@ -46,11 +48,11 @@ public class RestrictionsController {
         try{
             return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findAllRestrictions(), "Restricões não foram encontradas"));
         }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta!")));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a restrição!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a restrição!")));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -69,13 +71,13 @@ public class RestrictionsController {
     })
     public ResponseEntity<?> listAllRestrictionsByName(@Valid @PathVariable String name){
         try{
-            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsByName(name), mapResults.put("message", "Restricão não encontrada")));
+            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsByName(name), gson.toJson(new Message("Restricão não encontrada"))));
         }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta!")));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a restrição!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a restrição!")));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -94,13 +96,13 @@ public class RestrictionsController {
     })
     public ResponseEntity<?> listAllRestrictionsById(@Valid @PathVariable String id){
         try{
-            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsById(new ObjectId(id)), mapResults.put("message", "Restricão não encontrada")));
+            return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsById(new ObjectId(id)), gson.toJson(new Message("Restricão não encontrada"))));
         }catch(HttpClientErrorException.NotFound ntf){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta!")));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a restrição!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a restrição!")));
         }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 }

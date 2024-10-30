@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Controller;
 
+import com.google.gson.Gson;
 import com.mongodb.client.result.UpdateResult;
 import org.example.spring_nosql.Model.*;
 import org.springframework.data.mongodb.core.query.Query;
@@ -21,18 +22,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-
 
 @RestController
 @RequestMapping("/recipes")
 public class RecipesController {
     private final Validator validator;
     private final RecipesService recipesService;
-    private Map<String, String> mapResults = new HashMap<>();
+    private Gson gson = new Gson();
 
     public RecipesController(Validator validator, RecipesService recipesService, PersonsService personsService) {
         this.validator = validator;
@@ -70,13 +69,13 @@ public class RecipesController {
     })
     public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try{
-            return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), mapResults.put("message", "Não foi possível encontrar a receita!")));
+            return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), gson.toJson(new Message("Não foi possível encontrar a receita!"))));
         }catch(DataIntegrityViolationException ttt){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapResults.put("message", "Valores inseridos incorretamente!"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(new Message("Valores inseridos incorretamente!")));
         }catch (IndexOutOfBoundsException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor" + npc.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -100,12 +99,12 @@ public class RecipesController {
 
             return (!recipes.isEmpty())
                     ? ResponseEntity.ok(recipes)
-                    :ResponseEntity.ok(mapResults.put("message", "Não foi possível encontrar a receita!"));
+                    :ResponseEntity.ok(gson.toJson(new Message("Não foi possível encontrar a receita!")));
 
         } catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
         }
     }
 
@@ -129,11 +128,11 @@ public class RecipesController {
 
             return (!recipes.isEmpty())
                     ? ResponseEntity.ok(recipes)
-                    :ResponseEntity.ok(mapResults.put("message", "Não foi possível encontrar as receitas!"));
+                    :ResponseEntity.ok(gson.toJson(new Message("Não foi possível encontrar as receitas!")));
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar as receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar as receita ou o usuário!")));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
         }
     }
 
@@ -176,15 +175,15 @@ public class RecipesController {
                 UpdateResult results = recipesService.insertComent(query, update);
 
                 if (results.getModifiedCount() >= 1) {
-                    return ResponseEntity.ok(mapResults.put("message", "Comentário foi inserido com sucesso!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Comentário foi inserido com sucesso!")));
                 } else {
-                    return ResponseEntity.ok(mapResults.put("message", "Não foi possível fazer a inserção do comentário!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Não foi possível fazer a inserção do comentário!")));
                 }
             }
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
         }
     }
 

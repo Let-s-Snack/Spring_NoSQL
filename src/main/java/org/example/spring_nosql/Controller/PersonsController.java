@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Controller;
 
+import com.google.gson.Gson;
 import com.mongodb.client.result.UpdateResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -35,7 +36,7 @@ public class PersonsController {
     private final Validator validator;
     private final PersonsService personsService;
     private final RecipesService recipesService;
-    private Map<String, String> mapResults = new HashMap<>();
+    private Gson gson = new Gson();
 
     public PersonsController(Validator validator, PersonsService personsService, RecipesService recipesService) {
         this.validator = validator;
@@ -74,11 +75,11 @@ public class PersonsController {
         })
         public ResponseEntity<?> listPersonById(@Parameter(description = "Inserir ID do usuário") @PathVariable String id) {
             try {
-                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonById(new ObjectId(id)), mapResults.put("message", "Usuário não encontrado")));
+                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonById(new ObjectId(id)), gson.toJson(new Message("Usuário não encontrado!"))));
             } catch (RuntimeException nnn) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
             } catch (Exception npc) {
-                return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
+                return ResponseEntity.ok(gson.toJson(new Message("Erro interno com o servidor!")));
             }
         }
 
@@ -98,11 +99,11 @@ public class PersonsController {
         })
         public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email) {
             try {
-                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonByEmail(email), mapResults.put("message", "Usuário não encontrado!")));
+                return ResponseEntity.ok(Objects.requireNonNullElse(personsService.findPersonByEmail(email), gson.toJson(new Message("Usuário não encontrado!"))));
             } catch (RuntimeException nnn) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
             } catch (Exception npc) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
             }
         }
 
@@ -123,11 +124,11 @@ public class PersonsController {
     public ResponseEntity<?> listPersonByUsername(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String username) {
         try {
             Persons persons = personsService.findPersonsByUsername(username);
-            return ResponseEntity.ok(Objects.requireNonNullElse(persons, mapResults.put("message", "Apelido do usuário não existe")));
+            return ResponseEntity.ok(Objects.requireNonNullElse(persons, gson.toJson(new Message("Apelido do usuário não existe"))));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -151,11 +152,11 @@ public class PersonsController {
             Persons person = personsService.findPersonByEmail(email);
             return ResponseEntity.ok(person.getRestrictions());
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -177,16 +178,16 @@ public class PersonsController {
         try {
             List<Recipes> wishlist = personsService.findWishlistPersonByEmail(email);
             if (wishlist.isEmpty()) {
-                return ResponseEntity.ok(mapResults.put("message", "Wishlist está vazia"));
+                return ResponseEntity.ok(gson.toJson(new Message("Wishlist está vazia!")));
             } else {
                 return ResponseEntity.ok(wishlist);
             }
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -209,16 +210,16 @@ public class PersonsController {
             List<ShoppingList> shoppinglist = personsService.findShoppingListByEmail(email);
 
             if (shoppinglist.isEmpty()) {
-                return ResponseEntity.ok(mapResults.put("message", "Shoppinglist está vazia"));
+                return ResponseEntity.ok(gson.toJson(new Message("Shoppinglist está vazia!")));
             } else {
                 return ResponseEntity.ok(shoppinglist);
             }
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!" + nnn.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -240,16 +241,16 @@ public class PersonsController {
         try {
             List<Recipes> directionWeek = personsService.findDirectionWeekByEmail(email);
             if (directionWeek.isEmpty()) {
-                return ResponseEntity.ok(mapResults.put("message", "Semana da receita está vazia"));
+                return ResponseEntity.ok(gson.toJson(new Message("Semana da receita está vazia!")));
             } else {
                 return ResponseEntity.ok(directionWeek);
             }
         } catch (HttpClientErrorException.NotFound ntf) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(mapResults.put("message", "URL incorreta"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -286,15 +287,15 @@ public class PersonsController {
 
                 //Verificando se caso o usuário tenha sido inserido ele retornara que o usuário foi inserido, caso não ele retorna falso
                 if (personInsert != null) {
-                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Usuário foi inserido com sucesso"));
+                    return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Usuário foi inserido com sucesso!")));
                 } else {
-                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possivel inserir o usuário"));
+                    return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possivel inserir o usuário")));
                 }
             }
         } catch (DataIntegrityViolationException ttt) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapResults.put("message", "Valores inseridos incorretamente!"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(new Message("Valores inseridos incorretamente!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor!" + npc.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -324,7 +325,7 @@ public class PersonsController {
                 Update update = new Update();
 
                 if (updatedValues.containsKey("_id")) {
-                    return ResponseEntity.ok(mapResults.put("message", "ID do usuário não pode ser atualizado"));
+                    return ResponseEntity.ok(gson.toJson(new Message("ID do usuário não pode ser atualizado")));
                 }
 
                 if (updatedValues.containsKey("gender")) {
@@ -414,11 +415,11 @@ public class PersonsController {
                 }
 
                 if (updatedValues.containsKey("creationDate")) {
-                    return ResponseEntity.ok(mapResults.put("message", "Não é possivel atualizar a data de criação do usuário!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Não é possivel atualizar a data de criação do usuário!")));
                 }
 
                 if (updatedValues.containsKey("deactivationDate")) {
-                    return ResponseEntity.ok(mapResults.put("message", "Não é possivel atualizar a data de deleção do usuário, caso queira você deverá excluir o mesmo!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Não é possivel atualizar a data de deleção do usuário, caso queira você deverá excluir o mesmo!")));
                 }
 
                 //Validando os dados
@@ -433,19 +434,19 @@ public class PersonsController {
                 UpdateResult updateResult = personsService.updatePerson(query, update);
 
                 if(updateResult.getModifiedCount() >= 1){
-                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização feita com sucesso!"));
+                    return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Atualização feita com sucesso!")));
                 }else{
-                    return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possivel fazer a atualização do usuário!"));
+                    return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possivel fazer a atualização do usuário!")));
                 }
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possivel encontrar o usuário!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possivel encontrar o usuário!")));
             }
         } catch (DataIntegrityViolationException ttt) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapResults.put("message", "Valores inseridos incorretamente!"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(gson.toJson(new Message("Valores inseridos incorretamente!")));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!" + nnn.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possivel encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor!" + npc.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -475,7 +476,7 @@ public class PersonsController {
             //Criando um for na qual caso a receita já esteja dentro do ShoppingList ele não ira salvar
             for (ShoppingList objectShoppingList : persons.getShoppingList()) {
                 if (objectShoppingList.getRecipesId().equalsIgnoreCase(recipesId)) {
-                    return ResponseEntity.ok(mapResults.put("message", "Receita já está salva!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Receita já está salva!")));
                 }
             }
 
@@ -521,14 +522,14 @@ public class PersonsController {
             UpdateResult results = personsService.updatePerson(query, update);
 
             if(results.getModifiedCount() >= 1 ){
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização foi feita com sucesso!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Atualização foi feita com sucesso!")));
             }else{
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível fazer a atualização!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possível fazer a atualização!")));
             }
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.ok(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -594,14 +595,14 @@ public class PersonsController {
             UpdateResult results = personsService.updatePerson(query, update);
 
             if(results.getModifiedCount() >= 1 ){
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização foi feita com sucesso!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Atualização foi feita com sucesso!")));
             }else {
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível fazer a atualização!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possível fazer a atualização!")));
             }
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.ok(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -638,9 +639,9 @@ public class PersonsController {
                     UpdateResult results = personsService.updatePerson(query, update);
 
                     if(results.getModifiedCount() >= 1 ){
-                        return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Receita foi descutida com sucesso!"));
+                        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Receita foi descutida com sucesso!")));
                     }else{
-                        return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível descurtir a receita!"));
+                        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possível descurtir a receita!")));
                     }
                 }
             }
@@ -656,14 +657,14 @@ public class PersonsController {
             UpdateResult results = personsService.updatePerson(query, update);
 
             if(results.getModifiedCount() >= 1 ){
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Atualização foi feita com sucesso!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Atualização foi feita com sucesso!")));
             }else{
-                return ResponseEntity.status(HttpStatus.OK).body(mapResults.put("message", "Não foi possível fazer a atualização!"));
+                return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possível fazer a atualização!")));
             }
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar a receita ou o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.ok(mapResults.put("message", "Erro interno com o servidor"));
+            return ResponseEntity.ok(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
@@ -698,16 +699,17 @@ public class PersonsController {
             if (result.hasErrors()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors(result));
             }else {
+
                 if(personsService.deletePerson(deletePerson) != null){
-                    return ResponseEntity.ok(mapResults.put("message", "Usuário foi excluido com sucesso!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Usuário foi excluido com sucesso!")));
                 }else{
-                    return ResponseEntity.ok(mapResults.put("message", "Não foi possivel excluir o usuário!"));
+                    return ResponseEntity.ok(gson.toJson(new Message("Não foi possivel excluir o usuário!")));
                 }
             }
         }catch (RuntimeException nnn){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Não foi possível encontrar o usuário!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(mapResults.put("message", "Erro interno com o servidor!"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 
