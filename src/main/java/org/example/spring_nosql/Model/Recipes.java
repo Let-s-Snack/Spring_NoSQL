@@ -193,6 +193,9 @@ public class Recipes {
         this.isFavorite = isFavorite;
     }
 
+    public int getCommentCount() {
+        return this.coments.size();
+    }
     @Override
     public String toString() {
         return "Recipes{" +

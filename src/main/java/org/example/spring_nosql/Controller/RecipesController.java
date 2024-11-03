@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.*;
 
@@ -134,6 +135,99 @@ public class RecipesController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar as receita ou o usuário!")));
         }catch (Exception npc){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
+        }
+    }
+
+    @GetMapping("/personTrendingRecipes/{email}")
+    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas em alta a partir do e-mail e da restrição do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Receitas em alta do usuário foram encontradas com sucesso!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DirectionsWeek.class))),
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno com o servidor!")))
+
+    })
+    public ResponseEntity<?> personTrendingRecipes(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas em alta") @PathVariable String email) {
+        try {
+            List<Recipes> trendingRecipes = recipesService.findTrendingRecipes(email);
+            if (trendingRecipes.isEmpty()) {
+                return ResponseEntity.ok(gson.toJson(new Message("Receitas em Alta está vazia!")));
+            } else {
+                return ResponseEntity.ok(trendingRecipes);
+            }
+        } catch (HttpClientErrorException.NotFound ntf) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
+        } catch (RuntimeException nnn) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
+        } catch (Exception npc) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
+        }
+    }
+
+    @GetMapping("/personRecommendedRecipes/{email}")
+    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas recomendadas a partir do e-mail e da restrição do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Receitas em alta do usuário foram encontradas com sucesso!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DirectionsWeek.class))),
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno com o servidor!")))
+
+    })
+    public ResponseEntity<?> personRecommendedRecipes(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas recomendadas") @PathVariable String email) {
+        try {
+            List<Recipes> trendingRecipes = recipesService.findRecommendedRecipes(email);
+            if (trendingRecipes.isEmpty()) {
+                return ResponseEntity.ok(gson.toJson(new Message("Receitas recomendadas está vazia!")));
+            } else {
+                return ResponseEntity.ok(trendingRecipes);
+            }
+        } catch (HttpClientErrorException.NotFound ntf) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
+        } catch (RuntimeException nnn) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
+        } catch (Exception npc) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
+        }
+    }
+
+    @GetMapping("/personMostCommentedRecipes/{email}")
+    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas recomendadas a partir do e-mail e da restrição do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Receitas em alta do usuário foram encontradas com sucesso!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = DirectionsWeek.class))),
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno com o servidor!")))
+
+    })
+    public ResponseEntity<?> personMostCommentedRecipes(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas mais comentadas") @PathVariable String email) {
+        try {
+            List<Recipes> trendingRecipes = recipesService.findMostCommentedRecipes(email);
+            if (trendingRecipes.isEmpty()) {
+                return ResponseEntity.ok(gson.toJson(new Message("Receitas mais comentadas está vazia!")));
+            } else {
+                return ResponseEntity.ok(trendingRecipes);
+            }
+        } catch (HttpClientErrorException.NotFound ntf) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
+        } catch (RuntimeException nnn) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
+        } catch (Exception npc) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 

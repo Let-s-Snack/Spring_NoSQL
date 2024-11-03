@@ -3,7 +3,6 @@ package org.example.spring_nosql.Service;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
-import org.example.spring_nosql.Model.IngredientsShoppingList;
 import org.example.spring_nosql.Model.Persons;
 import org.example.spring_nosql.Model.Recipes;
 import org.example.spring_nosql.Model.ShoppingList;
@@ -16,18 +15,16 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Service
-public class PersonsService{
+public class PersonsService {
     private final PersonRepository personRepository;
+    private RecipesService recipesService;
     private final MongoTemplate mongoTemplate;
+
 
     public PersonsService(PersonRepository personRepository, MongoTemplate mongoTemplate) {
         this.personRepository = personRepository;
@@ -35,33 +32,38 @@ public class PersonsService{
     }
 
     //Fazendo um método para retornar todos os usuários
-    public List<Persons> findAllPersons(){
+    public List<Persons> findAllPersons() {
         return personRepository.findPersonsByDeactivationDateIsNull();
     }
 
     //Fazendo um método para retornar todos os usuários com base no id
-    public Persons findPersonById(ObjectId id){
+    public Persons findPersonById(ObjectId id) {
         return personRepository.findPersonsByIdAndDeactivationDateIsNull(id);
     }
 
     //Fazendo um método para retornar o usuário caso ele esteja cadastrado ou não
     public Persons findPersonByEmail(String email) {
-        return personRepository.findPersonByEmailIgnoreCaseAndDeactivationDateIsNull(email);
+        return mongoTemplate.aggregate(newAggregation(
+                match(Criteria.where("email").is(email).and("deactivation_date").isNull()),
+                addFieldsOperation("restrictionObjectId", "$restrictions.restrictions_id"),
+                Aggregation.lookup("Restrictions", "restrictionObjectId", "_id", "infoRestrictions"),
+                addRestrictionsName()
+        ), Persons.class, Persons.class).getMappedResults().get(0);
     }
 
     //Fazendo um método para retornar o usuário que contenha o username passado como parâmetro
-    public Persons findPersonsByUsername(String username){
+    public Persons findPersonsByUsername(String username) {
         return personRepository.findPersonsByNicknameIgnoreCaseAndDeactivationDateIsNull(username);
     }
 
     //Fazendo um método para retornar a wishlist do usuário com base no seu id
-    public List<Recipes> findWishlistPersonByEmail(String email){
+    public List<Recipes> findWishlistPersonByEmail(String email) {
         AddFieldsOperation addIsFavorite = Aggregation.addFields().addField("is_favorite").withValue(true).build();
 
         return mongoTemplate.aggregate(newAggregation(
                 Aggregation.match(Criteria.where("email").is(email)),
                 addFieldsOperation("wishlistObjectId", "$wishlist.recipes_id"),
-                Aggregation.lookup("Recipes","wishlistObjectId","_id","recipes"),
+                Aggregation.lookup("Recipes", "wishlistObjectId", "_id", "recipes"),
                 unwind("recipes"),
                 addAverageRatingOperation(),
                 addIsFavorite,
@@ -80,12 +82,12 @@ public class PersonsService{
     }
 
     //Fazendo um método para retornar uma lista das receita da semana do usuário
-    public List<Recipes> findDirectionWeekByEmail(String email){
+    public List<Recipes> findDirectionWeekByEmail(String email) {
         return mongoTemplate.aggregate(newAggregation(
                 Aggregation.match(Criteria.where("deactivation_date").is(null)),
                 Aggregation.match(Criteria.where("email").is(email)),
                 addFieldsOperation("directionsWeekObjectId", "$directions_week.recipes_id"),
-                Aggregation.lookup("Recipes","directionsWeekObjectId","_id","recipes"),
+                Aggregation.lookup("Recipes", "directionsWeekObjectId", "_id", "recipes"),
                 unwind("recipes"),
                 Aggregation.project()
                         .and("recipes._id").as("_id")
@@ -99,7 +101,7 @@ public class PersonsService{
         ), Persons.class, Recipes.class).getMappedResults();
     }
 
-    public List<ShoppingList> findShoppingListByEmail(String email){
+    public List<ShoppingList> findShoppingListByEmail(String email) {
         return mongoTemplate.aggregate(newAggregation(
                 // Match
                 Aggregation.match(Criteria.where("deactivation_date").is(null).and("email").is(email)),
@@ -174,22 +176,22 @@ public class PersonsService{
     }
 
     //Fazendo um método de criação do usuário
-    public Persons insertPerson(Persons person){
+    public Persons insertPerson(Persons person) {
         return personRepository.insert(person);
     }
 
     //Fazendo um método para fazer a atualização do usuário
-    public UpdateResult updatePerson(Query query, Update update){
+    public UpdateResult updatePerson(Query query, Update update) {
         return mongoTemplate.updateFirst(query, update, Persons.class);
     }
 
     //Fazendo um método para fazer a exclusão do usuário
-    public Persons deletePerson(Persons excludePerson){
+    public Persons deletePerson(Persons excludePerson) {
         excludePerson.setDeactivationDate(new Date());
         return mongoTemplate.save(excludePerson);
     }
 
-    public AggregationOperation addFieldsOperation(String nomeNovoCampo, String nomeColuna){
+    public AggregationOperation addFieldsOperation(String nomeNovoCampo, String nomeColuna) {
         return context -> new Document("$addFields", new Document(nomeNovoCampo,
                 new Document("$map", new Document("input", nomeColuna)
                         .append("as", "recipeId")
@@ -222,5 +224,32 @@ public class PersonsService{
                         0
                 )))
         );
+    }
+
+    private AggregationOperation addRestrictionsName() {
+        return Aggregation.addFields().addField("restrictions").withValue(
+            new Document("$map", new Document()
+                .append("input", "$restrictions")
+                .append("as", "restriction")
+                .append("in", new Document()
+                        .append("restrictions_id", "$$restriction.restrictions_id")
+                        .append("name", new Document("$arrayElemAt", Arrays.asList(
+                                        new Document("$map", new Document()
+                                                .append("input", new Document("$filter", new Document()
+                                                        .append("input", "$infoRestrictions")
+                                                        .append("as", "info")
+                                                        .append("cond", new Document("$eq", Arrays.asList(
+                                                                new Document("$toString", "$$info._id"),
+                                                                "$$restriction.restrictions_id"
+                                                        )))
+                                                ))
+                                                .append("as", "info")
+                                                .append("in", "$$info.name")
+                                        ),
+                                        0
+                                ))
+                        )
+                )
+        )).build();
     }
 }

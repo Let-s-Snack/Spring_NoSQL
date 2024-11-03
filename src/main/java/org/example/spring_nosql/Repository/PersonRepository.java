@@ -16,9 +16,6 @@ public interface PersonRepository extends MongoRepository<Persons, ObjectId> {
     //Query para buscar o usuário pelo id
     Persons findPersonsByIdAndDeactivationDateIsNull(ObjectId id);
 
-    //Query para retornarmos o e-mail e a senha do usuário com base no e-mail passado como parâmetro
-    Persons findPersonByEmailIgnoreCaseAndDeactivationDateIsNull(String email);
-
     //Query para retornarmos o username do usuário com base no parâmetro
     Persons findPersonsByNicknameIgnoreCaseAndDeactivationDateIsNull(String username);
 
