@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -26,6 +27,9 @@ public class RecipesService {
     private final PersonsService personsService;
     private final RestrictionsService restrictionsService;
     private final MongoTemplate mongoTemplate;
+    private List<Recipes> listRecipes = new ArrayList<>();
+    private List<ObjectId> listObjectId = new ArrayList<>();
+
 
     public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate, PersonsService personsService, RestrictionsService restrictionsService){
         this.recipesRepository = recipesRepository;
@@ -182,6 +186,89 @@ public class RecipesService {
         ),Recipes.class, Recipes.class).getMappedResults();
     }
 
+    //Método para encontrar as receitas que se encaixam na restrição passada como parâmetro
+    public List<Recipes> findRecipesByAllRestriction(List<ObjectId> restrictionsId, String personsEmail){
+        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields().addField("personsEmailFavorite").withValue(personsEmail).build();
+        AggregationOperation addFieldsRestrictionId = Aggregation.addFields().addField("restrictionId").withValue(restrictionsId).build();
+
+        return mongoTemplate.aggregate(Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("is_deleted").is(false)),
+                addFieldsOperation("restrictionsId", "$broken_restrictions"),
+                addAverageRatingOperation(),
+                addFieldsPersonsFavorite,
+                addFieldsRestrictionId,
+                createRestrictionMatchOperation(restrictionsId),
+
+                Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
+
+                addIsFavoriteFieldOperation(),
+
+                Aggregation.project()
+                        .and("_id").as("_id")
+                        .and("name").as("name")
+                        .and("description").as("description")
+                        .and("url_photo").as("url_photo")
+                        .and("creation_date").as("creation_date")
+                        .and("rating").as("rating")
+                        .and("isFavorite").as("isFavorite")
+                        .and("coments").as("coments")
+        ),Recipes.class, Recipes.class).getMappedResults();
+    }
+
+    //Método para retornar as receitas recomendada
+    public List<Recipes> findTrendingRecipes(String email) {
+        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+
+        for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
+            listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
+        }
+
+        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+            if(objectRecipes.getRating() != null){
+                listRecipes.add(objectRecipes);
+            }
+        }
+        listRecipes.sort(Comparator.comparingDouble(Recipes::getRating).reversed());
+
+        return listRecipes;
+    }
+
+    //Método para retornar as receitas em alta
+    public List<Recipes> findRecommendedRecipes(String email) {
+        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+
+        for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
+            listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
+        }
+
+        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+            if(objectRecipes.getId() != null){
+                listRecipes.add(objectRecipes);
+            }
+        }
+        listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
+
+        return listRecipes.size() > 20 ? listRecipes.subList(0, 20) : listRecipes;
+    }
+
+    //Método para retornar as receitas mais comentadas
+    public List<Recipes> findMostCommentedRecipes(String email) {
+        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+
+        for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
+            listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
+        }
+
+        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+            if(objectRecipes.getComents() != null){
+                listRecipes.add(objectRecipes);
+            }
+        }
+        listRecipes.sort(Comparator.comparingInt(Recipes::getCommentCount).reversed());
+
+        return listRecipes;
+    }
+
     //Método para inserir um comentário na receita
     public UpdateResult insertComent(Query query, Update update){
         return mongoTemplate.updateFirst(query, update, Recipes.class);
@@ -328,6 +415,21 @@ public class RecipesService {
                                         new Document("$ifNull", Arrays.asList("$restrictionsId", new ArrayList<>()))
                                 ))
                         )
+                )
+        );
+    }
+
+
+    public AggregationOperation createRestrictionMatchOperation(List<ObjectId> restrictionId) {
+        return context -> new Document("$match",
+                new Document("$expr",
+                        new Document("$anyElementTrue", Arrays.asList(
+                                new Document("$map", new Document()
+                                        .append("input", restrictionId)
+                                        .append("as", "id")
+                                        .append("in", new Document("$in", Arrays.asList("$$id", "$restrictionsId")))
+                                )
+                        ))
                 )
         );
     }
