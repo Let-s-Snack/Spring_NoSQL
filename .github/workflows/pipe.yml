@@ -1,0 +1,30 @@
+name: Pipe auto deploy render
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurando a JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Compilando o Maven
+        run: mvn -B package -DskipTests --file pom.xml
+
+      - name: Serviço de deploy no render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with:
+          service-id: srv-crpcaf5ds78s73d7uiqg
+          api-key: rnd_z22v7A7fQcrG2NM86StvCdmpnFYk
