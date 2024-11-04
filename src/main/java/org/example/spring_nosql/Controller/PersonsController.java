@@ -292,7 +292,7 @@ public class PersonsController {
                     List<Recipes> listRecipes = recipesService.findRecipesByBrokenRestrictions(personInsert.getEmail());
                     System.out.println(listRecipes);
 
-                    Recipes finalRecipes = listRecipes.get(random.nextInt(0, listRecipes.size() - 1));
+                    Recipes finalRecipes = listRecipes.get(random.nextInt(0, listRecipes.size()));
 
                     Query query = new Query(Criteria.where("email").is(personInsert.getEmail()));
                     Update update = new Update();
