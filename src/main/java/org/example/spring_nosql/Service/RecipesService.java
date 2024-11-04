@@ -269,6 +269,24 @@ public class RecipesService {
         return listRecipes;
     }
 
+    //Método para retornar as receitas em alta
+    public List<Recipes> findRecipesByBrokenRestrictions(String email) {
+        List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+
+        for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
+            listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
+        }
+
+        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+            if(objectRecipes.getId() != null){
+                listRecipes.add(objectRecipes);
+            }
+        }
+        listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
+
+        return listRecipes;
+    }
+
     //Método para inserir um comentário na receita
     public UpdateResult insertComent(Query query, Update update){
         return mongoTemplate.updateFirst(query, update, Recipes.class);

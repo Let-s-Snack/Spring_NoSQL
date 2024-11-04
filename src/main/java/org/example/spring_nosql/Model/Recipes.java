@@ -194,7 +194,7 @@ public class Recipes {
     }
 
     public int getCommentCount() {
-        return this.coments.size();
+        return (coments != null) ? coments.size() : 0;
     }
     @Override
     public String toString() {
