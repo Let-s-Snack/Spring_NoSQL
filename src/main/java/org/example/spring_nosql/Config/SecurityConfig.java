@@ -30,13 +30,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers("/adm/**").authenticated()
-                    .requestMatchers("/persons/deleteUserById/**").authenticated()
-                    .requestMatchers("/persons/updatePerson/**").authenticated()
-                    .requestMatchers("/persons/checkIngredients/**").authenticated()
                     .requestMatchers("/recipes/insertComent/**").authenticated()
-                    .requestMatchers("/persons/insertPerson").authenticated()
-                    .requestMatchers("/persons/saveRecipesIngredients").authenticated()
-                    .requestMatchers("/persons/likeRecipes").authenticated()
+                    .requestMatchers("/persons/deleteUserById/**", "/persons/updatePerson/**", "/persons/checkIngredients/**", "/persons/insertPerson", "/persons/saveRecipesIngredients", "/persons/likeRecipes").authenticated()
+
                     .requestMatchers("/auth/login").permitAll()
                     .requestMatchers("swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
@@ -60,6 +56,4 @@ public class SecurityConfig {
     public SecretKey secretKey(){
         return Keys.secretKeyFor(SignatureAlgorithm.HS512);
     }
-
-
 }
