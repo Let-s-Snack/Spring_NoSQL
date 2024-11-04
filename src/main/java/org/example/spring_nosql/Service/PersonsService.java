@@ -86,7 +86,7 @@ public class PersonsService {
         return mongoTemplate.aggregate(newAggregation(
                 Aggregation.match(Criteria.where("deactivation_date").is(null)),
                 Aggregation.match(Criteria.where("email").is(email)),
-                addFieldsOperation("directionsWeekObjectId", "$directions_week.recipes_id"),
+                addFieldsOperationDirectionsWeek("directionsWeekObjectId", "$directions_week.recipes_id"),
                 Aggregation.lookup("Recipes", "directionsWeekObjectId", "_id", "recipes"),
                 unwind("recipes"),
                 Aggregation.project()
@@ -197,6 +197,11 @@ public class PersonsService {
                         .append("as", "recipeId")
                         .append("in", new Document("$toObjectId", "$$recipeId"))
                 )));
+    }
+
+    public AggregationOperation addFieldsOperationDirectionsWeek(String nomeNovoCampo, String nomeColuna) {
+        return context -> new Document("$addFields", new Document(nomeNovoCampo,
+                new Document("$toObjectId", nomeColuna))); // Converte diretamente o valor da coluna
     }
 
     public AggregationOperation addAverageRatingOperation() {
