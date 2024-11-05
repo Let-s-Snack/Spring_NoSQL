@@ -36,11 +36,10 @@ public class AdmController {
             @ApiResponse(responseCode = "200", description = "administradores foram retornados com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Adm.class))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
-    })
+    @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
+})
     public ResponseEntity<?> listAllAdm() {
         return ResponseEntity.ok(admService.findAllAdm());
     }
@@ -53,11 +52,10 @@ public class AdmController {
                             schema = @Schema(implementation = Adm.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o administrador!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listAdmById(@Parameter(description = "Inserir ID do administrador") @PathVariable String id) {
         try {
@@ -77,11 +75,10 @@ public class AdmController {
                             schema = @Schema(implementation = Adm.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o administrador!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o administrador!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do administrador", example = "testecassio@gmail.com") @PathVariable String email) {
         try {
@@ -101,11 +98,10 @@ public class AdmController {
                             schema = @Schema(implementation = Adm.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o administrador!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o administrador!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listAdmByName(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String name) {
         try {

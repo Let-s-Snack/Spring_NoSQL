@@ -3,8 +3,15 @@ package org.example.spring_nosql.Controller;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.example.spring_nosql.Model.Adm;
 import org.example.spring_nosql.Model.Message;
+import org.example.spring_nosql.Model.Persons;
 import org.example.spring_nosql.Service.AdmService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.http.HttpStatus;
@@ -32,8 +39,22 @@ public class AuthController {
         this.secretKey = secretKey;
     }
 
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> objectAdm) {
+    @Operation(summary = "Gerar token de autenticação", description = "Faz a geração do token JWT de autenticação")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200", description = "O token foi gerado com sucesso",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyLnRlc3RlQGdtYWlsLmNvbSIsInJvbGVzIjpbXSwiZXhwIjoxNzMwMjUwMzA2fQ.P_QJxfbLxzOdOdad6nCuiJQbzxBVsmgycu7gMPrLdoOnSGl_W_4VWaPUAGubTyNQVv5v7LqVNlkDXYBBXUKc9A"))),
+            @ApiResponse(responseCode = "404", description = "Endpoint não foi encontrado",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Endpoint não foi encontrado"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno no servidor",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "Erro interno no servidor"))),
+    })
+    public ResponseEntity<?> login(@RequestBody @Parameter(description = "Dados do administrador para login")
+                                       @Schema(description = "Objeto contendo o e-mail e senha do administrador", example = "{\"email\": \"userservice.restrictpage@germinare.org.br\", \"password\": \"restrictpage123\"}") Map<String, String> objectAdm) {
         if (objectAdm.containsKey("email") && objectAdm.containsKey("password")) {
             String email = objectAdm.get("email");
             String password = objectAdm.get("password");
@@ -49,7 +70,7 @@ public class AuthController {
                             .signWith(secretKey, SignatureAlgorithm.HS512) //Usa a chave secreta para assinar
                             .compact();
 
-                    return ResponseEntity.ok(token);
+                    return ResponseEntity.ok(new Gson().toJson(new Message(token)));
                 } catch (Exception e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro ao gerar o Token JWT")));
                 }
