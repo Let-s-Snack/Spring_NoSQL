@@ -46,9 +46,9 @@ public class RecipesController {
             @ApiResponse(responseCode = "200" , description = "Receitas foram retornados com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Recipes.class))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+    @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> listAllRecipes(){
@@ -61,15 +61,15 @@ public class RecipesController {
             @ApiResponse(responseCode = "200" , description = "Receita foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Recipes.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
-    public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
+     public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try{
             return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), gson.toJson(new Message("Não foi possível encontrar a receita!"))));
         }catch(DataIntegrityViolationException ttt){
@@ -87,12 +87,12 @@ public class RecipesController {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Recipes.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> listRecipesByName(@Parameter(description = "Adicionar o nome da receita") @RequestParam String recipesName, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
@@ -116,12 +116,12 @@ public class RecipesController {
             @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Recipes.class))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> listRecipesByRestriction(@Parameter(description = "Adicionar o ID da restrição") @RequestParam String restrictionsId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail) {
@@ -139,18 +139,17 @@ public class RecipesController {
     }
 
     @GetMapping("/personTrendingRecipes/{email}")
-    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas em alta a partir do e-mail e da restrição do usuário")
+    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas em alta a partir do e-mail do usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Receitas em alta do usuário foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
+                            schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> personTrendingRecipes(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas em alta") @PathVariable String email) {
         try {
@@ -170,17 +169,17 @@ public class RecipesController {
     }
 
     @GetMapping("/personRecommendedRecipes/{email}")
-    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas recomendadas a partir do e-mail e da restrição do usuário")
+    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas recomendadas a partir do e-mail do usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Receitas em alta do usuário foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
+                            schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> personRecommendedRecipes(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas recomendadas") @PathVariable String email) {
@@ -201,17 +200,17 @@ public class RecipesController {
     }
 
     @GetMapping("/personMostCommentedRecipes/{email}")
-    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas recomendadas a partir do e-mail e da restrição do usuário")
+    @Operation(summary = "Buscar receitas em alta", description = "Faz a busca das receitas recomendadas a partir do e-mail do usuário")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Receitas em alta do usuário foram encontradas com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
+                            schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> personMostCommentedRecipes(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas mais comentadas") @PathVariable String email) {
@@ -238,7 +237,7 @@ public class RecipesController {
                     required = true,
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(
-                                    example = "{\"personsId\": \"6707fb6b93239565894241be\", \"rating\": \"4\", \"message\": \"Receita maravilhosa!\",}"
+                                    example = "{\"personsId\": \"6707fb6b93239565894241be\", \"rating\": \"4\", \"message\": \"Receita maravilhosa!\"}"
                             )
                     )
             )
@@ -246,13 +245,13 @@ public class RecipesController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "Comentário foi adicionado com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Recipes.class))),
+                            schema = @Schema(example = "{\"message\": \"Comentário foi inserido com sucesso!\"}"))),
             @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar a receita ou o usuário!\"}"))),
             @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> insertComent(@Parameter(description = "Inserir ID da receita") @PathVariable String recipesId, @Valid @RequestBody Coments coment, BindingResult result){
@@ -278,7 +277,7 @@ public class RecipesController {
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar a receita ou o usuário!")));
         }catch (Exception npc){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor!")));
         }
     }
 

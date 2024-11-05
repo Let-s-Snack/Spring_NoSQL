@@ -51,10 +51,9 @@ public class PersonsController {
             @ApiResponse(responseCode = "200", description = "Usuários foram retornados com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Persons.class))),
-            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+    @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listAllPersons() {
         return ResponseEntity.ok(personsService.findAllPersons());
@@ -68,11 +67,10 @@ public class PersonsController {
                             schema = @Schema(implementation = Persons.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listPersonById(@Parameter(description = "Inserir ID do usuário") @PathVariable String id) {
         try {
@@ -92,11 +90,10 @@ public class PersonsController {
                             schema = @Schema(implementation = Persons.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do usuário", example = "testecassio@gmail.com") @PathVariable String email) {
         try {
@@ -116,11 +113,10 @@ public class PersonsController {
                             schema = @Schema(implementation = Persons.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> listPersonByUsername(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String username) {
         try {
@@ -139,14 +135,13 @@ public class PersonsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Restrição do Usuário foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Restrictions.class))),
+                            schema = @Schema(implementation = PersonsRestrictions.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> personRestrictionByEmail(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas restrições") @PathVariable String email) {
         try {
@@ -166,14 +161,13 @@ public class PersonsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Wishlist do Usuário foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Wishlist.class))),
+                            schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> personWishListByEmail(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas salvas na wish list") @PathVariable String email) {
         try {
@@ -197,14 +191,13 @@ public class PersonsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Wishlist do Usuário foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Wishlist.class))),
+                            schema = @Schema(implementation = ShoppingList.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> personsShoppingList(@Parameter(description = "Inserir o e-mail do usuário para encontrar seu shopping list") @PathVariable String email) {
         try {
@@ -229,14 +222,13 @@ public class PersonsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Receita da semana do usuário foi encontrada com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = DirectionsWeek.class))),
+                            schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o usuário!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> personDirectionWeekEmail(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas receitas da semana") @PathVariable String email) {
         try {
@@ -260,14 +252,13 @@ public class PersonsController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário foi inserido com sucesso!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Usuário foi inserido com sucesso!"))),
+                            schema = @Schema(example = "{\"message\": \"Usuário foi inserido com sucesso!\"}"))),
             @ApiResponse(responseCode = "400", description = "Erro na requisição!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Valores inseridos incorretamente!"))),
+                            schema = @Schema(example = "{\"message\": \"Valores inseridos incorretamente!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     public ResponseEntity<?> insertPerson(@RequestBody PersonsMobile personsMobile, BindingResult result) {
         try {
@@ -318,20 +309,30 @@ public class PersonsController {
     }
 
     @PutMapping("/updatePerson/{email}")
-    @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do email passado como parâmetro")
+    @Operation(summary = "Atualizando o usuário", description = "Atualizando o usuário encontrado a partir do email passado como parâmetro",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Faz a inserção do comentário",
+                    required = true,
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\"restrictions\":[{\"restrictionId\":\"67296ec4af8d20eda0363931\"}], \"directionsWeek\": {\"recipesId\": \"67296ec5af8d20eda03639fa\"}}"
+                            )
+                    )
+            )
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Usuário foi atualizado com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Persons.class))),
             @ApiResponse(responseCode = "400", description = "Erro na requisição!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Valores inseridos incorretamente!"))),
+                            schema = @Schema(example = "{\"message\": \"Valores inseridos incorretamente!\"}"))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> updatePersonByEmail(@Parameter(description = "Inserir o e-mail do usuário") @PathVariable String email, @RequestBody Map<String, Object> updatedValues) {
@@ -476,10 +477,10 @@ public class PersonsController {
                             schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar a receita ou o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> saveRecipesIngredients(@Parameter(description = "Inserir ID da receita") @RequestParam String recipesId, @Parameter(description = "Inserir e-mail do usuário") @RequestParam String personsEmail) {
@@ -559,10 +560,10 @@ public class PersonsController {
                             schema = @Schema(implementation = ShoppingList.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar a receita ou o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> checkIngredients(@Parameter(description = "Inserir e-mail do usuário") @PathVariable String personsEmail, @RequestBody ShoppingList listShoppingList) {
@@ -633,10 +634,10 @@ public class PersonsController {
                             schema = @Schema(implementation = Recipes.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a receita!"))),
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar a receita ou o usuário!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> likeRecipes(@Parameter(description = "Inserir ID da receita") @RequestParam String recipesId, @Parameter(description = "Inserir e-mail do usuário") @RequestParam String personsEmail) {
@@ -694,14 +695,10 @@ public class PersonsController {
                     schema = @Schema(implementation = Persons.class))),
             @ApiResponse(responseCode = "400" , description = "Erro na requisição",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possível encontrar o usuário!"))),
-            @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar o usuário!\"}"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
-            @ApiResponse(responseCode = "500" , description = "Erro interno com o servidor!",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Erro interno com o servidor!")))
-
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
     })
     @Operation(summary = "Excluindo o usuário", description = "Excluindo o usuário encontrado a partir do id passado como parâmetro")
     public ResponseEntity<?> deleteUserByEmail(@Parameter(description = "Inserir o ID do usuário a ser excluido") @PathVariable String email){
