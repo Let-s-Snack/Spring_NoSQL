@@ -1,5 +1,6 @@
 package org.example.spring_nosql.Controller;
 
+import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Adm;
+import org.example.spring_nosql.Model.Message;
 import org.example.spring_nosql.Service.AdmService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.Objects;
 @RequestMapping("/adm")
 public class AdmController {
     private final AdmService admService;
+    private final Gson gson = new Gson();
 
     public AdmController(AdmService admService){
         this.admService = admService;
@@ -58,11 +61,11 @@ public class AdmController {
     })
     public ResponseEntity<?> listAdmById(@Parameter(description = "Inserir ID do administrador") @PathVariable String id) {
         try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(admService.findAdmById(new ObjectId(id)), "Administrador não encontrado"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(admService.findAdmById(new ObjectId(id)), gson.toJson(new Message("Administrador não encontrado"))));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o administrador!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o administrador!")));
         } catch (Exception npc) {
-            return ResponseEntity.ok("Erro interno com o servidor");
+            return ResponseEntity.ok(gson.toJson(new Message("Erro interno com o servidor")));
         }
     }
 
@@ -82,11 +85,11 @@ public class AdmController {
     })
     public ResponseEntity<?> listPersonByEmail(@Parameter(description = "Inserir e-mail do administrador", example = "testecassio@gmail.com") @PathVariable String email) {
         try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(admService.findAdmByEmail(email), "Administrador não encontrado!"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(admService.findAdmByEmail(email), gson.toJson(new Message("Administrador não encontrado!"))));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o administrador!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o administrador!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
         }
     }
 
@@ -106,11 +109,11 @@ public class AdmController {
     })
     public ResponseEntity<?> listAdmByName(@Parameter(description = "Inserir nome de usuário", example = "Gustavo") @PathVariable String name) {
         try {
-            return ResponseEntity.ok(Objects.requireNonNullElse(admService.findAdmByName(name), "Apelido do usuário não existe"));
+            return ResponseEntity.ok(Objects.requireNonNullElse(admService.findAdmByName(name), gson.toJson(new Message("Apelido do usuário não existe"))));
         } catch (RuntimeException nnn) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Não foi possível encontrar o usuário!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar o usuário!")));
         } catch (Exception npc) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro interno com o servidor");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
         }
     }
 
