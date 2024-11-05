@@ -129,7 +129,7 @@ public class RecipesController {
             List<Recipes> recipes = recipesService.findRecipesByRestriction(new ObjectId(restrictionsId), personsEmail);
 
             return (!recipes.isEmpty())
-                    ? ResponseEntity.ok(recipes)
+                    ?ResponseEntity.ok(recipes)
                     :ResponseEntity.ok(gson.toJson(new Message("Não foi possível encontrar as receitas!")));
         }catch (RuntimeException nnn){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar as receita ou o usuário!")));

@@ -37,7 +37,7 @@ public class PersonsController {
     private final PersonsService personsService;
     private final RecipesService recipesService;
     private final Gson gson = new Gson();
-    private final List<ObjectId> listObjectId = new ArrayList<>();
+    private final Random random = new Random();
 
     public PersonsController(Validator validator, PersonsService personsService, RecipesService recipesService) {
         this.validator = validator;
@@ -263,7 +263,7 @@ public class PersonsController {
                             schema = @Schema(example = "Usuário foi inserido com sucesso!"))),
             @ApiResponse(responseCode = "400", description = "Erro na requisição!",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = ""))), //Adicionar erro
+                            schema = @Schema(example = "Valores inseridos incorretamente!"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "Erro interno com o servidor!")))
@@ -288,7 +288,24 @@ public class PersonsController {
 
                 //Verificando se caso o usuário tenha sido inserido ele retornara que o usuário foi inserido, caso não ele retorna falso
                 if (personInsert != null) {
-                    return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Usuário foi inserido com sucesso!")));
+                    //Setando a receita da semana
+                    List<Recipes> listRecipes = recipesService.findRecipesByBrokenRestrictions(personInsert.getEmail());
+                    System.out.println(listRecipes);
+
+                    Recipes finalRecipes = listRecipes.get(random.nextInt(0, listRecipes.size()));
+
+                    Query query = new Query(Criteria.where("email").is(personInsert.getEmail()));
+                    Update update = new Update();
+
+                    update.set("directions_week", new DirectionsWeek(finalRecipes.getId()));
+
+                    UpdateResult updateResult = personsService.updatePerson(query, update);
+
+                    if(updateResult.getModifiedCount() >= 1){
+                        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Usuário foi inserido com sucesso!")));
+                    }else{
+                        return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Erro ao inserir o prato da semana!")));
+                    }
                 } else {
                     return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possivel inserir o usuário")));
                 }
@@ -677,7 +694,7 @@ public class PersonsController {
                     schema = @Schema(implementation = Persons.class))),
             @ApiResponse(responseCode = "400" , description = "Erro na requisição",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = ""))), //Adicionar erros
+                            schema = @Schema(example = "Não foi possível encontrar o usuário!"))),
             @ApiResponse(responseCode = "404" , description = "Erro na comunicação com o servidor!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(example = "URL Incorreta!"))),
