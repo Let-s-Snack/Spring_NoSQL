@@ -46,12 +46,12 @@ public class IngredientsController {
             @ApiResponse(responseCode = "200", description = "Lista de ingredientes retornada com sucesso",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Ingredients.class))),
-            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor.",
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL Incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar os ingredientes!")))
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar os ingredientes!\"}")))
     })
     public ResponseEntity<?> listAllIngredients() {
         try {
@@ -76,12 +76,12 @@ public class IngredientsController {
                             schema = @Schema(implementation = Ingredients.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL Incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar o ingrediente!")))
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar os ingredientes!\"}")))
     })
-    public ResponseEntity<?> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente") @PathVariable ObjectId id) {
+    public ResponseEntity<?> findIngredientById(@Parameter(description = "Inserir o ID do ingrediente", example = "67296ec4af8d20eda0363939") @PathVariable ObjectId id) {
         try {
             return ResponseEntity.ok(Objects.requireNonNullElse(ingredientsService.findIngredientsById(id), gson.toJson(new Message("Ingrediente não foi encontrado!"))));
         } catch (HttpClientErrorException.NotFound ntf) {
@@ -101,12 +101,12 @@ public class IngredientsController {
                             schema = @Schema(implementation = Ingredients.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL Incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar os ingredientes!")))
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar os ingredientes!\"}")))
     })
-    public ResponseEntity<?> findIngredientsByName(@Parameter(description = "Inserir o nome do ingrediente") @PathVariable String name) {
+    public ResponseEntity<?> findIngredientsByName(@Parameter(description = "Inserir o nome do ingrediente", example = "Ovo") @PathVariable String name) {
         try {
             List<Ingredients> ingredients = ingredientsService.findIngredientsByName(name);
             return (!ingredients.isEmpty())

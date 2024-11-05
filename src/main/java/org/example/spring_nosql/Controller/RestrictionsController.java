@@ -2,6 +2,7 @@ package org.example.spring_nosql.Controller;
 
 import com.google.gson.Gson;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.example.spring_nosql.Model.Message;
 import org.example.spring_nosql.Model.Restrictions;
 import org.example.spring_nosql.Service.RestrictionsService;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,10 +41,10 @@ public class RestrictionsController {
                             schema = @Schema(implementation = Restrictions.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL Incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar a restrição!\"}")))
     })
     public ResponseEntity<?> listAllRestrictions() {
         try{
@@ -64,12 +66,12 @@ public class RestrictionsController {
                             schema = @Schema(implementation = Restrictions.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL Incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar a restrição!\"}")))
     })
-    public ResponseEntity<?> listAllRestrictionsByName(@Valid @PathVariable String name){
+    public ResponseEntity<?> listAllRestrictionsByName(@Valid @PathVariable @Parameter(description = "Nome da restrição", example = "Vegetariana") String name){
         try{
             return ResponseEntity.ok(Objects.requireNonNullElse(restrictionsService.findRestrictionsByName(name), gson.toJson(new Message("Restricão não encontrada"))));
         }catch(HttpClientErrorException.NotFound ntf){
@@ -89,10 +91,10 @@ public class RestrictionsController {
                             schema = @Schema(implementation = Restrictions.class))),
             @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "URL Incorreta!"))),
+                            schema = @Schema(example = "{\"message\": \"URL Incorreta!\"}"))),
             @ApiResponse(responseCode = "500", description = "Erro interno com o servidor",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(example = "Não foi possivel encontrar a restrição!")))
+                            schema = @Schema(example = "{\"message\": \"Não foi possível encontrar a restrição!\"}")))
     })
     public ResponseEntity<?> listAllRestrictionsById(@Valid @PathVariable String id){
         try{
