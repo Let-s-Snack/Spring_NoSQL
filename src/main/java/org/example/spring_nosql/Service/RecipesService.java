@@ -223,7 +223,9 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+
+        for(Recipes objectRecipes : recipes){
             if(objectRecipes.getRating() != null){
                 listRecipes.add(objectRecipes);
             }
@@ -241,7 +243,9 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+
+        for(Recipes objectRecipes : recipes){
             if(objectRecipes.getId() != null){
                 listRecipes.add(objectRecipes);
             }
@@ -259,7 +263,9 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+
+        for(Recipes objectRecipes : recipes){
             if(objectRecipes.getComents() != null){
                 listRecipes.add(objectRecipes);
             }
