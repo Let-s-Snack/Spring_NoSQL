@@ -240,11 +240,12 @@ public class RecipesService {
         for(Recipes objectRecipes : recipes){
             if(objectRecipes.getRating() != null){
                 listRecipes.add(objectRecipes);
+
             }
         }
         listRecipes.sort(Comparator.comparingDouble(Recipes::getRating).reversed());
 
-        return listRecipes;
+        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
     }
 
     //Método para retornar as receitas em alta
@@ -264,7 +265,7 @@ public class RecipesService {
         }
         listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
 
-        return listRecipes.size() > 20 ? listRecipes.subList(0, 20) : listRecipes;
+        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
     }
 
     //Método para retornar as receitas mais comentadas
@@ -284,7 +285,7 @@ public class RecipesService {
         }
         listRecipes.sort(Comparator.comparingInt(Recipes::getCommentCount).reversed());
 
-        return listRecipes;
+        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
     }
 
     //Método para retornar as receitas em alta
@@ -302,7 +303,7 @@ public class RecipesService {
         }
         listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
 
-        return listRecipes;
+        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
     }
 
     //Método para inserir um comentário na receita
