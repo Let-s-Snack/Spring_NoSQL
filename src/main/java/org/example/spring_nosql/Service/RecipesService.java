@@ -187,21 +187,33 @@ public class RecipesService {
     }
 
     //Método para encontrar as receitas que se encaixam na restrição passada como parâmetro
-    public List<Recipes> findRecipesByAllRestriction(List<ObjectId> restrictionsId, String personsEmail){
-        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields().addField("personsEmailFavorite").withValue(personsEmail).build();
-        AggregationOperation addFieldsRestrictionId = Aggregation.addFields().addField("restrictionId").withValue(restrictionsId).build();
+    public List<Recipes> findRecipesByAllRestriction(List<ObjectId> restrictionsId, String personsEmail) {
+        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields()
+                .addField("personsEmailFavorite").withValue(personsEmail).build();
+        AggregationOperation addFieldsRestrictionsId = Aggregation.addFields()
+                .addField("restrictionsId").withValue(restrictionsId).build();
 
         return mongoTemplate.aggregate(Aggregation.newAggregation(
                 Aggregation.match(Criteria.where("is_deleted").is(false)),
                 addFieldsOperation("restrictionsId", "$broken_restrictions"),
                 addAverageRatingOperation(),
                 addFieldsPersonsFavorite,
-                addFieldsRestrictionId,
-                createRestrictionMatchOperation(restrictionsId),
+                addFieldsRestrictionsId,
+                createRestrictionsMatchOperation(restrictionsId),
 
                 Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
 
                 addIsFavoriteFieldOperation(),
+
+                // Usando $group para evitar duplicações
+                Aggregation.group("_id")
+                        .first("name").as("name")
+                        .first("description").as("description")
+                        .first("url_photo").as("url_photo")
+                        .first("creation_date").as("creation_date")
+                        .first("rating").as("rating")
+                        .first("isFavorite").as("isFavorite")
+                        .first("coments").as("coments"),
 
                 Aggregation.project()
                         .and("_id").as("_id")
@@ -212,7 +224,7 @@ public class RecipesService {
                         .and("rating").as("rating")
                         .and("isFavorite").as("isFavorite")
                         .and("coments").as("coments")
-        ),Recipes.class, Recipes.class).getMappedResults();
+        ), Recipes.class, Recipes.class).getMappedResults();
     }
 
     //Método para retornar as receitas recomendada
@@ -223,7 +235,9 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+
+        for(Recipes objectRecipes : recipes){
             if(objectRecipes.getRating() != null){
                 listRecipes.add(objectRecipes);
             }
@@ -241,7 +255,9 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+
+        for(Recipes objectRecipes : recipes){
             if(objectRecipes.getId() != null){
                 listRecipes.add(objectRecipes);
             }
@@ -259,7 +275,9 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        for(Recipes objectRecipes : findRecipesByAllRestriction(listObjectId ,email)){
+        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+
+        for(Recipes objectRecipes : recipes){
             if(objectRecipes.getComents() != null){
                 listRecipes.add(objectRecipes);
             }
@@ -438,12 +456,12 @@ public class RecipesService {
     }
 
 
-    public AggregationOperation createRestrictionMatchOperation(List<ObjectId> restrictionId) {
+    public AggregationOperation createRestrictionsMatchOperation(List<ObjectId> restrictionIds) {
         return context -> new Document("$match",
                 new Document("$expr",
                         new Document("$anyElementTrue", Arrays.asList(
                                 new Document("$map", new Document()
-                                        .append("input", restrictionId)
+                                        .append("input", restrictionIds)
                                         .append("as", "id")
                                         .append("in", new Document("$in", Arrays.asList("$$id", "$restrictionsId")))
                                 )

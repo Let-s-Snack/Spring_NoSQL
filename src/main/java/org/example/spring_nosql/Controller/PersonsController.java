@@ -236,7 +236,7 @@ public class PersonsController {
             if (directionWeek.isEmpty()) {
                 return ResponseEntity.ok(gson.toJson(new Message("Semana da receita está vazia!")));
             } else {
-                return ResponseEntity.ok(directionWeek);
+                return ResponseEntity.ok(directionWeek.get(0));
             }
         } catch (HttpClientErrorException.NotFound ntf) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
