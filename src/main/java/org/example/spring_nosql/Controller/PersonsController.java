@@ -146,7 +146,9 @@ public class PersonsController {
     public ResponseEntity<?> personRestrictionByEmail(@Parameter(description = "Inserir o e-mail do usuário para encontrar suas restrições") @PathVariable String email) {
         try {
             Persons person = personsService.findPersonByEmail(email);
-            return ResponseEntity.ok(person.getRestrictions());
+            return (!person.getRestrictions().isEmpty())
+                    ? ResponseEntity.ok(person)
+                    : ResponseEntity.ok(gson.toJson(new Message("Usuário não possui restrições")));
         } catch (HttpClientErrorException.NotFound ntf) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(gson.toJson(new Message("URL incorreta")));
         } catch (RuntimeException nnn) {
