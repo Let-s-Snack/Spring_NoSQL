@@ -34,4 +34,5 @@ jobs:
             cd /home/ubuntu/Spring_NoSQL && 
             git pull origin main &&
             mvn clean package -DskipTests &&
+            tmux kill-session -t springSession &&
             ./executar.sh "
