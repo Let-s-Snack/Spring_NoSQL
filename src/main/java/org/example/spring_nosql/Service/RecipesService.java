@@ -28,8 +28,6 @@ public class RecipesService {
     private final RestrictionsService restrictionsService;
     private final MongoTemplate mongoTemplate;
     private List<Recipes> listRecipes = new ArrayList<>();
-    private List<ObjectId> listObjectId = new ArrayList<>();
-
 
     public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate, PersonsService personsService, RestrictionsService restrictionsService){
         this.recipesRepository = recipesRepository;
@@ -188,48 +186,39 @@ public class RecipesService {
 
     //Método para encontrar as receitas que se encaixam na restrição passada como parâmetro
     public List<Recipes> findRecipesByAllRestriction(List<ObjectId> restrictionsId, String personsEmail) {
-        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields()
-                .addField("personsEmailFavorite").withValue(personsEmail).build();
-        AggregationOperation addFieldsRestrictionsId = Aggregation.addFields()
-                .addField("restrictionsId").withValue(restrictionsId).build();
+            AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields()
+                    .addField("personsEmailFavorite").withValue(personsEmail).build();
+            AggregationOperation addFieldsRestrictionsId = Aggregation.addFields()
+                    .addField("restrictionsId").withValue(restrictionsId).build();
 
-        return mongoTemplate.aggregate(Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("is_deleted").is(false)),
-                addFieldsOperation("restrictionsId", "$broken_restrictions"),
-                addAverageRatingOperation(),
-                addFieldsPersonsFavorite,
-                addFieldsRestrictionsId,
-                createRestrictionsMatchOperation(restrictionsId),
+            return mongoTemplate.aggregate(Aggregation.newAggregation(
+                    Aggregation.match(Criteria.where("is_deleted").is(false)),
+                    addFieldsOperation("restrictionsId", "$broken_restrictions"),
+                    addAverageRatingOperation(),
+                    addFieldsPersonsFavorite,
+                    addFieldsRestrictionsId,
+                    createRestrictionsMatchOperation(restrictionsId),
 
-                Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
+                    Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
 
-                addIsFavoriteFieldOperation(),
+                    addIsFavoriteFieldOperation(),
 
-                // Usando $group para evitar duplicações
-                Aggregation.group("_id")
-                        .first("name").as("name")
-                        .first("description").as("description")
-                        .first("url_photo").as("url_photo")
-                        .first("creation_date").as("creation_date")
-                        .first("rating").as("rating")
-                        .first("isFavorite").as("isFavorite")
-                        .first("coments").as("coments"),
-
-                Aggregation.project()
-                        .and("_id").as("_id")
-                        .and("name").as("name")
-                        .and("description").as("description")
-                        .and("url_photo").as("url_photo")
-                        .and("creation_date").as("creation_date")
-                        .and("rating").as("rating")
-                        .and("isFavorite").as("isFavorite")
-                        .and("coments").as("coments")
-        ), Recipes.class, Recipes.class).getMappedResults();
+                    Aggregation.project()
+                            .and("_id").as("_id")
+                            .and("name").as("name")
+                            .and("description").as("description")
+                            .and("url_photo").as("url_photo")
+                            .and("creation_date").as("creation_date")
+                            .and("rating").as("rating")
+                            .and("isFavorite").as("isFavorite")
+                            .and("coments").as("coments")
+            ), Recipes.class, Recipes.class).getMappedResults();
     }
 
     //Método para retornar as receitas recomendada
     public List<Recipes> findTrendingRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+        List<ObjectId> listObjectId = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
@@ -251,6 +240,7 @@ public class RecipesService {
     //Método para retornar as receitas em alta
     public List<Recipes> findRecommendedRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+        List<ObjectId> listObjectId = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
@@ -271,6 +261,7 @@ public class RecipesService {
     //Método para retornar as receitas mais comentadas
     public List<Recipes> findMostCommentedRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+        List<ObjectId> listObjectId = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
@@ -291,6 +282,7 @@ public class RecipesService {
     //Método para retornar as receitas em alta
     public List<Recipes> findRecipesByBrokenRestrictions(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
+        List<ObjectId> listObjectId = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
