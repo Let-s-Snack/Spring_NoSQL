@@ -27,7 +27,6 @@ public class RecipesService {
     private final PersonsService personsService;
     private final RestrictionsService restrictionsService;
     private final MongoTemplate mongoTemplate;
-    private List<Recipes> listRecipes = new ArrayList<>();
 
     public RecipesService(RecipesRepository recipesRepository, MongoTemplate mongoTemplate, PersonsService personsService, RestrictionsService restrictionsService){
         this.recipesRepository = recipesRepository;
@@ -219,6 +218,7 @@ public class RecipesService {
     public List<Recipes> findTrendingRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
         List<ObjectId> listObjectId = new ArrayList<>();
+        List<Recipes> listRecipes = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
@@ -241,6 +241,7 @@ public class RecipesService {
     public List<Recipes> findRecommendedRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
         List<ObjectId> listObjectId = new ArrayList<>();
+        List<Recipes> listRecipes = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
@@ -262,6 +263,7 @@ public class RecipesService {
     public List<Recipes> findMostCommentedRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
         List<ObjectId> listObjectId = new ArrayList<>();
+        List<Recipes> listRecipes = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
@@ -274,6 +276,7 @@ public class RecipesService {
                 listRecipes.add(objectRecipes);
             }
         }
+
         listRecipes.sort(Comparator.comparingInt(Recipes::getCommentCount).reversed());
 
         return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
@@ -283,6 +286,7 @@ public class RecipesService {
     public List<Recipes> findRecipesByBrokenRestrictions(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
         List<ObjectId> listObjectId = new ArrayList<>();
+        List<Recipes> listRecipes = new ArrayList<>();
 
         for(PersonsRestrictions objectPersonsRestrictions : listPersonsRestrictions){
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
