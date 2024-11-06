@@ -26,3 +26,12 @@ jobs:
         with:
           service-id: ${{ secrets.SERVICEID }}
           api-key: ${{ secrets.APIKEY }}
+
+      - name: Deploy na EC2
+        run: |
+          echo "${{secrets.KEY_SSH_EC2}}" > private_key && chmod 400 private_key
+          ssh -o StrictHostKeyChecking=no -i "private_key" ubuntu@ec2-44-196-143-207.compute-1.amazonaws.com "
+            cd /home/ubuntu/Spring_NoSQL && 
+            git pull origin main &&
+            mvn clean package -DskipTests &&
+            ./executar.sh "
