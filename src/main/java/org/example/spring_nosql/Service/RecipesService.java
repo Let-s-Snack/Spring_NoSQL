@@ -300,17 +300,31 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+        if(!listPersonsRestrictions.isEmpty()){
+            List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
 
-        for(Recipes objectRecipes : recipes){
-            if(objectRecipes.getRating() != null){
-                listRecipes.add(objectRecipes);
+            for(Recipes objectRecipes : recipes){
+                if(objectRecipes.getRating() != null){
+                    listRecipes.add(objectRecipes);
 
+                }
             }
-        }
-        listRecipes.sort(Comparator.comparingDouble(Recipes::getRating).reversed());
+            listRecipes.sort(Comparator.comparingDouble(Recipes::getRating).reversed());
 
-        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+            return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+        }else{
+            List<Recipes> recipes = findAllRecipes();
+
+            for(Recipes objectRecipes : recipes){
+                if(objectRecipes.getRating() != null){
+                    listRecipes.add(objectRecipes);
+
+                }
+            }
+            listRecipes.sort(Comparator.comparingDouble(Recipes::getRating).reversed());
+
+            return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+        }
     }
 
     //Método para retornar as receitas em alta
@@ -323,16 +337,29 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+        if(!listPersonsRestrictions.isEmpty()){
+            List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
 
-        for(Recipes objectRecipes : recipes){
-            if(objectRecipes.getId() != null){
-                listRecipes.add(objectRecipes);
+            for(Recipes objectRecipes : recipes){
+                if(objectRecipes.getId() != null){
+                    listRecipes.add(objectRecipes);
+                }
             }
-        }
-        listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
+            listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
 
-        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+            return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+        }else{
+            List<Recipes> recipes = findAllRecipes();
+
+            for(Recipes objectRecipes : recipes){
+                if(objectRecipes.getId() != null){
+                    listRecipes.add(objectRecipes);
+                }
+            }
+            listRecipes.sort(Comparator.comparing(Recipes::getId).reversed());
+
+            return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+        }
     }
 
     //Método para retornar as receitas mais comentadas
@@ -345,17 +372,31 @@ public class RecipesService {
             listObjectId.add(new ObjectId(objectPersonsRestrictions.getRestrictionId()));
         }
 
-        List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
+        if(!listPersonsRestrictions.isEmpty()){
+            List<Recipes> recipes = findRecipesByAllRestriction(listObjectId ,email);
 
-        for(Recipes objectRecipes : recipes){
-            if(objectRecipes.getComents() != null){
-                listRecipes.add(objectRecipes);
+            for(Recipes objectRecipes : recipes){
+                if(objectRecipes.getComents() != null){
+                    listRecipes.add(objectRecipes);
+                }
             }
+
+            listRecipes.sort(Comparator.comparingInt(Recipes::getCommentCount).reversed());
+
+            return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
+        }else{
+            List<Recipes> recipes = findAllRecipes();
+
+            for(Recipes objectRecipes : recipes){
+                if(objectRecipes.getComents() != null){
+                    listRecipes.add(objectRecipes);
+                }
+            }
+
+            listRecipes.sort(Comparator.comparingInt(Recipes::getCommentCount).reversed());
+
+            return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
         }
-
-        listRecipes.sort(Comparator.comparingInt(Recipes::getCommentCount).reversed());
-
-        return listRecipes.size() > 10 ? listRecipes.subList(0, 10) : listRecipes;
     }
 
     //Método para retornar as receitas em alta
