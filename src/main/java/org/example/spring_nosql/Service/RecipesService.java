@@ -251,6 +251,45 @@ public class RecipesService {
             ), Recipes.class, Recipes.class).getMappedResults();
     }
 
+    //Método para encontrar as receitas que se encaixam na restrição passada como parâmetro
+    public List<Recipes> findRecipesByCategory(ObjectId categoryId, String personsEmail) {
+        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields()
+                .addField("personsEmailFavorite").withValue(personsEmail).build();
+        AggregationOperation addFieldsRestrictionId = Aggregation.addFields()
+                .addField("categoryId").withValue(categoryId).build();
+
+        return mongoTemplate.aggregate(Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("is_deleted").is(false)),
+                addFieldsOperation("categoriesId", "$categories"),
+                addAverageRatingOperation(),
+                addFieldsPersonsFavorite,
+                addFieldsRestrictionId,
+                createCategoryMatchOperation(categoryId),  // Usando o match atualizado
+
+                Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
+
+                addIsFavoriteFieldOperation(),
+
+                addIsSwift(),
+
+                Aggregation.lookup("Categories", "categories", "_id", "categoriesInfo"),
+
+                addPartners(),
+
+                Aggregation.project()
+                        .and("_id").as("_id")
+                        .and("name").as("name")
+                        .and("description").as("description")
+                        .and("url_photo").as("url_photo")
+                        .and("creation_date").as("creation_date")
+                        .and("rating").as("rating")
+                        .and("isFavorite").as("isFavorite")
+                        .and("categories").as("categories")
+                        .and("is_swift").as("is_swift")
+                        .and("partner").as("partner")
+        ), Recipes.class, Recipes.class).getMappedResults();
+    }
+
     //Método para retornar as receitas recomendada
     public List<Recipes> findTrendingRecipes(String email) {
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(email).getRestrictions();
@@ -489,6 +528,22 @@ public class RecipesService {
                 )
         );
     }
+
+    public AggregationOperation createCategoryMatchOperation(ObjectId categoryId) {
+        // Verificação específica para o ID 672d94bedb6a04681a5844c6
+        if (categoryId.toHexString().equals("672d94bedb6a04681a5844c6")) {
+            // Retorna receitas onde 'categories' contém somente este ID e o tamanho é 1
+            return context -> new Document("$match",
+                    new Document("categories", new Document("$eq", Arrays.asList(categoryId)))
+            );
+        } else {
+            // Condição para outros IDs: verifica apenas se o ID existe em 'categories'
+            return context -> new Document("$match",
+                    new Document("categories", categoryId)
+            );
+        }
+    }
+
 
     public AggregationOperation addIsSwift() {
         return context -> new Document("$addFields",

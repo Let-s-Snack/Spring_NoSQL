@@ -44,4 +44,63 @@ public class Categories {
     @Field(name = "url_photo")
     @NotBlank(message = "A foto da receita não deve ser nula")
     private String urlPhoto;
+
+    public String getId() {
+        return id.toHexString();
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getUrlPhoto() {
+        return urlPhoto;
+    }
+
+    public void setUrlPhoto(String urlPhoto) {
+        this.urlPhoto = urlPhoto;
+    }
+
+    public String toString() {
+        return "Categories{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", isDeleted=" + isDeleted +
+                ", creationDate=" + creationDate +
+                ", urlPhoto='" + urlPhoto + '\'' +
+                '}';
+    }
 }
