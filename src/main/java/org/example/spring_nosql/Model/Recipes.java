@@ -54,7 +54,7 @@ public class Recipes {
     private List<String> preparationMethods;
 
     @NotNull(message = "A lista de restrições não deve ser nula")
-    @Schema(description = "Lista de alimentos restritos", example = "Teste") //Adicionar um exemplo
+    @Schema(description = "Lista de alimentos restritos", example = "[\"60d21b4667d0d8992e610c85\", \"60d21b4667d0d8992e610c86\"]")
     @Field(name = "broken_restrictions")
     private List<ObjectId> brokenRestrictions;
 
@@ -77,9 +77,16 @@ public class Recipes {
     @NotNull(message = "Informativo de deleção não pode ser nulo")
     private boolean isDeleted;
 
+    @Schema(description = "Lista de alimentos restritos", example = "[\"60d21b4667d0d8992e610c85\", \"60d21b4667d0d8992e610c86\"]")
+    @NotNull(message = "Informativo de deleção não pode ser nulo")
+    private List<ObjectId> categories;
+
+    @Schema(description = "Indica as categorias/parceiros", example = "1")
+    private int partner;
+
     public Recipes() { }
 
-    public Recipes(ObjectId id, String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<ObjectId> brokenRestrictions, Date creationDate, Double rating, Boolean isFavorite, boolean isDeleted) {
+    public Recipes(ObjectId id, String name, String description, String urlPhoto, List<IngredientsRecipes> ingredients, List<Coments> coments, List<String> preparationMethods, List<ObjectId> brokenRestrictions, Date creationDate, Double rating, Boolean isFavorite, boolean isDeleted, List<ObjectId> categories, int partner) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -92,6 +99,8 @@ public class Recipes {
         this.rating = rating;
         this.isFavorite = isFavorite;
         this.isDeleted = isDeleted;
+        this.categories = categories;
+        this.partner = partner;
     }
 
     public String getId() {
@@ -196,7 +205,27 @@ public class Recipes {
     public int getCommentCount() {
         return (coments != null) ? coments.size() : 0;
     }
-    @Override
+
+    public List<String> getCategories() {
+        return (categories == null)
+                ? List.of()
+                : categories.stream()
+                .map(ObjectId::toHexString)
+                .collect(Collectors.toList());
+    }
+
+    public void setCategories(List<ObjectId> categories) {
+        this.categories = categories;
+    }
+
+    public int getPartner() {
+        return partner;
+    }
+
+    public void setPartner(int partner) {
+        this.partner = partner;
+    }
+
     public String toString() {
         return "Recipes{" +
                 "id=" + id +
@@ -211,6 +240,8 @@ public class Recipes {
                 ", rating=" + rating +
                 ", isFavorite=" + isFavorite +
                 ", isDeleted=" + isDeleted +
+                ", partner=" + partner +
+                ", categories=" + categories +
                 '}';
     }
 }

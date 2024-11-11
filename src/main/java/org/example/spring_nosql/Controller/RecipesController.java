@@ -35,7 +35,7 @@ public class RecipesController {
     private final RecipesService recipesService;
     private Gson gson = new Gson();
 
-    public RecipesController(Validator validator, RecipesService recipesService, PersonsService personsService) {
+    public RecipesController(Validator validator, RecipesService recipesService) {
         this.validator = validator;
         this.recipesService = recipesService;
     }
@@ -46,9 +46,9 @@ public class RecipesController {
             @ApiResponse(responseCode = "200" , description = "Receitas foram retornados com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Recipes.class))),
-    @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> listAllRecipes(){
@@ -69,7 +69,7 @@ public class RecipesController {
                             schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
-     public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
+    public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try{
             return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), gson.toJson(new Message("Não foi possível encontrar a receita!"))));
         }catch(DataIntegrityViolationException ttt){
@@ -127,6 +127,34 @@ public class RecipesController {
     public ResponseEntity<?> listRecipesByRestriction(@Parameter(description = "Adicionar o ID da restrição") @RequestParam String restrictionsId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail) {
         try{
             List<Recipes> recipes = recipesService.findRecipesByRestriction(new ObjectId(restrictionsId), personsEmail);
+
+            return (!recipes.isEmpty())
+                    ?ResponseEntity.ok(recipes)
+                    :ResponseEntity.ok(gson.toJson(new Message("Não foi possível encontrar as receitas!")));
+        }catch (RuntimeException nnn){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Não foi possível encontrar as receita ou o usuário!")));
+        }catch (Exception npc){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(gson.toJson(new Message("Erro interno com o servidor")));
+        }
+    }
+
+    @GetMapping("/listRecipesByCategories")
+    @Operation(summary = "Busca receita pela categoria", description = "Faz a busca da receita a partir do id da categoria e do e-mail do usuário")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Receitas foram encontradas com sucesso!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Recipes.class))),
+            @ApiResponse(responseCode = "404", description = "Erro na comunicação com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "{\"message\": \"Não foi possivel encontrar o usuário!\"}"))),
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
+
+    })
+    public ResponseEntity<?> listRecipesByCategories(@Parameter(description = "Adicionar o ID da categoria") @RequestParam String categoryId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail) {
+        try{
+            List<Recipes> recipes = recipesService.findRecipesByCategory(new ObjectId(categoryId), personsEmail);
 
             return (!recipes.isEmpty())
                     ?ResponseEntity.ok(recipes)
