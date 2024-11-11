@@ -30,14 +30,19 @@ public class IngredientsRecipes {
     @Schema(description = "Descrição do ingrediente", example = "Camarão é um fruto do mar")
     private String description;
 
+    @Field (name = "is_swift")
+    @Schema(description = "Indica se o ingrediente é da swift ou não", example = "true")
+    private boolean isSwift;
+
     public IngredientsRecipes(){}
 
-    public IngredientsRecipes(String ingredientId, String meditionType, double quantity, String name, String description) {
+    public IngredientsRecipes(String ingredientId, String meditionType, double quantity, String name, String description, boolean isSwift) {
         this.ingredientId = ingredientId;
         this.meditionType = meditionType;
         this.quantity = quantity;
         this.name = name;
         this.description = description;
+        this.isSwift = isSwift;
     }
 
     public String getIngredientId() {
@@ -80,7 +85,14 @@ public class IngredientsRecipes {
         this.description = description;
     }
 
-    @Override
+    public boolean getIsSwift() {
+        return isSwift;
+    }
+
+    public void setIsSwift(boolean isSwift) {
+        this.isSwift = isSwift;
+    }
+
     public String toString() {
         return "IngredientsRecipes{" +
                 "ingredientId='" + ingredientId + '\'' +
@@ -88,6 +100,7 @@ public class IngredientsRecipes {
                 ", quantity=" + quantity +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", isSwift=" + isSwift +
                 '}';
     }
 }

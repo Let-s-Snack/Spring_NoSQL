@@ -45,13 +45,18 @@ public class Ingredients {
     @Schema(description = "Lista de restrições que bloqueam o ingrediente", example = "Pescetariano")
     private List<ObjectId> brokenRestrictions;
 
-    public Ingredients(ObjectId id, String name, String description, boolean isDeleted, Date creationDate, List<ObjectId> brokenRestrictions) {
+    @Field (name = "is_swift")
+    @Schema(description = "Indica se o ingrediente é da swift ou não", example = "true")
+    private boolean isSwift;
+
+    public Ingredients(ObjectId id, String name, String description, boolean isDeleted, Date creationDate, List<ObjectId> brokenRestrictions, boolean isSwift) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.brokenRestrictions = brokenRestrictions;
         this.creationDate = creationDate;
         this.isDeleted = isDeleted;
+        this.isSwift = isSwift;
     }
 
     public Ingredients() {}
@@ -108,15 +113,23 @@ public class Ingredients {
         this.isDeleted = isDeleted;
     }
 
-    @Override
+    public boolean getIsSwift() {
+        return this.isSwift;
+    }
+
+    public void setIsSwift(boolean isSwift) {
+        this.isSwift = isSwift;
+    }
+
     public String toString() {
         return "Ingredients{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", brokenRestrictions=" + brokenRestrictions +
-                ", creationDate=" + creationDate +
                 ", isDeleted=" + isDeleted +
+                ", creationDate=" + creationDate +
+                ", brokenRestrictions=" + brokenRestrictions +
+                ", isSwift=" + isSwift +
                 '}';
     }
 }

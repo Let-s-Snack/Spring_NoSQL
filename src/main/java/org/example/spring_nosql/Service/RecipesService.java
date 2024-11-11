@@ -54,6 +54,12 @@ public class RecipesService {
 
                 addIngredientsMappingOperation(),
 
+                addIsSwift(),
+
+                Aggregation.lookup("Categories", "categories", "_id", "categoriesInfo"),
+
+                addPartners(),
+
                 Aggregation.project()
                         .and("_id").as("_id")
                         .and("name").as("name")
@@ -67,6 +73,10 @@ public class RecipesService {
 
                         .and("preparation_methods").as("preparation_methods")
                         .and("broken_restrictions").as("broken_restrictions")
+
+                        .and("categories").as("categories")
+                        .and("is_swift").as("is_swift")
+                        .and("partner").as("partner")
         ), Recipes.class, Recipes.class).getMappedResults();
     }
 
@@ -97,6 +107,12 @@ public class RecipesService {
 
                 addIsFavoriteFieldOperation(),
 
+                addIsSwift(),
+
+                Aggregation.lookup("Categories", "categories", "_id", "categoriesInfo"),
+
+                addPartners(),
+
                 Aggregation.project()
                         .and("_id").as("_id")
                         .and("name").as("name")
@@ -109,6 +125,9 @@ public class RecipesService {
                         .and("isFavorite").as("isFavorite")
                         .and("preparation_methods").as("preparation_methods")
                         .and("restrictionsInfo").as("broken_restrictions")
+                        .and("categories").as("categories")
+                        .and("is_swift").as("is_swift")
+                        .and("partner").as("partner")
         ), Recipes.class, Recipes.class).getMappedResults().get(0);
     }
 
@@ -172,14 +191,23 @@ public class RecipesService {
 
                 addIsFavoriteFieldOperation(),
 
-                    Aggregation.project()
-                        .and("_id").as("_id")
-                        .and("name").as("name")
-                        .and("description").as("description")
-                        .and("url_photo").as("url_photo")
-                        .and("creation_date").as("creation_date")
-                        .and("rating").as("rating")
-                        .and("isFavorite").as("isFavorite")
+                addIsSwift(),
+
+                Aggregation.lookup("Categories", "categories", "_id", "categoriesInfo"),
+
+                addPartners(),
+
+                Aggregation.project()
+                    .and("_id").as("_id")
+                    .and("name").as("name")
+                    .and("description").as("description")
+                    .and("url_photo").as("url_photo")
+                    .and("creation_date").as("creation_date")
+                    .and("rating").as("rating")
+                    .and("isFavorite").as("isFavorite")
+                    .and("categories").as("categories")
+                    .and("is_swift").as("is_swift")
+                    .and("partner").as("partner")
         ),Recipes.class, Recipes.class).getMappedResults();
     }
 
@@ -202,6 +230,12 @@ public class RecipesService {
 
                     addIsFavoriteFieldOperation(),
 
+                    addIsSwift(),
+
+                    Aggregation.lookup("Categories", "categories", "_id", "categoriesInfo"),
+
+                    addPartners(),
+
                     Aggregation.project()
                             .and("_id").as("_id")
                             .and("name").as("name")
@@ -211,7 +245,49 @@ public class RecipesService {
                             .and("rating").as("rating")
                             .and("isFavorite").as("isFavorite")
                             .and("coments").as("coments")
+                            .and("categories").as("categories")
+                            .and("is_swift").as("is_swift")
+                            .and("partner").as("partner")
             ), Recipes.class, Recipes.class).getMappedResults();
+    }
+
+    //Método para encontrar as receitas que se encaixam na restrição passada como parâmetro
+    public List<Recipes> findRecipesByCategory(ObjectId categoryId, String personsEmail) {
+        AggregationOperation addFieldsPersonsFavorite = Aggregation.addFields()
+                .addField("personsEmailFavorite").withValue(personsEmail).build();
+        AggregationOperation addFieldsRestrictionId = Aggregation.addFields()
+                .addField("categoryId").withValue(categoryId).build();
+
+        return mongoTemplate.aggregate(Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("is_deleted").is(false)),
+                addFieldsOperation("categoriesId", "$categories"),
+                addAverageRatingOperation(),
+                addFieldsPersonsFavorite,
+                addFieldsRestrictionId,
+                createCategoryMatchOperation(categoryId),  // Usando o match atualizado
+
+                Aggregation.lookup("Persons", "personsEmailFavorite", "email", "personsFavorite"),
+
+                addIsFavoriteFieldOperation(),
+
+                addIsSwift(),
+
+                Aggregation.lookup("Categories", "categories", "_id", "categoriesInfo"),
+
+                addPartners(),
+
+                Aggregation.project()
+                        .and("_id").as("_id")
+                        .and("name").as("name")
+                        .and("description").as("description")
+                        .and("url_photo").as("url_photo")
+                        .and("creation_date").as("creation_date")
+                        .and("rating").as("rating")
+                        .and("isFavorite").as("isFavorite")
+                        .and("categories").as("categories")
+                        .and("is_swift").as("is_swift")
+                        .and("partner").as("partner")
+        ), Recipes.class, Recipes.class).getMappedResults();
     }
 
     //Método para retornar as receitas recomendada
@@ -370,6 +446,7 @@ public class RecipesService {
                                         .append("ingredient_id", "$$ingredient.ingredient_id")
                                         .append("medition_type", "$$ingredient.medition_type")
                                         .append("quantity", "$$ingredient.quantity")
+                                        .append("is_swift", "$$ingredient.is_swift")
                                         .append("name",
                                                 new Document("$arrayElemAt",
                                                         Arrays.asList(
@@ -452,6 +529,71 @@ public class RecipesService {
         );
     }
 
+    public AggregationOperation createCategoryMatchOperation(ObjectId categoryId) {
+        // Verificação específica para o ID 672d94bedb6a04681a5844c6
+        if (categoryId.toHexString().equals("672d94bedb6a04681a5844c6")) {
+            // Retorna receitas onde 'categories' contém somente este ID e o tamanho é 1
+            return context -> new Document("$match",
+                    new Document("categories", new Document("$eq", Arrays.asList(categoryId)))
+            );
+        } else {
+            // Condição para outros IDs: verifica apenas se o ID existe em 'categories'
+            return context -> new Document("$match",
+                    new Document("categories", categoryId)
+            );
+        }
+    }
+
+
+    public AggregationOperation addIsSwift() {
+        return context -> new Document("$addFields",
+                new Document("is_swift",
+                        new Document("$anyElementTrue", Arrays.asList(
+                                new Document("$map", new Document("input", "$ingredients")
+                                        .append("as", "ingredient")
+                                        .append("in", "$$ingredient.is_swift")
+                                )
+                        ))
+                )
+        );
+    }
+
+    public AggregationOperation addPartners() {
+        return context -> new Document("$addFields",
+                new Document("partner",
+                        new Document("$cond", new Document("if",
+                                new Document("$anyElementTrue", Arrays.asList(
+                                        new Document("$map", new Document("input", "$categoriesInfo")
+                                                .append("as", "category")
+                                                .append("in", new Document("$eq", Arrays.asList(
+                                                        new Document("$toLower", "$$category.name"),
+                                                        "germinachef"))))
+                                )))
+                                .append("then", 2)
+                                .append("else", new Document("$cond", new Document("if",
+                                        new Document("$anyElementTrue", Arrays.asList(
+                                                new Document("$map", new Document("input", "$categoriesInfo")
+                                                        .append("as", "category")
+                                                        .append("in", new Document("$eq", Arrays.asList(
+                                                                new Document("$toLower", "$$category.name"),
+                                                                "swift"))))
+                                        )))
+                                        .append("then", 1)
+                                        .append("else", new Document("$cond", new Document("if",
+                                                new Document("$anyElementTrue", Arrays.asList(
+                                                        new Document("$map", new Document("input", "$categoriesInfo")
+                                                                .append("as", "category")
+                                                                .append("in", new Document("$ne", Arrays.asList(
+                                                                        new Document("$toLower", "$$category.name"),
+                                                                        "germinachef"))))
+                                                )))
+                                                .append("then", 3)
+                                                .append("else", -1)
+                                        ))
+                                ))
+                        )
+                ));
+    }
 
     public AggregationOperation createRestrictionsMatchOperation(List<ObjectId> restrictionIds) {
         return context -> new Document("$match",

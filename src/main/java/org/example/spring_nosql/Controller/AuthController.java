@@ -54,7 +54,7 @@ public class AuthController {
                             schema = @Schema(example = "Erro interno no servidor"))),
     })
     public ResponseEntity<?> login(@RequestBody @Parameter(description = "Dados do administrador para login")
-                                       @Schema(description = "Objeto contendo o e-mail e senha do administrador", example = "{\"email\": \"userservice.restrictpage@germinare.org.br\", \"password\": \"restrictpage123\"}") Map<String, String> objectAdm) {
+                                   @Schema(description = "Objeto contendo o e-mail e senha do administrador", example = "{\"email\": \"userservice.restrictpage@germinare.org.br\", \"password\": \"restrictpage123\"}") Map<String, String> objectAdm) {
         if (objectAdm.containsKey("email") && objectAdm.containsKey("password")) {
             String email = objectAdm.get("email");
             String password = objectAdm.get("password");
