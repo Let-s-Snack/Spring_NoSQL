@@ -566,56 +566,60 @@ public class PersonsController {
                             schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
-    public ResponseEntity<?> checkIngredients(@Parameter(description = "Inserir e-mail do usuário") @PathVariable String personsEmail, @RequestBody ShoppingList listShoppingList) {
+    public ResponseEntity<?> checkIngredients(@Parameter(description = "Inserir e-mail do usuário") @PathVariable String personsEmail, @RequestBody List<ShoppingList> listShoppingList) {
         try {
-            //Criando um persons e pegando o seu shoppingList
+            // Criando um persons e pegando o seu shoppingList
             Persons persons = personsService.findPersonByEmail(personsEmail);
             List<ShoppingList> personsShoppingList = persons.getShoppingList();
-            int contIngredientsChecked = 0;
 
-            //Percorrendo o shoppingList do usuário e verificando se a receita existe
-            for(ShoppingList objectPersonsShoppingList : personsShoppingList){
+            // Percorrendo a lista de shopping lists recebida
+            for (ShoppingList list : listShoppingList) {
+                int contIngredientsChecked = 0;
 
-            //Verificando se o ingredient enviado é igual ao já existente
-                if(objectPersonsShoppingList.getRecipesId().equalsIgnoreCase(listShoppingList.getRecipesId())){
-                    //Guardando os ingredientes e percorrendo eles
-                    List<IngredientsShoppingList> personsIngredientsShoppingList = objectPersonsShoppingList.getIngredients();
-                    List<IngredientsShoppingList> ingredientsShoppingList = listShoppingList.getIngredients();
+                // Percorrendo o shoppingList do usuário e verificando se a receita existe
+                for (ShoppingList objectPersonsShoppingList : personsShoppingList) {
 
-                    for (IngredientsShoppingList personsIngredients : personsIngredientsShoppingList){
-                        for (IngredientsShoppingList ingredients : ingredientsShoppingList){
+                    // Verificando se o recipeId do shopping list enviado é igual ao já existente
+                    if (objectPersonsShoppingList.getRecipesId().equalsIgnoreCase(list.getRecipesId())) {
+                        List<IngredientsShoppingList> personsIngredientsShoppingList = objectPersonsShoppingList.getIngredients();
+                        List<IngredientsShoppingList> ingredientsShoppingList = list.getIngredients();
 
-                            //Verificando se o id existe, e caso exista eu dou um check nele
-                            if(personsIngredients.getIngredientId().equalsIgnoreCase(ingredients.getIngredientId())){
-                                personsIngredients.setIsChecked(ingredients.getIsChecked());
+                        // Atualizando o estado de cada ingrediente
+                        for (IngredientsShoppingList personsIngredients : personsIngredientsShoppingList) {
+                            for (IngredientsShoppingList ingredients : ingredientsShoppingList) {
+                                if (personsIngredients.getIngredientId().equalsIgnoreCase(ingredients.getIngredientId())) {
+                                    personsIngredients.setIsChecked(ingredients.getIsChecked());
+                                }
                             }
+                        }
+
+                        objectPersonsShoppingList.setIngredients(personsIngredientsShoppingList);
+                    }
+
+                    // Verificando se todos os ingredientes estão checados
+                    for (IngredientsShoppingList ingredients : objectPersonsShoppingList.getIngredients()) {
+                        if (ingredients.getIsChecked()) {
+                            contIngredientsChecked++;
                         }
                     }
 
-                    objectPersonsShoppingList.setIngredients(personsIngredientsShoppingList);
-                }
-
-                //Verificando se todos os ingredientes estão checkados
-                for(IngredientsShoppingList ingredients : objectPersonsShoppingList.getIngredients()){
-                    if(ingredients.getIsChecked()){
-                        contIngredientsChecked ++;
+                    // Caso todos estejam checados, remover da lista do usuário
+                    if (contIngredientsChecked == objectPersonsShoppingList.getIngredients().size()) {
+                        personsShoppingList.remove(objectPersonsShoppingList);
+                        break; // Para evitar a modificação da lista enquanto está sendo iterada
                     }
-                }
-
-                //Caso esteja eu removo o personShoppingList
-                if(contIngredientsChecked == objectPersonsShoppingList.getIngredients().size()){
-                    personsShoppingList.remove(objectPersonsShoppingList);
                 }
             }
 
+            // Atualizando a lista de compras do usuário no banco de dados
             Query query = new Query(Criteria.where("email").is(personsEmail));
             Update update = new Update().set("shopping_list", personsShoppingList);
 
             UpdateResult results = personsService.updatePerson(query, update);
 
-            if(results.getModifiedCount() >= 1 ){
+            if (results.getModifiedCount() >= 1) {
                 return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Atualização foi feita com sucesso!")));
-            }else {
+            } else {
                 return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(new Message("Não foi possível fazer a atualização!")));
             }
         } catch (RuntimeException nnn) {

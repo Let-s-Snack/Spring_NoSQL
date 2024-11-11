@@ -35,7 +35,7 @@ public class RecipesController {
     private final RecipesService recipesService;
     private Gson gson = new Gson();
 
-    public RecipesController(Validator validator, RecipesService recipesService, PersonsService personsService) {
+    public RecipesController(Validator validator, RecipesService recipesService) {
         this.validator = validator;
         this.recipesService = recipesService;
     }
@@ -46,9 +46,9 @@ public class RecipesController {
             @ApiResponse(responseCode = "200" , description = "Receitas foram retornados com sucesso!",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = Recipes.class))),
-    @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
+            @ApiResponse(responseCode = "500", description = "Erro interno com o servidor!",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
     public ResponseEntity<?> listAllRecipes(){
@@ -69,7 +69,7 @@ public class RecipesController {
                             schema = @Schema(example = "{\"message\": \"Erro interno com o servidor!\"}")))
 
     })
-     public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
+    public ResponseEntity<?> listRecipesById(@Parameter(description = "Adicionar o ID da receita") @RequestParam String recipesId, @Parameter(description = "Adicionar o e-mail do usuário") @RequestParam String personsEmail){
         try{
             return ResponseEntity.ok(Objects.requireNonNullElse(recipesService.findRecipesById(new ObjectId(recipesId), personsEmail), gson.toJson(new Message("Não foi possível encontrar a receita!"))));
         }catch(DataIntegrityViolationException ttt){
