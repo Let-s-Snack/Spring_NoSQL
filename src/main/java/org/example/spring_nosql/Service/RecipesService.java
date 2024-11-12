@@ -131,6 +131,68 @@ public class RecipesService {
         ), Recipes.class, Recipes.class).getMappedResults().get(0);
     }
 
+    public AggregationOperation addIngredientsMappingOperation() {
+        return context -> new Document("$addFields", new Document("ingredients",
+                new Document("$map",
+                        new Document("input", "$ingredients")
+                                .append("as", "ingredient")
+                                .append("in", new Document()
+                                        .append("ingredient_id", "$$ingredient.ingredient_id")
+                                        .append("medition_type", "$$ingredient.medition_type")
+                                        .append("quantity", "$$ingredient.quantity")
+                                        .append("name",
+                                                new Document("$arrayElemAt",
+                                                        Arrays.asList(
+                                                                new Document("$map", new Document("input",
+                                                                        new Document("$filter", new Document("input", "$ingredientsInfo")
+                                                                                .append("as", "ingredientInfo")
+                                                                                .append("cond", new Document("$eq", Arrays.asList("$$ingredientInfo._id",
+                                                                                        new Document("$toObjectId", "$$ingredient.ingredient_id"))))
+                                                                        ))
+                                                                        .append("as", "filteredIngredient")
+                                                                        .append("in", "$$filteredIngredient.name")
+                                                                ),
+                                                                0
+                                                        )
+                                                )
+                                        )
+                                        .append("description",
+                                                new Document("$arrayElemAt",
+                                                        Arrays.asList(
+                                                                new Document("$map", new Document("input",
+                                                                        new Document("$filter", new Document("input", "$ingredientsInfo")
+                                                                                .append("as", "ingredientInfo")
+                                                                                .append("cond", new Document("$eq", Arrays.asList("$$ingredientInfo._id",
+                                                                                        new Document("$toObjectId", "$$ingredient.ingredient_id"))))
+                                                                        ))
+                                                                        .append("as", "filteredIngredient")
+                                                                        .append("in", "$$filteredIngredient.description")
+                                                                ),
+                                                                0
+                                                        )
+                                                )
+                                        )
+                                        .append("is_swift",
+                                                new Document("$arrayElemAt",
+                                                        Arrays.asList(
+                                                                new Document("$map", new Document("input",
+                                                                        new Document("$filter", new Document("input", "$ingredientsInfo")
+                                                                                .append("as", "ingredientInfo")
+                                                                                .append("cond", new Document("$eq", Arrays.asList("$$ingredientInfo._id",
+                                                                                        new Document("$toObjectId", "$$ingredient.ingredient_id"))))
+                                                                        ))
+                                                                        .append("as", "filteredIngredient")
+                                                                        .append("in", "$$filteredIngredient.is_swift")
+                                                                ),
+                                                                0
+                                                        )
+                                                )
+                                        )
+                                )
+                )
+        ));
+    }
+
     //Método para retornar uma receita com base no seu nome
     public List<Recipes> findRecipesByName(String recipeNameFilter, String personsEmail){
         List<PersonsRestrictions> listPersonsRestrictions = personsService.findPersonByEmail(personsEmail).getRestrictions();
@@ -474,53 +536,6 @@ public class RecipesService {
                                 )
                         ).append("then", true)
                                 .append("else", false)
-                )
-        ));
-    }
-
-    public AggregationOperation addIngredientsMappingOperation() {
-        return context -> new Document("$addFields", new Document("ingredients",
-                new Document("$map",
-                        new Document("input", "$ingredients")
-                                .append("as", "ingredient")
-                                .append("in", new Document()
-                                        .append("ingredient_id", "$$ingredient.ingredient_id")
-                                        .append("medition_type", "$$ingredient.medition_type")
-                                        .append("quantity", "$$ingredient.quantity")
-                                        .append("is_swift", "$$ingredient.is_swift")
-                                        .append("name",
-                                                new Document("$arrayElemAt",
-                                                        Arrays.asList(
-                                                                new Document("$map", new Document("input",
-                                                                        new Document("$filter", new Document("input", "$ingredientsInfo")
-                                                                                .append("as", "ingredientInfo")
-                                                                                .append("cond", new Document("$eq", Arrays.asList("$$ingredientInfo._id",
-                                                                                        new Document("$toObjectId", "$$ingredient.ingredient_id"))))
-                                                                        ))
-                                                                        .append("as", "filteredIngredient")
-                                                                        .append("in", "$$filteredIngredient.name")
-                                                                ),
-                                                                0
-                                                        )
-                                                )
-                                        )
-                                        .append("description",
-                                                new Document("$arrayElemAt",
-                                                        Arrays.asList(
-                                                                new Document("$map", new Document("input",
-                                                                        new Document("$filter", new Document("input", "$ingredientsInfo")
-                                                                                .append("as", "ingredientInfo")
-                                                                                .append("cond", new Document("$eq", Arrays.asList("$$ingredientInfo._id",
-                                                                                        new Document("$toObjectId", "$$ingredient.ingredient_id"))))
-                                                                        ))
-                                                                        .append("as", "filteredIngredient")
-                                                                        .append("in", "$$filteredIngredient.description")
-                                                                ),
-                                                                0
-                                                        )
-                                                )
-                                        )
-                                )
                 )
         ));
     }
