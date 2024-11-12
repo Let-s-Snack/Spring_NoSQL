@@ -80,6 +80,7 @@ public class PersonsService {
                         .and("recipes.broken_restrictions").as("broken_restrictions")
                         .and("is_favorite").as("isFavorite")
                         .and("rating").as("rating")
+                        .and("recipes.categories").as("categories")
                         .and("partner").as("partner")
         ), Persons.class, Recipes.class).getMappedResults();
     }
@@ -103,6 +104,7 @@ public class PersonsService {
                         .and("recipes.ingredients").as("ingredients")
                         .and("recipes.preparation_methods").as("preparation_methods")
                         .and("recipes.broken_restrictions").as("broken_restrictions")
+                        .and("recipes.categories").as("categories")
                         .and("partner").as("partner")
         ), Persons.class, Recipes.class).getMappedResults();
     }
