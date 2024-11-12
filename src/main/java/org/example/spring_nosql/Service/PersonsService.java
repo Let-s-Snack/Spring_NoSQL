@@ -67,6 +67,8 @@ public class PersonsService {
                 unwind("recipes"),
                 addAverageRatingOperation(),
                 addIsFavorite,
+                Aggregation.lookup("Categories", "recipes.categories", "_id", "categoriesInfo"),
+                addPartners(),
                 Aggregation.project()
                         .and("recipes._id").as("_id")
                         .and("recipes.name").as("name")
@@ -78,6 +80,7 @@ public class PersonsService {
                         .and("recipes.broken_restrictions").as("broken_restrictions")
                         .and("is_favorite").as("isFavorite")
                         .and("rating").as("rating")
+                        .and("partner").as("partner")
         ), Persons.class, Recipes.class).getMappedResults();
     }
 
@@ -89,6 +92,8 @@ public class PersonsService {
                 addFieldsOperationDirectionsWeek("directionsWeekObjectId", "$directions_week.recipes_id"),
                 Aggregation.lookup("Recipes", "directionsWeekObjectId", "_id", "recipes"),
                 unwind("recipes"),
+                Aggregation.lookup("Categories", "recipes.categories", "_id", "categoriesInfo"),
+                addPartners(),
                 Aggregation.project()
                         .and("recipes._id").as("_id")
                         .and("recipes.name").as("name")
@@ -98,6 +103,7 @@ public class PersonsService {
                         .and("recipes.ingredients").as("ingredients")
                         .and("recipes.preparation_methods").as("preparation_methods")
                         .and("recipes.broken_restrictions").as("broken_restrictions")
+                        .and("partner").as("partner")
         ), Persons.class, Recipes.class).getMappedResults();
     }
 
@@ -189,6 +195,43 @@ public class PersonsService {
     public Persons deletePerson(Persons excludePerson) {
         excludePerson.setDeactivationDate(new Date());
         return mongoTemplate.save(excludePerson);
+    }
+
+    public AggregationOperation addPartners() {
+        return context -> new Document("$addFields",
+                new Document("partner",
+                        new Document("$cond", new Document("if",
+                                new Document("$anyElementTrue", Arrays.asList(
+                                        new Document("$map", new Document("input", "$categoriesInfo")
+                                                .append("as", "category")
+                                                .append("in", new Document("$eq", Arrays.asList(
+                                                        new Document("$toLower", "$$category.name"),
+                                                        "germinachef"))))
+                                )))
+                                .append("then", 2)
+                                .append("else", new Document("$cond", new Document("if",
+                                        new Document("$anyElementTrue", Arrays.asList(
+                                                new Document("$map", new Document("input", "$categoriesInfo")
+                                                        .append("as", "category")
+                                                        .append("in", new Document("$eq", Arrays.asList(
+                                                                new Document("$toLower", "$$category.name"),
+                                                                "swift"))))
+                                        )))
+                                        .append("then", 1)
+                                        .append("else", new Document("$cond", new Document("if",
+                                                new Document("$anyElementTrue", Arrays.asList(
+                                                        new Document("$map", new Document("input", "$categoriesInfo")
+                                                                .append("as", "category")
+                                                                .append("in", new Document("$ne", Arrays.asList(
+                                                                        new Document("$toLower", "$$category.name"),
+                                                                        "germinachef"))))
+                                                )))
+                                                .append("then", 3)
+                                                .append("else", -1)
+                                        ))
+                                ))
+                        )
+                ));
     }
 
     public AggregationOperation addFieldsOperation(String nomeNovoCampo, String nomeColuna) {
