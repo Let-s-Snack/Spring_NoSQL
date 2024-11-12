@@ -281,7 +281,10 @@ public class PersonsController {
                 if (personInsert != null) {
                     //Setando a receita da semana
                     List<Recipes> listRecipes = recipesService.findRecipesByBrokenRestrictions(personInsert.getEmail());
-                    System.out.println(listRecipes);
+
+                    if(listRecipes.isEmpty()){
+                        listRecipes = recipesService.findAllRecipes();
+                    }
 
                     Recipes finalRecipes = listRecipes.get(random.nextInt(0, listRecipes.size()));
 
