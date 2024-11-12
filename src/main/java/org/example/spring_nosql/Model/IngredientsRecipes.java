@@ -86,7 +86,7 @@ public class IngredientsRecipes {
     }
 
     public boolean getIsSwift() {
-        return isSwift;
+        return this.isSwift;
     }
 
     public void setIsSwift(boolean isSwift) {
