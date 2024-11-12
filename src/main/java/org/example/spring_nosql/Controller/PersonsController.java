@@ -286,7 +286,15 @@ public class PersonsController {
                         listRecipes = recipesService.findAllRecipes();
                     }
 
-                    Recipes finalRecipes = listRecipes.get(random.nextInt(0, listRecipes.size()));
+                    List<Recipes> finalAddRecipes = new ArrayList<>();
+
+                    for (Recipes recipes : listRecipes){
+                        if(recipes.getPartner() == 1){
+                            finalAddRecipes.add(recipes);
+                        }
+                    }
+
+                    Recipes finalRecipes = finalAddRecipes.get(random.nextInt(0, listRecipes.size()));
 
                     Query query = new Query(Criteria.where("email").is(personInsert.getEmail()));
                     Update update = new Update();
